@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dummy</title>
+    <%= csrf_meta_tags %>
+  </head>
+
+  <body>
+    <% if current_user %>
+      <%= link_to "Sign out", passwordless.sign_out_path %>
+    <% else %>
+      <%= link_to "Sign in", passwordless.sign_in_path %>
+    <% end %>
+
+    <%= debug current_user.inspect %>
+
+    <% flash.each do |kind, msg| %>
+      <%= tag.div(class: kind) { msg } %>
+    <% end %>
+
+    <%= yield %>
+  </body>
+</html>

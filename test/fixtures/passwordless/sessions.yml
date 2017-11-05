@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  timeout_at: 2017-11-04 23:17:35
+  expires_at: 2017-11-04 23:17:35
+  user_agent: MyText
+  remote_addr: MyString
+  token: MyString
+
+two:
+  timeout_at: 2017-11-04 23:17:35
+  expires_at: 2017-11-04 23:17:35
+  user_agent: MyText
+  remote_addr: MyString
+  token: MyString
