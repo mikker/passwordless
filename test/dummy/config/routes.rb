@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   passwordless_for :users
-  passwordless_for :admins, at: '/'
 
   resources :users
+  resources :registrations, only: [:new, :create]
 
   get '/secret', to: 'secrets#index'
 

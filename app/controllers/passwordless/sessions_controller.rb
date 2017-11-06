@@ -35,13 +35,13 @@ module Passwordless
         token: params[:token]
       )
 
-      sign_in! session.authenticatable
+      sign_in session.authenticatable
 
       redirect_to main_app.root_path
     end
 
     def destroy
-      sign_out! authenticatable_class
+      sign_out authenticatable_class
       redirect_to main_app.root_path
     end
 

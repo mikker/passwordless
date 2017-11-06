@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
-    @current_user ||= authenticate!(User)
+    @current_user ||= authenticate_by_cookie(User)
   end
 
   def authenticate_user!
