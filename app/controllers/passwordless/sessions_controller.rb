@@ -2,6 +2,8 @@ module Passwordless
   class SessionsController < ApplicationController
     include ControllerHelpers
 
+    helper_method :authenticatable_resource
+
     def new
       @email_field = authenticatable_class.passwordless_email_field
 
@@ -45,12 +47,20 @@ module Passwordless
 
     private
 
+    def authenticatable
+      params.fetch(:authenticatable)
+    end
+
     def authenticatable_classname
-      params[:authenticatable].to_s.camelize
+      authenticatable.to_s.camelize
     end
 
     def authenticatable_class
       authenticatable_classname.constantize
+    end
+
+    def authenticatable_resource
+      authenticatable.pluralize
     end
   end
 end
