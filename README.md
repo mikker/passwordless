@@ -1,8 +1,14 @@
-# Passwordless
+<p align='center'>
+  <img src='https://s3.brnbw.com/Passwordless-title-JO71NQv7Q0.svg' alt='Passwordless' />
+  <br />
+  <br />
+</p>
 
 <img src='https://travis-ci.org/mikker/passwordless.svg?branch=master' alt='Build status' />
 
 Add authentication to your Rails app without all the icky-ness of passwords.
+
+---
 
 ## Installation
 
