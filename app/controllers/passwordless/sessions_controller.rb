@@ -29,7 +29,7 @@ module Passwordless
 
     def show
       session = Session.valid.find_by!(
-        authenticatable_type: params[:authenticatable],
+        authenticatable_type: authenticatable_classname,
         token: params[:token]
       )
 
@@ -40,14 +40,17 @@ module Passwordless
 
     def destroy
       sign_out! authenticatable_class
-
       redirect_to main_app.root_path
     end
 
     private
 
+    def authenticatable_classname
+      params[:authenticatable].to_s.camelize
+    end
+
     def authenticatable_class
-      params[:authenticatable].constantize
+      authenticatable_classname.constantize
     end
   end
 end

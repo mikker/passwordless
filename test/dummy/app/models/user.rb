@@ -1,5 +1,3 @@
 class User < ApplicationRecord
-  def self.passwordless_email_field
-    :email
-  end
+  passwordless_with :email
 end

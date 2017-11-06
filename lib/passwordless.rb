@@ -1,5 +1,5 @@
 require "passwordless/engine"
 
 module Passwordless
-  # Your code goes here...
+  mattr_accessor(:default_from_address) { 'CHANGE_ME@example.com' }
 end

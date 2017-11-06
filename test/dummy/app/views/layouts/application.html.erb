@@ -7,9 +7,9 @@
 
   <body>
     <% if current_user %>
-      <%= link_to "Sign out", passwordless.sign_out_path %>
+      <%= link_to "Sign out", users.sign_out_path %>
     <% else %>
-      <%= link_to "Sign in", passwordless.sign_in_path %>
+      <%= link_to "Sign in", users.sign_in_path %>
     <% end %>
 
     <%= debug current_user.inspect %>

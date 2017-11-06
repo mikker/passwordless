@@ -1,9 +1,6 @@
 Rails.application.routes.draw do
-  mount(
-    Passwordless::Engine,
-    at: "/passwordless",
-    defaults: { authenticatable: 'User' }
-  )
+  passwordless_for :users
+  passwordless_for :admins, at: '/'
 
   resources :users
 
