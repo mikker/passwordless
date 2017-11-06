@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    passwordless (0.1.0)
+    passwordless (0.2.0)
       rails (~> 5.1.4)
 
 GEM
