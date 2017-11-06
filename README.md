@@ -4,7 +4,7 @@
   <br />
 </p>
 
-<img src='https://travis-ci.org/mikker/passwordless.svg?branch=master' alt='Build status' />
+<img src='https://travis-ci.org/mikker/passwordless.svg?branch=master' alt='Build status' /> <img src='https://img.shields.io/gem/v/passwordless.svg' alt='Gem version' />
 
 Add authentication to your Rails app without all the icky-ness of passwords.
 
