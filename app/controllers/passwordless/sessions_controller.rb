@@ -1,3 +1,5 @@
+require 'bcrypt'
+
 module Passwordless
   class SessionsController < ApplicationController
     include ControllerHelpers
@@ -30,6 +32,9 @@ module Passwordless
     end
 
     def show
+      # Make it "slow" on purpose to make brute-force attacks more of a hassle
+      BCrypt::Password.create(params[:token])
+
       session = Session.valid.find_by!(
         authenticatable_type: authenticatable_classname,
         token: params[:token]
