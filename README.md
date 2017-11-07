@@ -74,6 +74,18 @@ class ApplicationController < ActionController::Base
 end
 ```
 
+Et voilá:
+
+```ruby
+class VerySecretThingsController < ApplicationController
+  before_filter :require_user!
+  
+  def index
+    @things = current_user.very_secret_things
+  end
+end
+```
+
 ## Providing your own templates
 
 Override `passwordless`' bundled views by adding your own. `passwordless` has 2 action views and 1 mailer view:
@@ -110,18 +122,6 @@ class UsersController < ApplicationController
   end
   
   # ...
-end
-```
-
-Et voilá:
-
-```ruby
-class VerySecretThingsController < ApplicationController
-  before_filter :require_user!
-  
-  def index
-    @things = current_user.very_secret_things
-  end
 end
 ```
 
