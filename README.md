@@ -91,7 +91,7 @@ See [the bundled views](https://github.com/mikker/passwordless/tree/master/app/v
 
 ## Registering new users
 
-Because your `User` record is just any other record, you just create one like you normally would. Passwordless provides a helper method you can use to sign in the created user after it is saved like so:
+Because your `User` record is like any other record, you create one like you normally would. Passwordless provides a helper method you can use to sign in the created user after it is saved like so:
 
 ```ruby
 class UsersController < ApplicationController
