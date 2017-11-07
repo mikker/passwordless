@@ -1,5 +1,5 @@
 <p align='center'>
-  <img src='https://s3.brnbw.com/Passwordless-title-JO71NQv7Q0.svg' alt='Passwordless' />
+  <img src='https://s3.brnbw.com/Passwordless-title-gaIVkX0sPg.svg' alt='Passwordless' />
   <br />
   <br />
 </p>
