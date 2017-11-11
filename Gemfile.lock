@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    passwordless (0.2.1)
+    passwordless (0.3.0)
       bcrypt (~> 3.1.11)
       rails (~> 5.1.4)
 
@@ -61,7 +61,7 @@ GEM
     mail (2.7.0)
       mini_mime (>= 0.1.1)
     method_source (0.9.0)
-    mini_mime (0.1.4)
+    mini_mime (1.0.0)
     mini_portile2 (2.3.0)
     minitest (5.10.3)
     nio4r (2.1.0)
@@ -108,7 +108,7 @@ GEM
       thread_safe (~> 0.1)
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.2)
+    websocket-extensions (0.1.3)
 
 PLATFORMS
   ruby
