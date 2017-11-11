@@ -22,7 +22,7 @@ module Passwordless
       self.expires_at ||= 1.year.from_now
       self.timeout_at ||= 1.hour.from_now
       self.token ||= loop do
-        token = SecureRandom.urlsafe_base64(32)
+        token = Passwordless.token_generator.call(self)
         break token unless Session.find_by(token: token)
       end
     end
