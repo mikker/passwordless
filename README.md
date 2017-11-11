@@ -125,6 +125,18 @@ class UsersController < ApplicationController
 end
 ```
 
+## Generating tokens
+
+By default Passwordless generates tokens using Rails' `SecureRandom.urlsafe_base64` but you can change that by setting `Passwordless.token_generator` to something else that responds to `call(session)` eg.:
+
+```ruby
+Passwordless.token_generator = -> (session) {
+  "probably-stupid-token-#{session.user_agent}-#{Time.current}"
+}
+```
+
+Session is going to keep generating tokens until it finds one that hasn't been used yet. So be sure to use some kind of method where matches are unlikely.
+
 # License
 
 MIT
