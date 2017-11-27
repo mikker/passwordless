@@ -13,6 +13,9 @@ class ApplicationController < ActionController::Base
 
   def authenticate_user!
     return if current_user
+
+    save_passwordless_redirect_location!
+
     redirect_to root_path, flash: {error: 'Not worthy!'}
   end
 end

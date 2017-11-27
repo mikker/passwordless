@@ -7,6 +7,7 @@ module Passwordless
       ActionDispatch::Routing::Mapper.include RouterHelpers
       require 'passwordless/model_helpers'
       ActiveRecord::Base.extend ModelHelpers
+      require 'passwordless/controller_helpers'
     end
   end
 end

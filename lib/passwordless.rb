@@ -6,4 +6,5 @@ module Passwordless
   mattr_accessor(:token_generator) do
     UrlSafeBase64Generator.new
   end
+  mattr_accessor(:redirect_back_after_sign_in) { true }
 end

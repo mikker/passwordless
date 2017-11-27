@@ -42,7 +42,14 @@ module Passwordless
 
       sign_in session.authenticatable
 
-      redirect_to main_app.root_path
+      enabled = Passwordless.redirect_back_after_sign_in
+      destination = dest = reset_passwordless_redirect_location!
+
+      if enabled && destination
+        redirect_to dest
+      else
+        redirect_to main_app.root_path
+      end
     end
 
     def destroy

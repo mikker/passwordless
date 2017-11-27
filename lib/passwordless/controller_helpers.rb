@@ -20,6 +20,14 @@ module Passwordless
       cookies.delete(key)
     end
 
+    def save_passwordless_redirect_location!
+      session[:destination_when_rejected] = request.original_url
+    end
+
+    def reset_passwordless_redirect_location!
+      session.delete :destination_when_rejected
+    end
+
     private
 
     def cookie_name(authenticatable_class)
