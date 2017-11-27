@@ -1,3 +1,9 @@
+# 0.4.0
+
+- Added: Redirect to previous destination post sign in
+- Added: Added `#passwordless_controller?`
+- Fixed: Inherit from main app's ApplicationController
+
 # 0.3.1
 
 - Fixed: Removed Gemfile.lock
