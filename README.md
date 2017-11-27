@@ -10,6 +10,17 @@ Add authentication to your Rails app without all the icky-ness of passwords.
 
 ---
 
+## Table of Contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+     * [Getting the current user, restricting access, the usual](#getting-the-current-user-restricting-access-the-usual)
+     * [Providing your own templates](#providing-your-own-templates)
+     * [Registering new users](#registering-new-users)
+     * [Generating tokens](#generating-tokens)
+     * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
+* [License](#license)
+
 ## Installation
 
 Add the `passwordless` gem to your `Gemfile`:
@@ -24,6 +35,8 @@ Install it and copy over the migrations:
 $ bundle
 $ bin/rails passwordless:install:migrations
 ```
+
+## Usage
 
 Passwordless creates a single model called `Passwordless::Session`. It doesn't come with its own `User` model, it expects you to create one, eg.:
 
@@ -49,7 +62,7 @@ Rails.application.routes.draw do
 end
 ```
 
-## Getting the current user, restricting access, the usual
+### Getting the current user, restricting access, the usual
 
 Passwordless doesn't give you `current_user` automatically -- it's dead easy to add it though:
 
@@ -86,7 +99,7 @@ class VerySecretThingsController < ApplicationController
 end
 ```
 
-## Providing your own templates
+### Providing your own templates
 
 Override `passwordless`' bundled views by adding your own. `passwordless` has 2 action views and 1 mailer view:
 
@@ -101,7 +114,7 @@ app/views/passwordless/mailer/magic_link.text.erb
 
 See [the bundled views](https://github.com/mikker/passwordless/tree/master/app/views/passwordless).
 
-## Registering new users
+### Registering new users
 
 Because your `User` record is like any other record, you create one like you normally would. Passwordless provides a helper method you can use to sign in the created user after it is saved like so:
 
@@ -125,7 +138,7 @@ class UsersController < ApplicationController
 end
 ```
 
-## Generating tokens
+### Generating tokens
 
 By default Passwordless generates tokens using Rails' `SecureRandom.urlsafe_base64` but you can change that by setting `Passwordless.token_generator` to something else that responds to `call(session)` eg.:
 
@@ -136,6 +149,26 @@ Passwordless.token_generator = -> (session) {
 ```
 
 Session is going to keep generating tokens until it finds one that hasn't been used yet. So be sure to use some kind of method where matches are unlikely.
+
+### Redirecting back after sign-in
+
+By default Passwordless will redirect back to where the user wanted to go **if** it knows where that is, so you'll have to help it. `Passwordless::ControllerHelpers` provide a method for this:
+
+```ruby
+class ApplicationController < ActionController::Base
+  include Passwordless::ControllerHelpers # <-- Probably already have this!
+  
+  # ...
+  
+  def require_user!
+    return if current_user
+    save_passwordless_redirect_location! # <-- here we go!
+    redirect_to root_path, flash: {error: 'You are not worthy!'}
+  end
+end
+```
+
+This can be turned off with `Passwordless.redirect_back_after_sign_in = false` but if you just don't save the previous destination, you'll be fine.
 
 # License
 
