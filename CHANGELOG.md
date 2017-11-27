@@ -1,3 +1,7 @@
+# 0.4.1
+
+- Fixed: Post-sign in redirect destination is scoped to model
+
 # 0.4.0
 
 - Added: Redirect to previous destination post sign in
