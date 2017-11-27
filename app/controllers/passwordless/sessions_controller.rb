@@ -43,7 +43,7 @@ module Passwordless
       sign_in session.authenticatable
 
       enabled = Passwordless.redirect_back_after_sign_in
-      destination = dest = reset_passwordless_redirect_location!
+      destination = dest = reset_passwordless_redirect_location!(User)
 
       if enabled && destination
         redirect_to dest
