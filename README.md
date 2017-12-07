@@ -87,7 +87,7 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-Et voilá:
+Et voilà:
 
 ```ruby
 class VerySecretThingsController < ApplicationController
