@@ -91,7 +91,7 @@ Et voilà:
 
 ```ruby
 class VerySecretThingsController < ApplicationController
-  before_filter :require_user!
+  before_action :require_user!
   
   def index
     @things = current_user.very_secret_things
