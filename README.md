@@ -48,7 +48,9 @@ Then specify which field on your `User` record is the email field with:
 
 ```ruby
 class User < ApplicationRecord
-  passwordless_with :email
+  validates :email, presence: true, uniqueness: { case_sensitive: false }
+  
+  passwordless_with :email # <-- here!
 end
 ```
 
