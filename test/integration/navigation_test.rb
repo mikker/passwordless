@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class NavigationTest < ActionDispatch::IntegrationTest
@@ -5,4 +7,3 @@ class NavigationTest < ActionDispatch::IntegrationTest
   #   assert true
   # end
 end
-

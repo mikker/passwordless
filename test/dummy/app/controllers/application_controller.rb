@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   include Passwordless::ControllerHelpers
 
@@ -16,6 +18,6 @@ class ApplicationController < ActionController::Base
 
     save_passwordless_redirect_location!(User)
 
-    redirect_to root_path, flash: {error: 'Not worthy!'}
+    redirect_to root_path, flash: { error: 'Not worthy!' }
   end
 end
