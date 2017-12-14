@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Passwordless
   module ModelHelpers
     def passwordless_with(field)

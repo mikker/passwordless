@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Passwordless
   module ControllerHelpers
     def authenticate_by_cookie(authenticatable_class)

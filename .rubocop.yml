@@ -1,0 +1,14 @@
+AllCops:
+  TargetRubyVersion: 2.4
+  Exclude:
+    - 'passwordless.gemspec'
+
+Layout/AlignHash:
+  Exclude:
+    - 'Gemfile'
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Rails:
+  Enabled: true

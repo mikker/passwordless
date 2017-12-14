@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Passwordless
   class Session < ApplicationRecord
     belongs_to :authenticatable, polymorphic: true

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'passwordless/engine'
 require 'passwordless/url_safe_base_64_generator'
 
