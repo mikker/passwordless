@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Passwordless
   class UrlSafeBase64Generator
     def call(_session)

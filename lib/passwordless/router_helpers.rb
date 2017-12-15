@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Passwordless
   module RouterHelpers
     def passwordless_for(resource, at: nil, as: nil)

@@ -1,6 +1,11 @@
+# frozen_string_literal: true
+
 module Passwordless
+  # The session responsible holding the connection between the record trying to
+  # log in and the unique tokens.
   class Session < ApplicationRecord
-    belongs_to :authenticatable, polymorphic: true
+    belongs_to :authenticatable,
+               polymorphic: true, inverse_of: :passwordless_sessions
 
     validates \
       :timeout_at,

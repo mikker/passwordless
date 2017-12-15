@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Passwordless
   class Engine < ::Rails::Engine
     isolate_namespace Passwordless

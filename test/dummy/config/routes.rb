@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   passwordless_for :users
 
   resources :users
-  resources :registrations, only: [:new, :create]
+  resources :registrations, only: %i[new create]
 
   get '/secret', to: 'secrets#index'
 
