@@ -9,16 +9,12 @@ module Passwordless
     helper_method :authenticatable_resource
 
     def new
-      @email_field = authenticatable_class.passwordless_email_field
-
+      @email_field = email_field
       @session = Session.new
     end
 
     def create
-      email_field = authenticatable_class.passwordless_email_field
-      authenticatable = authenticatable_class.where(
-        "lower(#{email_field}) = ?", params[:passwordless][email_field]
-      ).first
+      authenticatable = find_authenticatable
 
       session = Session.new.tap do |us|
         us.remote_addr = request.remote_addr
@@ -37,18 +33,14 @@ module Passwordless
       # Make it "slow" on purpose to make brute-force attacks more of a hassle
       BCrypt::Password.create(params[:token])
 
-      session = Session.valid.find_by!(
-        authenticatable_type: authenticatable_classname,
-        token: params[:token]
-      )
-
+      session = find_session
       sign_in session.authenticatable
 
-      enabled = Passwordless.redirect_back_after_sign_in
-      destination = dest = reset_passwordless_redirect_location!(User)
+      redirect_enabled = Passwordless.redirect_back_after_sign_in
+      destination = reset_passwordless_redirect_location!(User)
 
-      if enabled && destination
-        redirect_to dest
+      if redirect_enabled && destination
+        redirect_to destination
       else
         redirect_to main_app.root_path
       end
@@ -75,6 +67,23 @@ module Passwordless
 
     def authenticatable_resource
       authenticatable.pluralize
+    end
+
+    def email_field
+      authenticatable_class.passwordless_email_field
+    end
+
+    def find_authenticatable
+      authenticatable_class.where(
+        "lower(#{email_field}) = ?", params[:passwordless][email_field]
+      ).first
+    end
+
+    def find_session
+      Session.valid.find_by!(
+        authenticatable_type: authenticatable_classname,
+        token: params[:token]
+      )
     end
   end
 end
