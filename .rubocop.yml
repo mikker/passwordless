@@ -1,7 +1,10 @@
 AllCops:
   TargetRubyVersion: 2.4
   Exclude:
+    - 'db/migrate/*.rb'
     - 'passwordless.gemspec'
+    - 'test/dummy/db/schema.rb'
+    - 'test/dummy/bin/*'
 
 Layout/AlignHash:
   Exclude:
@@ -12,3 +15,15 @@ Style/IfUnlessModifier:
 
 Rails:
   Enabled: true
+
+Rails/HttpPositionalArguments:
+  Exclude:
+    - 'test/dummy/config/routes.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'test/**/*_test.rb'
+
+Metrics/LineLength:
+  Exclude:
+    - 'test/dummy/**/*'

@@ -68,7 +68,7 @@ module Passwordless
     end
 
     test 'disabling redirecting back after sign in' do
-      _default = Passwordless.redirect_back_after_sign_in
+      default = Passwordless.redirect_back_after_sign_in
       Passwordless.redirect_back_after_sign_in = false
 
       user = User.create! email: 'a@a'
@@ -85,7 +85,7 @@ module Passwordless
 
       assert_equal '/', path
 
-      Passwordless.redirect_back_after_sign_in = _default
+      Passwordless.redirect_back_after_sign_in = default
     end
 
     test 'trying to sign in with an unknown token' do

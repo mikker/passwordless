@@ -2,8 +2,7 @@
 
 require 'test_helper'
 
-class Passwordless::Test < ActiveSupport::TestCase
-  test 'truth' do
-    assert_kind_of Module, Passwordless
+module Passwordless
+  class Test < ActiveSupport::TestCase
   end
 end

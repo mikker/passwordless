@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   resources :users
   resources :registrations, only: %i[new create]
 
-  get '/secret', params: { to: 'secrets#index' }
+  get '/secret', to: 'secrets#index'
 
   root to: 'users#index'
 end

@@ -5,11 +5,13 @@ require 'test_helper'
 module Passwordless
   class SessionTest < ActiveSupport::TestCase
     def create_session(attrs = {})
-      Session.create!(attrs.reverse_merge(
-                        remote_addr: '0.0.0.0',
-                        user_agent: 'wooden box',
-                        authenticatable: User.create(email: 'session_test_valid@a')
-      ))
+      Session.create!(
+        attrs.reverse_merge(
+          remote_addr: '0.0.0.0',
+          user_agent: 'wooden box',
+          authenticatable: User.create(email: 'session_test_valid@a')
+        )
+      )
     end
 
     test 'scope: valid' do
@@ -36,7 +38,7 @@ module Passwordless
         end
       end
 
-      _old_generator = Passwordless.token_generator
+      old_generator = Passwordless.token_generator
       Passwordless.token_generator = AlwaysMeGenerator.new
 
       session = Session.new
@@ -44,7 +46,7 @@ module Passwordless
 
       assert_equal 'ALWAYS ME', session.token
 
-      Passwordless.token_generator = _old_generator
+      Passwordless.token_generator = old_generator
     end
   end
 end
