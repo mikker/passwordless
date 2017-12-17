@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
 module Passwordless
-  VERSION = '0.4.2'
+  # The current version of Passwordless.
+  VERSION = '0.4.1' # :nodoc:
 end
