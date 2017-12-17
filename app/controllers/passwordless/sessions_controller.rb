@@ -3,16 +3,24 @@
 require 'bcrypt'
 
 module Passwordless
+  # Controller to manage RESTful methods for Sessions.
   class SessionsController < ApplicationController
     include ControllerHelpers
 
     helper_method :authenticatable_resource
 
+    # Controller#Method for Route: get '/sign_in'.
+    #   Assigns an email_field and new Session to be used by new view.
+    #   renders sessions/new.html.erb.
     def new
       @email_field = email_field
       @session = Session.new
     end
 
+    # Controller#Method for Route: post '/sign_in'.
+    #   Saves a new Session. Sends out a Mailer
+    #   renders sessions/create.html.erb.
+    # @see Mailer#magic_link Mailer#magic_link
     def create
       authenticatable = find_authenticatable
 
@@ -29,6 +37,11 @@ module Passwordless
       render
     end
 
+    # Controller#Method for Route: get '/sign_in/:token'.
+    #   Uses a token to sign user in.
+    #   will try to redirect to either some reset path or the root_path.
+    # @see ControllerHelpers#sign_in
+    # @see ControllerHelpers#reset_passwordless_redirect_location!
     def show
       # Make it "slow" on purpose to make brute-force attacks more of a hassle
       BCrypt::Password.create(params[:token])
@@ -46,6 +59,10 @@ module Passwordless
       end
     end
 
+    # Controller#Method for Route: match '/sign_out', via: %i[get delete].
+    #   Signs user out.
+    #   redirects to root_path
+    # @see ControllerHelpers#sign_out
     def destroy
       sign_out authenticatable_class
       redirect_to main_app.root_path
