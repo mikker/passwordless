@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Passwordless
+  # Engine that runs the passwordless gem.
   class Engine < ::Rails::Engine
     isolate_namespace Passwordless
 

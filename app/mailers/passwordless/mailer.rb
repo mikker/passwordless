@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 module Passwordless
-  # The mailer responsible for sending Passwordless' mails
+  # The mailer responsible for sending Passwordless' mails.
   class Mailer < ActionMailer::Base
     default from: Passwordless.default_from_address
 
+    # Sends a magic link (secret token) email to allow sign in with
+    # link straight from email.
+    # @param session [Object] the rails session Object.
     def magic_link(session)
       @session = session
 
