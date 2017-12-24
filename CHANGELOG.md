@@ -1,3 +1,7 @@
+$ 0.4.2
+
+- Fix case-insensitive email lookup
+
 # 0.4.1
 
 - Fixed: Post-sign in redirect destination is scoped to model
