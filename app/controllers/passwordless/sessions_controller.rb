@@ -14,9 +14,9 @@ module Passwordless
 
     def create
       email_field = authenticatable_class.passwordless_email_field
-      authenticatable = authenticatable_class.where(
-        "lower(#{email_field}) = ?", params[:passwordless][email_field]
-      ).first
+      email = params.require(:passwordless).fetch(email_field).downcase
+      authenticatable =
+        authenticatable_class.where("lower(#{email_field}) = ?", email).first
 
       session = Session.new.tap do |us|
         us.remote_addr = request.remote_addr
