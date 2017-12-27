@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Passwordless
-  # Classic Rails class to abstractify and insulate ActiveRecord:Base.
+  # Base record for Passordless' models
   class ApplicationRecord < ActiveRecord::Base
     self.abstract_class = true
   end

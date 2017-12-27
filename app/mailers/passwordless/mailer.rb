@@ -5,9 +5,8 @@ module Passwordless
   class Mailer < ActionMailer::Base
     default from: Passwordless.default_from_address
 
-    # Sends a magic link (secret token) email to allow sign in with
-    # link straight from email.
-    # @param session [Object] the rails session Object.
+    # Sends a magic link (secret token) email.
+    # @param session [Session] A Passwordless Session
     def magic_link(session)
       @session = session
 
