@@ -5,7 +5,7 @@ module Passwordless
   # trying to log in and the unique tokens.
   class Session < ApplicationRecord
     belongs_to :authenticatable,
-               polymorphic: true, inverse_of: :passwordless_sessions
+      polymorphic: true, inverse_of: :passwordless_sessions
 
     validates \
       :timeout_at,

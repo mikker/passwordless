@@ -10,6 +10,9 @@ Layout/AlignHash:
   Exclude:
     - 'Gemfile'
 
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
 Style/IfUnlessModifier:
   Enabled: false
 
@@ -27,3 +30,4 @@ Metrics/BlockLength:
 Metrics/LineLength:
   Exclude:
     - 'test/dummy/**/*'
+

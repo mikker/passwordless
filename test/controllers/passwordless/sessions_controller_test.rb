@@ -19,8 +19,8 @@ module Passwordless
       assert_equal 200, status
 
       post '/users/sign_in',
-           params: { passwordless: { email: user.email } },
-           headers: { 'User-Agent': 'an actual monkey' }
+        params: { passwordless: { email: user.email } },
+        headers: { 'User-Agent': 'an actual monkey' }
       assert_equal 200, status
 
       assert_equal 1, ActionMailer::Base.deliveries.size
@@ -31,8 +31,8 @@ module Passwordless
       assert_equal 200, status
 
       post '/users/sign_in',
-           params: { passwordless: { email: 'something_em@ilish' } },
-           headers: { 'User-Agent': 'an actual monkey' }
+        params: { passwordless: { email: 'something_em@ilish' } },
+        headers: { 'User-Agent': 'an actual monkey' }
       assert_equal 200, status
 
       assert_equal 0, ActionMailer::Base.deliveries.size
