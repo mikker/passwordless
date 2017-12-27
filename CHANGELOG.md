@@ -1,6 +1,10 @@
-$ 0.4.2
+# 0.4.3
 
-- Fix case-insensitive email lookup
+- Added: Documentation! (Thanks to @mftaff)
+
+# 0.4.2
+
+- Fixed: Case-insensitive email lookup
 
 # 0.4.1
 
