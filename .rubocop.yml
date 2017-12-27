@@ -1,9 +1,9 @@
 AllCops:
   TargetRubyVersion: 2.4
   Exclude:
-    - 'db/migrate/*.rb'
     - 'passwordless.gemspec'
     - 'test/dummy/db/schema.rb'
+    - 'test/dummy/db/migrate/*.rb'
     - 'test/dummy/bin/*'
 
 Layout/AlignHash:

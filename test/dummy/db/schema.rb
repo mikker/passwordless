@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,23 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_171_104_225_303) do
-  create_table 'passwordless_sessions', force: :cascade do |t|
-    t.string 'authenticatable_type'
-    t.integer 'authenticatable_id'
-    t.datetime 'timeout_at', null: false
-    t.datetime 'expires_at', null: false
-    t.text 'user_agent', null: false
-    t.string 'remote_addr', null: false
-    t.string 'token', null: false
-    t.datetime 'created_at', null: false
-    t.datetime 'updated_at', null: false
-    t.index %w[authenticatable_type authenticatable_id], name: 'authenticatable'
+ActiveRecord::Schema.define(version: 20171104225303) do
+
+  create_table "passwordless_sessions", force: :cascade do |t|
+    t.string "authenticatable_type"
+    t.integer "authenticatable_id"
+    t.datetime "timeout_at", null: false
+    t.datetime "expires_at", null: false
+    t.text "user_agent", null: false
+    t.string "remote_addr", null: false
+    t.string "token", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["authenticatable_type", "authenticatable_id"], name: "authenticatable"
   end
 
-  create_table 'users', force: :cascade do |t|
-    t.string 'email'
-    t.datetime 'created_at', null: false
-    t.datetime 'updated_at', null: false
+  create_table "users", force: :cascade do |t|
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
+
 end
