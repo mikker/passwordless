@@ -9,3 +9,4 @@ Gemfile.lock
 .projections.json
 .yardoc
 doc
+coverage

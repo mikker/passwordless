@@ -1,5 +1,13 @@
 # frozen_string_literal: true
 
+require 'simplecov'
+SimpleCov.start
+
+if ENV['CI']
+  require 'codecov'
+  SimpleCov.formatter = SimpleCov::Formatter::Codecov
+end
+
 require File.expand_path('../../test/dummy/config/environment.rb', __FILE__)
 ActiveRecord::Migrator.migrations_paths =
   [File.expand_path('../../test/dummy/db/migrate', __FILE__)]
