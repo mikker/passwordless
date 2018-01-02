@@ -1,3 +1,7 @@
+# 0.4.4
+
+- Added: `build_passwordless_session` controller helper
+
 # 0.4.3
 
 - Added: Documentation! (Thanks to @mftaff)
