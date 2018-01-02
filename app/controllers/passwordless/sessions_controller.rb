@@ -22,13 +22,7 @@ module Passwordless
     #   renders sessions/create.html.erb.
     # @see Mailer#magic_link Mailer#magic_link
     def create
-      authenticatable = find_authenticatable
-
-      session = Session.new.tap do |us|
-        us.remote_addr = request.remote_addr
-        us.user_agent = request.env['HTTP_USER_AGENT']
-        us.authenticatable = authenticatable
-      end
+      session = build_passwordless_session(find_authenticatable)
 
       if session.save
         Mailer.magic_link(session).deliver_now
