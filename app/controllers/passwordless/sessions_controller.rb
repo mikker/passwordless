@@ -5,6 +5,9 @@ require 'bcrypt'
 module Passwordless
   # Controller for managing Passwordless sessions
   class SessionsController < ApplicationController
+    # Raise this exception when a session is expired.
+    class ExpiredSessionError < StandardError; end
+
     include ControllerHelpers
 
     helper_method :authenticatable_resource
@@ -31,6 +34,8 @@ module Passwordless
       render
     end
 
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+
     # get '/sign_in/:token'
     #   Looks up session record by provided token. Signs in user if a match
     #   is found. Redirects to either the user's original destination
@@ -42,6 +47,8 @@ module Passwordless
       BCrypt::Password.create(params[:token])
 
       session = find_session
+      raise ExpiredSessionError if session.expired?
+
       sign_in session.authenticatable
 
       redirect_enabled = Passwordless.redirect_back_after_sign_in
@@ -52,7 +59,11 @@ module Passwordless
       else
         redirect_to main_app.root_path
       end
+    rescue ExpiredSessionError
+      flash[:error] = 'Your session has expired, please sign in again.'
+      redirect_to main_app.root_path
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     # match '/sign_out', via: %i[get delete].
     #   Signs user out. Redirects to root_path

@@ -16,7 +16,6 @@ module Passwordless
 
     test 'scope: valid' do
       valid = create_session
-      _expired = create_session expires_at: 1.hour.ago
       _timed_out = create_session timeout_at: 1.hour.ago
 
       assert_equal [valid], Session.valid.all
