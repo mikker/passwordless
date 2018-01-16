@@ -108,5 +108,19 @@ module Passwordless
       assert_equal '/', path
       assert cookies[:user_id].blank?
     end
+
+    test 'trying to sign in with an expired session' do
+      user = User.create email: 'a@a'
+      session = create_session_for user
+      session.update(expires_at: Time.current - 1.day)
+
+      get "/users/sign_in/#{session.token}"
+      follow_redirect!
+
+      assert flash[:error]
+      assert_nil cookies[:user_id]
+      assert_equal 200, status
+      assert_equal '/', path
+    end
   end
 end
