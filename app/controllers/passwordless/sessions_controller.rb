@@ -60,7 +60,7 @@ module Passwordless
         redirect_to main_app.root_path
       end
     rescue ExpiredSessionError
-      flash[:error] = 'Your session has expired, please sign in again.'
+      flash[:error] = I18n.t('.passwordless.sessions.session_expired')
       redirect_to main_app.root_path
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize

@@ -12,5 +12,10 @@ module Passwordless
       ActiveRecord::Base.extend ModelHelpers
       require 'passwordless/controller_helpers'
     end
+
+    config.before_initialize do |app|
+      app.config.i18n.load_path +=
+        Dir[Engine.root.join('config', 'locales', '*.yml')]
+    end
   end
 end

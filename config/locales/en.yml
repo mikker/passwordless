@@ -1,0 +1,5 @@
+---
+en:
+  passwordless:
+    sessions:
+      session_expired: 'Your session has expired, please sign in again.'
