@@ -2,4 +2,11 @@
 en:
   passwordless:
     sessions:
-      session_expired: 'Your session has expired, please sign in again.'
+      create:
+        session_expired: 'Your session has expired, please sign in again.'
+        email_sent_if_record_found: "If we found you in the system, we've sent you an email."
+      new:
+        submit: 'Send magic link'
+    mailer:
+      subject: "Your magic link ✨'"
+      magic_link: "Here's your link: %{link}"

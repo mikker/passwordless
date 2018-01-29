@@ -18,7 +18,7 @@ module Passwordless
       email_field = @session.authenticatable.class.passwordless_email_field
       mail(
         to: @session.authenticatable.send(email_field),
-        subject: 'Your magic link ✨'
+        subject: I18n.t('passwordless.mailer.subject')
       )
     end
   end
