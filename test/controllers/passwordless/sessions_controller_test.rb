@@ -117,7 +117,7 @@ module Passwordless
       get "/users/sign_in/#{session.token}"
       follow_redirect!
 
-      assert flash[:error]
+      assert_match 'Your session has expired', flash[:error]
       assert_nil cookies[:user_id]
       assert_equal 200, status
       assert_equal '/', path
