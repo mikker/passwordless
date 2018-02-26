@@ -1,3 +1,8 @@
+# 0.5.0
+
+- Added: Support for I18n (Thanks @mftaff)
+- Fixed: Actually expire sessions (Thanks @mftaff)
+
 # 0.4.4
 
 - Added: `build_passwordless_session` controller helper
