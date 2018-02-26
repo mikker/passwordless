@@ -19,6 +19,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
      * [Registering new users](#registering-new-users)
      * [Generating tokens](#generating-tokens)
      * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
+     * [URLs and links](#urls-and-links)
 * [License](#license)
 
 ## Installation
@@ -171,6 +172,20 @@ end
 ```
 
 This can be turned off with `Passwordless.redirect_back_after_sign_in = false` but if you just don't save the previous destination, you'll be fine.
+
+### URLs and links
+
+By default, Passwordless uses the resource name given to `passwordless_for` to generate its routes and helpers.
+
+```ruby
+passwordless_for :users
+  # <%= users.sign_in_path %> # => /users/sign_in
+  
+passwordless_for :users, at: '/', as: :auth
+  # <%= auth.sign_in_path %> # => /sign_in
+```
+
+Also be sure to [specify ActionMailer's `default_url_options.host`](http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views).
 
 # License
 
