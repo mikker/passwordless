@@ -10,10 +10,7 @@ module Passwordless
     def magic_link(session)
       @session = session
 
-      authenticatable_resource_name =
-        @session.authenticatable_type.underscore.pluralize
-      @magic_link =
-        send(authenticatable_resource_name).token_sign_in_url(session.token)
+      @magic_link = send(Passwordless.router_context).token_sign_in_url(session.token)
 
       email_field = @session.authenticatable.class.passwordless_email_field
       mail(

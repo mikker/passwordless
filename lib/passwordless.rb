@@ -8,4 +8,5 @@ module Passwordless
   mattr_accessor(:default_from_address) { 'CHANGE_ME@example.com' }
   mattr_accessor(:token_generator) { UrlSafeBase64Generator.new }
   mattr_accessor(:redirect_back_after_sign_in) { true }
+  mattr_accessor(:router_context) { :configured_when_mounting_passwordless }
 end
