@@ -11,7 +11,7 @@ class NavigationTest < ActionDispatch::IntegrationTest
     # Verify the user has no access to the /secret endpoint and
     # is instead redirected to homepage. Meanwhile access to /secret is
     # stored in the users session.
-    get secret_path
+    get '/secret'
     assert_equal 302, status
     assert_equal 'Not worthy!', flash['error']
     follow_redirect!
@@ -53,7 +53,7 @@ class NavigationTest < ActionDispatch::IntegrationTest
     follow_redirect!
 
     assert_equal 200, status
-    assert_equal secret_path, path
+    assert_equal '/secret', path
     assert_equal 'shhhh! secrets!', response.body
   end
 end
