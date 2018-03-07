@@ -24,7 +24,7 @@ module Passwordless
         defaults: { authenticatable: resource.to_s.singularize }
       )
 
-      Passwordless.router_context = mount_at
+      Passwordless.router_context = mount_as
     end
   end
 end
