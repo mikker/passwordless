@@ -1,4 +1,4 @@
-<%= form_for @session, url: send(Passwordless.router_context).sign_in_path do |f| %>
+<%= form_for @session, url: send(Passwordless.mounted_as).sign_in_path do |f| %>
   <% email_field_name = :"passwordless[#{@email_field}]" %>
   <%= text_field_tag email_field_name, params.fetch(email_field_name, nil) %>
   <%= f.submit I18n.t('passwordless.sessions.new.submit') %>
