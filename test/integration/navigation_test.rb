@@ -5,7 +5,7 @@ require 'test_helper'
 class NavigationTest < ActionDispatch::IntegrationTest
   fixtures :users
 
-  test "the truth" do
+  test 'failed access, sign in and redirect to protected resource' do
     alice = users(:alice)
 
     # Verify the user has no access to the /secret endpoint and
@@ -16,7 +16,7 @@ class NavigationTest < ActionDispatch::IntegrationTest
     assert_equal 'Not worthy!', flash['error']
     follow_redirect!
     assert_equal 200, status
-    assert_equal "/", path
+    assert_equal '/', path
 
     # Load login form
     get '/users/sign_in'
