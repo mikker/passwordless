@@ -4,7 +4,7 @@ en:
     sessions:
       create:
         session_expired: 'Your session has expired, please sign in again.'
-        email_sent_if_record_found: "If we found you in the system, we have sent you an email."
+        email_sent_if_record_found: "If we found you in the system, we've sent you an email."
       new:
         submit: 'Send magic link'
     mailer:

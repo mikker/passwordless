@@ -29,9 +29,7 @@ class NavigationTest < ActionDispatch::IntegrationTest
       },
       headers: { 'HTTP_USER_AGENT' => 'Mosaic v.1' }
     assert_equal 200, status
-    assert response.body.include?(
-      'If we found you in the system, we have sent you an email.'
-    )
+    assert response.body.include?('If we found you in the system')
 
     # Expect session created for alice
     session = Passwordless::Session.find_by! authenticatable: alice
