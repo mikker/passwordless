@@ -10,8 +10,6 @@ module Passwordless
 
     include ControllerHelpers
 
-    helper_method :authenticatable_resource
-
     # get '/sign_in'
     #   Assigns an email_field and new Session to be used by new view.
     #   renders sessions/new.html.erb.
@@ -85,10 +83,6 @@ module Passwordless
 
     def authenticatable_class
       authenticatable_classname.constantize
-    end
-
-    def authenticatable_resource
-      authenticatable.pluralize
     end
 
     def email_field

@@ -17,12 +17,14 @@ module Passwordless
     #   <%= link_to 'Sign in', user_session_things.sign_in_path %>).
     #   (Default: resource.to_s)
     def passwordless_for(resource, at: nil, as: nil)
+      mount_at = at || resource.to_s
+      mount_as = as || resource.to_s
       mount(
-        Passwordless::Engine,
-        at: at || resource.to_s,
-        as: as || resource.to_s,
+        Passwordless::Engine, at: mount_at, as: mount_as,
         defaults: { authenticatable: resource.to_s.singularize }
       )
+
+      Passwordless.mounted_as = mount_as
     end
   end
 end
