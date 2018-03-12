@@ -188,7 +188,7 @@ passwordless_for :users, at: '/', as: :auth
 Also be sure to [specify ActionMailer's `default_url_options.host`](http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views).
 
 ### E-mail security
-When using e-mail to login users e-mail security is extremely important. If the service you use to deliver e-mails is compromised your entire app is compromised. Services like SendGrid, Mailgun etc log e-mails, and their content witch basically is the same as storing passwords in clear text. Using e-mail to send password reset links has the same vulnerability. [Reddit was compromised]https://thenextweb.com/hardfork/2018/01/05/reddit-bitcoin-cash-hack/() using this method.
+When using e-mail to login users e-mail security is extremely important. If the service you use to deliver e-mails is compromised your entire app is compromised. Services like SendGrid, Mailgun etc log e-mails, and their content witch basically is the same as storing passwords in clear text. Using e-mail to send password reset links has the same vulnerability. [Reddit was compromised](https://thenextweb.com/hardfork/2018/01/05/reddit-bitcoin-cash-hack/) using this method.
 
 Make sure that you use an e-mail service that does not log the content of the e-mails that you send with passwordless. 
 
