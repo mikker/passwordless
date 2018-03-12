@@ -20,6 +20,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
      * [Generating tokens](#generating-tokens)
      * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
      * [URLs and links](#urls-and-links)
+     * [E-mail security](#e-mail-security)
 * [License](#license)
 
 ## Installation
