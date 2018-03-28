@@ -189,9 +189,12 @@ passwordless_for :users, at: '/', as: :auth
 Also be sure to [specify ActionMailer's `default_url_options.host`](http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views).
 
 ### E-mail security
-When using e-mail to login users e-mail security is extremely important. If the service you use to deliver e-mails is compromised your entire app is compromised. Services like SendGrid, Mailgun etc log e-mails, and their content witch basically is the same as storing passwords in clear text. Using e-mail to send password reset links has the same vulnerability. [Reddit was compromised](https://thenextweb.com/hardfork/2018/01/05/reddit-bitcoin-cash-hack/) using this method.
 
-Make sure that you use an e-mail service that does not log the content of the e-mails that you send with passwordless. 
+There's no reason that this approach should be less secure than the usual username/password combo. In fact this is most often a more secure option, as users don't get to choose the weak passwords they still use. In a way this is just the same as having each user go through "Forgot password" on every login.
+
+But be aware that when everyone authenticates via emails you send, the way you send those mails becomes a weak spot. Email services usually provide a log of all the mails you send so if your app's account is compromised, every user in the system is as well. (This is the same for "Forgot password".) [Reddit was compromised](https://thenextweb.com/hardfork/2018/01/05/reddit-bitcoin-cash-hack/) using this method.
+
+Ideally you should set up your email provider to not log these mails. And be sure to turn on 2-factor auth if your provider supports it.
 
 # License
 
