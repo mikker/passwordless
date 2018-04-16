@@ -91,7 +91,7 @@ module Passwordless
 
     def find_authenticatable
       authenticatable_class.where(
-        "lower(#{email_field}) = ?", params[:passwordless][email_field]
+        "lower(#{email_field}) = ?", params[:passwordless][email_field].downcase
       ).first
     end
 

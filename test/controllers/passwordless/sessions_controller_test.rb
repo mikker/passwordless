@@ -19,7 +19,7 @@ module Passwordless
       assert_equal 200, status
 
       post '/users/sign_in',
-        params: { passwordless: { email: user.email } },
+        params: { passwordless: { email: 'A@a' } },
         headers: { 'User-Agent': 'an actual monkey' }
       assert_equal 200, status
 
