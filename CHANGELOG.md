@@ -1,3 +1,7 @@
+# 0.5.1
+
+- Fixed: Authenticatable (User) lookup is case-insentive
+
 # 0.5.0
 
 - Added: Support for I18n (Thanks @mftaff)
