@@ -1,6 +1,6 @@
 # 0.5.3 (2018-06-06)
 
-- Fixed: Missing `as:` on session association `has_many` (#23)
+- Fixed: Missing `as:` on session association `has_many` ([#23](https://github.com/mikker/passwordless/issues/23))
 
 # 0.5.2 (2018-04-24)
 
