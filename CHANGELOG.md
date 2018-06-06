@@ -1,3 +1,11 @@
+# 0.5.3
+
+- Fixed: Missing `as:` on session association `has_many` (#23)
+
+# 0.5.2
+
+- Added: Include main app's routes in passwordless views
+
 # 0.5.1
 
 - Fixed: Authenticatable (User) lookup is case-insentive
