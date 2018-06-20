@@ -72,11 +72,11 @@ module Passwordless
     private
 
     def session_key(authenticatable_class)
-      :"passwordless_prev_location--#{authenticatable_class}"
+      :"passwordless_prev_location--#{authenticatable_class.base_class}"
     end
 
     def cookie_name(authenticatable_class)
-      :"#{authenticatable_class.to_s.underscore}_id"
+      :"#{authenticatable_class.base_class.to_s.underscore}_id"
     end
   end
 end
