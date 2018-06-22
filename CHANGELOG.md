@@ -1,3 +1,7 @@
+# 0.5.4 (2018-06-22)
+
+- Fixed: Support models using Single Table Inheritance ([#26](https://github.com/mikker/passwordless/pull/26))
+
 # 0.5.3 (2018-06-06)
 
 - Fixed: Missing `as:` on session association `has_many` ([#23](https://github.com/mikker/passwordless/issues/23))
