@@ -17,6 +17,8 @@ require 'passwordless'
 
 module Dummy
   class Application < Rails::Application
+    config.active_record.sqlite3.represent_boolean_as_integer = true
+
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1
 
