@@ -13,7 +13,7 @@ module Passwordless
     end
 
     test 'requesting a magic link as an existing user' do
-      user = User.create email: 'a@a'
+      User.create email: 'a@a'
 
       get '/users/sign_in'
       assert_equal 200, status
@@ -47,7 +47,19 @@ module Passwordless
 
       assert_equal 200, status
       assert_equal '/', path
-      refute_nil cookies[:user_id]
+      assert_not_nil cookies[:user_id]
+    end
+
+    test 'signing in via a token as STI model' do
+      admin = Admin.create email: 'a@a'
+      session = create_session_for admin
+
+      get "/users/sign_in/#{session.token}"
+      follow_redirect!
+
+      assert_equal 200, status
+      assert_equal '/', path
+      assert_not_nil cookies[:user_id]
     end
 
     test 'signing in and redirecting back' do
@@ -99,7 +111,7 @@ module Passwordless
 
       session = create_session_for user
       get "/users/sign_in/#{session.token}"
-      refute_nil cookies[:user_id]
+      assert_not_nil cookies[:user_id]
 
       get '/users/sign_out'
       follow_redirect!
