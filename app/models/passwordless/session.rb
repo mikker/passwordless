@@ -8,6 +8,7 @@ module Passwordless
       polymorphic: true, inverse_of: :passwordless_sessions
 
     validates \
+      :authenticatable,
       :timeout_at,
       :expires_at,
       :user_agent,
