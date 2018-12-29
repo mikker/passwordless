@@ -90,9 +90,15 @@ module Passwordless
     end
 
     def find_authenticatable
-      authenticatable_class.where(
-        "lower(#{email_field}) = ?", params[:passwordless][email_field].downcase
-      ).first
+      email = params[:passwordless][email_field].downcase
+
+      if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
+        authenticatable_class.fetch_resource_for_passwordless(email)
+      else
+        authenticatable_class.where(
+          "lower(#{email_field}) = ?", params[:passwordless][email_field].downcase
+        ).first
+      end
     end
 
     def find_session
