@@ -16,6 +16,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
 * [Usage](#usage)
      * [Getting the current user, restricting access, the usual](#getting-the-current-user-restricting-access-the-usual)
      * [Providing your own templates](#providing-your-own-templates)
+     * [Overrides](#overrides)
      * [Registering new users](#registering-new-users)
      * [Generating tokens](#generating-tokens)
      * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
@@ -51,7 +52,7 @@ Then specify which field on your `User` record is the email field with:
 ```ruby
 class User < ApplicationRecord
   validates :email, presence: true, uniqueness: { case_sensitive: false }
-  
+
   passwordless_with :email # <-- here!
 end
 ```
@@ -73,13 +74,13 @@ Passwordless doesn't give you `current_user` automatically -- it's dead easy to 
 ```ruby
 class ApplicationController < ActionController::Base
   include Passwordless::ControllerHelpers # <-- This!
-  
+
   # ...
-  
+
   helper_method :current_user
-  
+
   private
-  
+
   def current_user
     @current_user ||= authenticate_by_cookie(User)
   end
@@ -96,7 +97,7 @@ Et voilà:
 ```ruby
 class VerySecretThingsController < ApplicationController
   before_action :require_user!
-  
+
   def index
     @things = current_user.very_secret_things
   end
@@ -118,6 +119,25 @@ app/views/passwordless/mailer/magic_link.text.erb
 
 See [the bundled views](https://github.com/mikker/passwordless/tree/master/app/views/passwordless).
 
+### Overrides
+
+By default `passwordless` uses the `passwordless_with` column you specify in the model to case insensitively fetch the resource during authentication. You can override this and provide your own customer fetcher by defining a class method `fetch_resource_for_passwordless` in your passwordless model. The method will be supplied with the downcased email and should return an `ActiveRecord` instance of the model.
+
+Example time:
+
+Let's say we would like to fetch the record and if it doesn't exist, create automatically.
+
+```ruby
+    class User < ApplicationRecord
+        def self.fetch_resource_for_passwordless(email)
+            record = where("lower(email) = ?", email).first
+            return record if record.present?
+
+            create(email: email)
+        end
+    end
+```
+
 ### Registering new users
 
 Because your `User` record is like any other record, you create one like you normally would. Passwordless provides a helper method you can use to sign in the created user after it is saved like so:
@@ -129,7 +149,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new user_params
-    
+
     if @user.save
       sign_in @user # <-- And this!
       redirect_to @user, flash: {notice: 'Welcome!'}
@@ -137,7 +157,7 @@ class UsersController < ApplicationController
       render :new
     end
   end
-  
+
   # ...
 end
 ```
@@ -161,9 +181,9 @@ By default Passwordless will redirect back to where the user wanted to go **if**
 ```ruby
 class ApplicationController < ActionController::Base
   include Passwordless::ControllerHelpers # <-- Probably already have this!
-  
+
   # ...
-  
+
   def require_user!
     return if current_user
     save_passwordless_redirect_location!(User) # <-- here we go!
@@ -181,7 +201,7 @@ By default, Passwordless uses the resource name given to `passwordless_for` to g
 ```ruby
 passwordless_for :users
   # <%= users.sign_in_path %> # => /users/sign_in
-  
+
 passwordless_for :users, at: '/', as: :auth
   # <%= auth.sign_in_path %> # => /sign_in
 ```
