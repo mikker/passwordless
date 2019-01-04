@@ -31,11 +31,31 @@ module Passwordless
       assert_equal 200, status
 
       post '/users/sign_in',
-        params: { passwordless: { email: 'something_em@ilish' } },
+        params: { passwordless: { email: 'invalidemail' } },
         headers: { 'User-Agent': 'an actual monkey' }
       assert_equal 200, status
 
       assert_equal 0, ActionMailer::Base.deliveries.size
+    end
+
+    test 'requesting a magic link with overridden fetch method' do
+      def User.fetch_resource_for_passwordless(email)
+        User.find_or_create_by(email: email)
+      end
+
+      get '/users/sign_in'
+      assert_equal 200, status
+
+      post '/users/sign_in',
+        params: { passwordless: { email: 'overriden_email@example' } },
+        headers: { 'User-Agent': 'an actual monkey' }
+      assert_equal 200, status
+
+      assert_equal 1, ActionMailer::Base.deliveries.size
+
+      class << User
+        remove_method :fetch_resource_for_passwordless
+      end
     end
 
     test 'signing in via a token' do
