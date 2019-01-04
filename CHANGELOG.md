@@ -1,3 +1,9 @@
+# Unreleased
+
+## Added
+
+- Allow overriding the lookup method of the user resource ([#33](https://github.com/mikker/passwordless/pull/33))
+
 # 0.5.4 (2018-06-22)
 
 - Fixed: Support models using Single Table Inheritance ([#26](https://github.com/mikker/passwordless/pull/26))
