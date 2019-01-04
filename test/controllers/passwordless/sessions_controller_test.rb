@@ -12,12 +12,6 @@ module Passwordless
       )
     end
 
-    def User.fetch_resource_for_passwordless(email)
-      return if email == 'invalidemail'
-
-      User.find_or_create_by(email: email)
-    end
-
     test 'requesting a magic link as an existing user' do
       User.create email: 'a@a'
 
@@ -45,6 +39,10 @@ module Passwordless
     end
 
     test 'requesting a magic link with overridden fetch method' do
+      def User.fetch_resource_for_passwordless(email)
+        User.find_or_create_by(email: email)
+      end
+
       get '/users/sign_in'
       assert_equal 200, status
 
@@ -54,6 +52,10 @@ module Passwordless
       assert_equal 200, status
 
       assert_equal 1, ActionMailer::Base.deliveries.size
+
+      class << User
+        remove_method :fetch_resource_for_passwordless
+      end
     end
 
     test 'signing in via a token' do

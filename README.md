@@ -128,14 +128,11 @@ Example time:
 Let's say we would like to fetch the record and if it doesn't exist, create automatically.
 
 ```ruby
-    class User < ApplicationRecord
-        def self.fetch_resource_for_passwordless(email)
-            record = where("lower(email) = ?", email).first
-            return record if record.present?
-
-            create(email: email)
-        end
-    end
+class User < ApplicationRecord
+  def self.fetch_resource_for_passwordless(email)
+    find_or_create_by(email: email)
+  end
+end
 ```
 
 ### Registering new users
