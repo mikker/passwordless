@@ -47,5 +47,25 @@ module Passwordless
 
       Passwordless.token_generator = old_generator
     end
+
+    test 'with a custom expire at function' do
+      custom_expire_at = DateTime.parse('01-01-2100').utc
+      Passwordless.expires_at = lambda { custom_expire_at }
+
+      session = Session.new
+      session.validate
+
+      assert_equal custom_expire_at.to_s, session.expires_at.to_s
+    end
+
+    test 'with a custom timeout at function' do
+      custom_timeout_at = DateTime.parse('01-01-2100').utc
+      Passwordless.timeout_at = lambda { custom_timeout_at }
+
+      session = Session.new
+      session.validate
+
+      assert_equal custom_timeout_at.to_s, session.timeout_at.to_s
+    end
   end
 end
