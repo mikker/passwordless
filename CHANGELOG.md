@@ -1,7 +1,8 @@
-# Unreleased
+# 0.6.0 (2019-01-29)
 
 ## Added
 
+- Option to set custom expiration and timeout durations ([#37](https://github.com/mikker/passwordless/pull/37))
 - Allow overriding the lookup method of the user resource ([#33](https://github.com/mikker/passwordless/pull/33))
 
 # 0.5.4 (2018-06-22)
