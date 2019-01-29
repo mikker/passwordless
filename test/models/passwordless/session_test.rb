@@ -50,22 +50,28 @@ module Passwordless
 
     test 'with a custom expire at function' do
       custom_expire_at = DateTime.parse('01-01-2100').utc
+      old_expires_at = Passwordless.expires_at
+
       Passwordless.expires_at = lambda { custom_expire_at }
 
       session = Session.new
       session.validate
 
       assert_equal custom_expire_at.to_s, session.expires_at.to_s
+      Passwordless.expires_at = old_expires_at
     end
 
     test 'with a custom timeout at function' do
       custom_timeout_at = DateTime.parse('01-01-2100').utc
+      old_timeout_at = Passwordless.timeout_at
+
       Passwordless.timeout_at = lambda { custom_timeout_at }
 
       session = Session.new
       session.validate
 
       assert_equal custom_timeout_at.to_s, session.timeout_at.to_s
+      Passwordless.timeout_at = old_timeout_at
     end
   end
 end
