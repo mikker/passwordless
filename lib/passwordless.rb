@@ -9,4 +9,7 @@ module Passwordless
   mattr_accessor(:token_generator) { UrlSafeBase64Generator.new }
   mattr_accessor(:redirect_back_after_sign_in) { true }
   mattr_accessor(:mounted_as) { :configured_when_mounting_passwordless }
+
+  mattr_accessor(:expires_at) { lambda { 1.year.from_now } }
+  mattr_accessor(:timeout_at) { lambda { 1.hour.from_now } }
 end
