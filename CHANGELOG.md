@@ -1,3 +1,9 @@
+# Unreleased
+
+## Added
+
+- Option to customize callback (eg. send e-mail, sms, whatever) ([#39](https://github.com/mikker/passwordless/pull/37))
+
 # 0.6.0 (2019-01-29)
 
 ## Added
