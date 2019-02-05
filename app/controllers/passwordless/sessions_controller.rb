@@ -26,7 +26,7 @@ module Passwordless
       session = build_passwordless_session(find_authenticatable)
 
       if session.save
-        Mailer.magic_link(session).deliver_now
+        Passwordless.after_session_save.call(session)
       end
 
       render

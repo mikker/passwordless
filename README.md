@@ -22,6 +22,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
      * [Token and Session Expiry](#token-and-session-expiry)
      * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
      * [URLs and links](#urls-and-links)
+     * [Customize the way to send magic link](#customize_the_way_to_send_magic_link)
      * [E-mail security](#e-mail-security)
 * [License](#license)
 
@@ -231,6 +232,26 @@ passwordless_for :users, at: '/', as: :auth
 ```
 
 Also be sure to [specify ActionMailer's `default_url_options.host`](http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views).
+
+
+### Customize the way to send magic link
+
+By default, magic link will send by email. You can customize this method. For example, you can send magic link via SMS.
+
+config/initializers/passwordless.rb
+
+```
+Passwordless.after_session_save = lambda do |session|
+  # Default behavior is
+  # Mailer.magic_link(session).deliver_now
+
+  # You can change behavior to do something with session model. For example,
+  # session.authenticatable.send_sms
+end
+```
+
+You can access user model through authenticatable.
+
 
 ### E-mail security
 
