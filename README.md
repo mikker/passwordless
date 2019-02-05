@@ -23,6 +23,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
      * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
      * [URLs and links](#urls-and-links)
      * [E-mail security](#e-mail-security)
+     * [Customize the way to send magic link](#customize_the_way_to_send_magic_link)
 * [License](#license)
 
 ## Installation
@@ -239,6 +240,21 @@ There's no reason that this approach should be less secure than the usual userna
 But be aware that when everyone authenticates via emails you send, the way you send those mails becomes a weak spot. Email services usually provide a log of all the mails you send so if your app's account is compromised, every user in the system is as well. (This is the same for "Forgot password".) [Reddit was compromised](https://thenextweb.com/hardfork/2018/01/05/reddit-bitcoin-cash-hack/) using this method.
 
 Ideally you should set up your email provider to not log these mails. And be sure to turn on 2-factor auth if your provider supports it.
+
+### Customize the way to send magic link
+
+By default, magic link will send by email. You can customize this method. For example, you can send magic link via SMS.
+
+config/initializers/passwordless.rb
+
+```
+Passwordless.after_session_save = lambda do |session|
+  # do something with session model
+  # e.g) session.authenticatable.send_sms
+end
+```
+
+You can access user model through authenticatable.
 
 # License
 
