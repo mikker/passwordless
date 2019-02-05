@@ -22,8 +22,8 @@ Add authentication to your Rails app without all the icky-ness of passwords.
      * [Token and Session Expiry](#token-and-session-expiry)
      * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
      * [URLs and links](#urls-and-links)
-     * [E-mail security](#e-mail-security)
      * [Customize the way to send magic link](#customize_the_way_to_send_magic_link)
+     * [E-mail security](#e-mail-security)
 * [License](#license)
 
 ## Installation
@@ -233,13 +233,6 @@ passwordless_for :users, at: '/', as: :auth
 
 Also be sure to [specify ActionMailer's `default_url_options.host`](http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views).
 
-### E-mail security
-
-There's no reason that this approach should be less secure than the usual username/password combo. In fact this is most often a more secure option, as users don't get to choose the weak passwords they still use. In a way this is just the same as having each user go through "Forgot password" on every login.
-
-But be aware that when everyone authenticates via emails you send, the way you send those mails becomes a weak spot. Email services usually provide a log of all the mails you send so if your app's account is compromised, every user in the system is as well. (This is the same for "Forgot password".) [Reddit was compromised](https://thenextweb.com/hardfork/2018/01/05/reddit-bitcoin-cash-hack/) using this method.
-
-Ideally you should set up your email provider to not log these mails. And be sure to turn on 2-factor auth if your provider supports it.
 
 ### Customize the way to send magic link
 
@@ -249,12 +242,24 @@ config/initializers/passwordless.rb
 
 ```
 Passwordless.after_session_save = lambda do |session|
-  # do something with session model
-  # e.g) session.authenticatable.send_sms
+  # Default behavior is
+  # Mailer.magic_link(session).deliver_now
+
+  # You can change behavior to do something with session model. For example,
+  # session.authenticatable.send_sms
 end
 ```
 
 You can access user model through authenticatable.
+
+
+### E-mail security
+
+There's no reason that this approach should be less secure than the usual username/password combo. In fact this is most often a more secure option, as users don't get to choose the weak passwords they still use. In a way this is just the same as having each user go through "Forgot password" on every login.
+
+But be aware that when everyone authenticates via emails you send, the way you send those mails becomes a weak spot. Email services usually provide a log of all the mails you send so if your app's account is compromised, every user in the system is as well. (This is the same for "Forgot password".) [Reddit was compromised](https://thenextweb.com/hardfork/2018/01/05/reddit-bitcoin-cash-hack/) using this method.
+
+Ideally you should set up your email provider to not log these mails. And be sure to turn on 2-factor auth if your provider supports it.
 
 # License
 
