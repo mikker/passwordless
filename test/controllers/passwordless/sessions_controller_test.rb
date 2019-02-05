@@ -26,6 +26,23 @@ module Passwordless
       assert_equal 1, ActionMailer::Base.deliveries.size
     end
 
+    test 'magic link will send by custom method' do
+      old_proc = Passwordless.after_session_save
+      called = false
+      Passwordless.after_session_save = lambda { |_| called = true }
+
+      User.create email: 'a@a'
+
+      post '/users/sign_in',
+        params: { passwordless: { email: 'A@a' } },
+        headers: { 'User-Agent': 'an actual monkey' }
+      assert_equal 200, status
+
+      assert_equal true, called
+
+      Passwordless.after_session_save = old_proc
+    end
+
     test 'requesting a magic link as an unknown user' do
       get '/users/sign_in'
       assert_equal 200, status
