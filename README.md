@@ -22,7 +22,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
      * [Token and Session Expiry](#token-and-session-expiry)
      * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
      * [URLs and links](#urls-and-links)
-     * [Customize the way to send magic link](#customize_the_way_to_send_magic_link)
+     * [Customize the way to send magic link](#customize-the-way-to-send-magic-link)
      * [E-mail security](#e-mail-security)
 * [License](#license)
 
