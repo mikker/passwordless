@@ -45,7 +45,7 @@ module Passwordless
       BCrypt::Password.create(params[:token])
 
       session = find_session
-      raise ExpiredSessionError if session.expired?
+      raise ExpiredSessionError if session.timed_out?
 
       sign_in session.authenticatable
 
