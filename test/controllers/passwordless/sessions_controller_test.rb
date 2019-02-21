@@ -158,10 +158,10 @@ module Passwordless
       assert cookies[:user_id].blank?
     end
 
-    test 'trying to sign in with an expired session' do
+    test 'trying to sign in with an timed out session' do
       user = User.create email: 'a@a'
       session = create_session_for user
-      session.update(expires_at: Time.current - 1.day)
+      session.update(timeout_at: Time.current - 1.day)
 
       get "/users/sign_in/#{session.token}"
       follow_redirect!
