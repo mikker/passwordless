@@ -21,6 +21,12 @@ module Passwordless
       assert_equal [valid], Session.valid.all
     end
 
+    test 'expired?' do
+      expired_session = create_session expires_at: 1.hour.ago
+
+      assert_equal expired_session.expired?, true
+    end
+
     test 'it has defaults' do
       session = Session.new
       session.validate
