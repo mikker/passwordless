@@ -26,6 +26,10 @@ module Passwordless
       expires_at <= Time.current
     end
 
+    def timed_out?
+      timeout_at <= Time.current
+    end
+
     private
 
     def set_defaults

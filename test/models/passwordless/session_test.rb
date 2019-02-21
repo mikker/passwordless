@@ -27,6 +27,12 @@ module Passwordless
       assert_equal expired_session.expired?, true
     end
 
+    test 'timed_out?' do
+      timed_out_session = create_session timeout_at: 1.hour.ago
+
+      assert_equal timed_out_session.timed_out?, true
+    end
+
     test 'it has defaults' do
       session = Session.new
       session.validate
