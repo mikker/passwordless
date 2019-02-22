@@ -23,6 +23,10 @@ Rails/HttpPositionalArguments:
   Exclude:
     - 'test/dummy/config/routes.rb'
 
+Metrics/ClassLength:
+  Exclude:
+    - 'test/**/*_test.rb'
+
 Metrics/BlockLength:
   Exclude:
     - 'test/**/*_test.rb'

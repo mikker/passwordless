@@ -6,7 +6,7 @@ module Passwordless
   # Controller for managing Passwordless sessions
   class SessionsController < ApplicationController
     # Raise this exception when a session is expired.
-    class ExpiredSessionError < StandardError; end
+    class SessionTimedOutError < StandardError; end
 
     include ControllerHelpers
 
@@ -45,7 +45,7 @@ module Passwordless
       BCrypt::Password.create(params[:token])
 
       session = find_session
-      raise ExpiredSessionError if session.timed_out?
+      raise SessionTimedOutError if session.timed_out?
 
       sign_in session.authenticatable
 
@@ -57,7 +57,7 @@ module Passwordless
       else
         redirect_to main_app.root_path
       end
-    rescue ExpiredSessionError
+    rescue SessionTimedOutError
       flash[:error] = I18n.t('.passwordless.sessions.create.session_expired')
       redirect_to main_app.root_path
     end
@@ -102,7 +102,7 @@ module Passwordless
     end
 
     def find_session
-      Session.valid.find_by!(
+      Session.find_by!(
         authenticatable_type: authenticatable_classname,
         token: params[:token]
       )
