@@ -9,6 +9,8 @@ module Passwordless
     class SessionTimedOutError < StandardError; end
 
     include ControllerHelpers
+    
+    before_action :already_signed_in, only: [:new, :create]
 
     # get '/sign_in'
     #   Assigns an email_field and new Session to be used by new view.
@@ -106,6 +108,12 @@ module Passwordless
         authenticatable_type: authenticatable_classname,
         token: params[:token]
       )
+    end
+    
+    def already_signed_in
+      if authenticate_by_cookie(User)
+        redirect_to main_app.root_path, flash: { notice: 'Already signed in!' }
+      end
     end
   end
 end
