@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'bcrypt'
+require "bcrypt"
 
 module Passwordless
   # Controller for managing Passwordless sessions
@@ -32,8 +32,6 @@ module Passwordless
       render
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-
     # get '/sign_in/:token'
     #   Looks up session record by provided token. Signs in user if a match
     #   is found. Redirects to either the user's original destination
@@ -58,10 +56,9 @@ module Passwordless
         redirect_to main_app.root_path
       end
     rescue SessionTimedOutError
-      flash[:error] = I18n.t('.passwordless.sessions.create.session_expired')
+      flash[:error] = I18n.t(".passwordless.sessions.create.session_expired")
       redirect_to main_app.root_path
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     # match '/sign_out', via: %i[get delete].
     #   Signs user out. Redirects to root_path

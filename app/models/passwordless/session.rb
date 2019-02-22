@@ -19,7 +19,7 @@ module Passwordless
     before_validation :set_defaults
 
     scope :valid, lambda {
-      where('timeout_at > ?', Time.current)
+      where("timeout_at > ?", Time.current)
     }
 
     def expired?
@@ -35,10 +35,10 @@ module Passwordless
     def set_defaults
       self.expires_at ||= Passwordless.expires_at.call
       self.timeout_at ||= Passwordless.timeout_at.call
-      self.token ||= loop do
+      self.token ||= loop {
         token = Passwordless.token_generator.call(self)
         break token unless Session.find_by(token: token)
-      end
+      }
     end
   end
 end

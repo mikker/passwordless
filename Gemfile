@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
 gemspec
 
-gem 'codecov', require: false, group: :test
+gem "codecov", require: false, group: :test

@@ -12,7 +12,7 @@ module Passwordless
     def build_passwordless_session(authenticatable)
       Session.new.tap do |us|
         us.remote_addr = request.remote_addr
-        us.user_agent = request.env['HTTP_USER_AGENT']
+        us.user_agent = request.env["HTTP_USER_AGENT"]
         us.authenticatable = authenticatable
       end
     end
@@ -38,7 +38,7 @@ module Passwordless
     # @return [ActiveRecord::Base] the record that is passed in.
     def sign_in(authenticatable)
       key = cookie_name(authenticatable.class)
-      cookies.encrypted.permanent[key] = { value: authenticatable.id }
+      cookies.encrypted.permanent[key] = {value: authenticatable.id}
       authenticatable
     end
 
@@ -47,7 +47,7 @@ module Passwordless
     # @return [boolean] Always true
     def sign_out(authenticatable_class)
       key = cookie_name(authenticatable_class)
-      cookies.encrypted.permanent[key] = { value: nil }
+      cookies.encrypted.permanent[key] = {value: nil}
       cookies.delete(key)
       true
     end
