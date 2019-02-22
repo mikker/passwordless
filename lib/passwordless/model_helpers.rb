@@ -9,7 +9,7 @@ module Passwordless
     # @param field [string] email submitted by user.
     def passwordless_with(field)
       has_many :passwordless_sessions,
-        class_name: 'Passwordless::Session',
+        class_name: "Passwordless::Session",
         as: :authenticatable
 
       define_singleton_method(:passwordless_email_field) { field }

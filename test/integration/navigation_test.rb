@@ -1,39 +1,39 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 class NavigationTest < ActionDispatch::IntegrationTest
   fixtures :users
 
-  test 'failed access, sign in and redirect to protected resource' do
+  test "failed access, sign in and redirect to protected resource" do
     alice = users(:alice)
 
     # Verify the user has no access to the /secret endpoint and
     # is instead redirected to homepage. Meanwhile access to /secret is
     # stored in the users session.
-    get '/secret'
+    get "/secret"
     assert_equal 302, status
-    assert_equal 'Not worthy!', flash['error']
+    assert_equal "Not worthy!", flash["error"]
     follow_redirect!
     assert_equal 200, status
-    assert_equal '/', path
+    assert_equal "/", path
 
     # Load login form
-    get '/users/sign_in'
+    get "/users/sign_in"
     assert_equal 200, status
 
     # Submit form
-    post '/users/sign_in',
+    post "/users/sign_in",
       params: {
-        passwordless: { email: alice.email }
+        passwordless: {email: alice.email},
       },
-      headers: { 'HTTP_USER_AGENT' => 'Mosaic v.1' }
+      headers: {"HTTP_USER_AGENT" => "Mosaic v.1"}
     assert_equal 200, status
-    assert response.body.include?('If we found you in the system')
+    assert response.body.include?("If we found you in the system")
 
     # Expect session created for alice
     session = Passwordless::Session.find_by! authenticatable: alice
-    assert_equal 'Mosaic v.1', session.user_agent
+    assert_equal "Mosaic v.1", session.user_agent
 
     # Expect mail for alice
     assert_equal 1, ActionMailer::Base.deliveries.count
@@ -51,7 +51,7 @@ class NavigationTest < ActionDispatch::IntegrationTest
     follow_redirect!
 
     assert_equal 200, status
-    assert_equal '/secret', path
-    assert_equal 'shhhh! secrets!', response.body
+    assert_equal "/secret", path
+    assert_equal "shhhh! secrets!", response.body
   end
 end

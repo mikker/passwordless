@@ -1,4 +1,4 @@
-$:.push File.expand_path("../lib", __FILE__)
+$LOAD_PATH.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
 require "passwordless/version"
@@ -21,5 +21,5 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "sqlite3", "~> 1.3.6"
   s.add_development_dependency "yard"
-  s.add_development_dependency "rubocop"
+  s.add_development_dependency "standard"
 end
