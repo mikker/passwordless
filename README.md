@@ -43,7 +43,7 @@ $ bin/rails passwordless:install:migrations
 
 ## Usage
 
-Passwordless creates a single model called `Passwordless::Session`. It doesn't come with its own `User` model, it expects you to create one, eg.:
+Passwordless creates a single model called `Passwordless::Session`. It doesn't come with its own `User` model, it expects you to create one:
 
 ```
 $ bin/rails generate model User email
@@ -71,7 +71,7 @@ end
 
 ### Getting the current user, restricting access, the usual
 
-Passwordless doesn't give you `current_user` automatically -- it's dead easy to add it though:
+Passwordless doesn't give you `current_user` automatically. Here's how you could add it:
 
 ```ruby
 class ApplicationController < ActionController::Base
@@ -121,36 +121,20 @@ app/views/passwordless/mailer/magic_link.text.erb
 
 See [the bundled views](https://github.com/mikker/passwordless/tree/master/app/views/passwordless).
 
-### Overrides
-
-By default `passwordless` uses the `passwordless_with` column you specify in the model to case insensitively fetch the resource during authentication. You can override this and provide your own customer fetcher by defining a class method `fetch_resource_for_passwordless` in your passwordless model. The method will be supplied with the downcased email and should return an `ActiveRecord` instance of the model.
-
-Example time:
-
-Let's say we would like to fetch the record and if it doesn't exist, create automatically.
-
-```ruby
-class User < ApplicationRecord
-  def self.fetch_resource_for_passwordless(email)
-    find_or_create_by(email: email)
-  end
-end
-```
-
 ### Registering new users
 
-Because your `User` record is like any other record, you create one like you normally would. Passwordless provides a helper method you can use to sign in the created user after it is saved like so:
+Because your `User` record is like any other record, you create one like you normally would. Passwordless provides a helper method to sign in the created user after it is saved – like so:
 
 ```ruby
 class UsersController < ApplicationController
   include Passwordless::ControllerHelpers # <-- This!
-  #  (unless you already have it in your ApplicationController)
+  # (unless you already have it in your ApplicationController)
 
   def create
     @user = User.new user_params
 
     if @user.save
-      sign_in @user # <-- And this!
+      sign_in @user # <-- This!
       redirect_to @user, flash: {notice: 'Welcome!'}
     else
       render :new
@@ -163,7 +147,7 @@ end
 
 ### Generating tokens
 
-By default Passwordless generates tokens using Rails' `SecureRandom.urlsafe_base64` but you can change that by setting `Passwordless.token_generator` to something else that responds to `call(session)` eg.:
+By default Passwordless generates tokens using `SecureRandom.urlsafe_base64` but you can change that by setting `Passwordless.token_generator` to something else that responds to `call(session)` eg.:
 
 ```ruby
 Passwordless.token_generator = -> (session) {
@@ -252,6 +236,24 @@ end
 
 You can access user model through authenticatable.
 
+
+### Overrides
+
+By default `passwordless` uses the `passwordless_with` column to _case insensitively_ fetch the resource.
+
+You can override this and provide your own customer fetcher by defining a class method `fetch_resource_for_passwordless` in your passwordless model. The method will be called with the downcased email and should return an `ActiveRecord` instance of the model.
+
+Example time:
+
+Let's say we would like to fetch the record and if it doesn't exist, create automatically.
+
+```ruby
+class User < ApplicationRecord
+  def self.fetch_resource_for_passwordless(email)
+    find_or_create_by(email: email)
+  end
+end
+```
 
 ### E-mail security
 
