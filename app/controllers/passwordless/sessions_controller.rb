@@ -26,7 +26,7 @@ module Passwordless
       session = build_passwordless_session(find_authenticatable)
 
       if session.save
-        Passwordless.after_session_save.call(session)
+        Passwordless.after_session_save.call(session, request)
       end
 
       render
