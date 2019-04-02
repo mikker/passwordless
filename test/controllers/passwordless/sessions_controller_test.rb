@@ -29,7 +29,7 @@ module Passwordless
     test "magic link will send by custom method" do
       old_proc = Passwordless.after_session_save
       called = false
-      Passwordless.after_session_save = ->(_) { called = true }
+      Passwordless.after_session_save = ->(_, _) { called = true }
 
       User.create email: "a@a"
 
