@@ -225,7 +225,7 @@ By default, magic link will send by email. You can customize this method. For ex
 config/initializers/passwordless.rb
 
 ```
-Passwordless.after_session_save = lambda do |session|
+Passwordless.after_session_save = lambda do |session, request|
   # Default behavior is
   # Mailer.magic_link(session).deliver_now
 
