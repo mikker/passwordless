@@ -263,6 +263,10 @@ But be aware that when everyone authenticates via emails you send, the way you s
 
 Ideally you should set up your email provider to not log these mails. And be sure to turn on 2-factor auth if your provider supports it.
 
+# Alternatives
+
+- [OTP JWT](https://github.com/stas/otp-jwt) -- Passwordless JSON Web Tokens
+
 # License
 
 MIT
