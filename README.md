@@ -16,6 +16,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
 * [Usage](#usage)
      * [Getting the current user, restricting access, the usual](#getting-the-current-user-restricting-access-the-usual)
      * [Providing your own templates](#providing-your-own-templates)
+     * [Claming tokens](#claiming-tokens)
      * [Overrides](#overrides)
      * [Registering new users](#registering-new-users)
      * [Generating tokens](#generating-tokens)
@@ -236,6 +237,35 @@ end
 
 You can access user model through authenticatable.
 
+### Claiming tokens
+
+Opt-in for marking tokens as `claimed` so that they can't be used again.
+
+config/initializers/passwordless.rb
+
+```ruby
+# Default is `false`
+Passwordless.claim_token_after_sign_in = true
+```
+
+#### Upgrading an existing Rails app
+
+For small, low traffic apps, you can probably get away with a single migration (not recommended though!), however it best practice to stagger the migrations to minimise locks to the table/database. For a “high availability migration”, follow this [example gist](https://gist.github.com/JoeSouthan/78d3746e8d728d8ab47e67202b59c891).
+
+All in one migration (will lock database during migration, be cautious!):
+
+```bash
+bin/rails generate migration add_claimed_to_passwordless_sessions
+```
+
+```ruby
+class AddClaimedToPasswordlessSessions < ActiveRecord::Migration[5.2]
+  def change
+    add_column :passwordless_sessions, :claimed, :boolean, null: false, default: false
+  end
+end
+
+```
 
 ### Overrides
 

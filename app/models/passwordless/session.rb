@@ -30,6 +30,10 @@ module Passwordless
       timeout_at <= Time.current
     end
 
+    def claim!
+      update!(claimed: true)
+    end
+
     private
 
     def set_defaults

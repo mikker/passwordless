@@ -171,5 +171,30 @@ module Passwordless
       assert_equal 200, status
       assert_equal "/", path
     end
+
+    test "trying to use a claimed token" do
+      default = Passwordless.claim_token_after_sign_in
+      Passwordless.claim_token_after_sign_in = true
+      user = User.create email: "a@a"
+      session = create_session_for user
+
+      get "/users/sign_in/#{session.token}"
+      follow_redirect!
+      assert_not_nil cookies[:user_id]
+
+      get "/users/sign_out"
+      follow_redirect!
+      assert_equal true, session.reload.claimed?
+
+      get "/users/sign_in/#{session.token}"
+
+      assert_match "This link has already been used", flash[:error]
+      assert_equal cookies[:user_id], ""
+      follow_redirect!
+      assert_equal 200, status
+      assert_equal "/", path
+
+      Passwordless.claim_token_after_sign_in = default
+    end
   end
 end

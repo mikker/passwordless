@@ -13,6 +13,7 @@ class CreatePasswordlessSessions < ActiveRecord::Migration[5.1]
       t.text :user_agent, null: false
       t.string :remote_addr, null: false
       t.string :token, null: false
+      t.boolean :claimed, null: false, default: false
 
       t.timestamps
     end

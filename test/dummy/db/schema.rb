@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2017_11_04_225303) do
     t.text "user_agent", null: false
     t.string "remote_addr", null: false
     t.string "token", null: false
+    t.boolean "claimed", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["authenticatable_type", "authenticatable_id"], name: "authenticatable"

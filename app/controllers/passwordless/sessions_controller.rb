@@ -7,6 +7,7 @@ module Passwordless
   class SessionsController < ApplicationController
     # Raise this exception when a session is expired.
     class SessionTimedOutError < StandardError; end
+    class TokenAlreadyUsedError < StandardError; end
 
     include ControllerHelpers
 
@@ -43,6 +44,12 @@ module Passwordless
       BCrypt::Password.create(params[:token])
 
       session = find_session
+
+      if Passwordless.claim_token_after_sign_in
+        raise TokenAlreadyUsedError if session.claimed?
+        session.claim!
+      end
+
       raise SessionTimedOutError if session.timed_out?
 
       sign_in session.authenticatable
@@ -55,6 +62,9 @@ module Passwordless
       else
         redirect_to main_app.root_path
       end
+    rescue TokenAlreadyUsedError
+      flash[:error] = I18n.t(".passwordless.sessions.create.token_claimed")
+      redirect_to main_app.root_path
     rescue SessionTimedOutError
       flash[:error] = I18n.t(".passwordless.sessions.create.session_expired")
       redirect_to main_app.root_path
