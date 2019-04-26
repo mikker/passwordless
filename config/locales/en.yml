@@ -8,5 +8,5 @@ en:
       new:
         submit: 'Send magic link'
     mailer:
-      subject: "Your magic link ✨'"
+      subject: "Your magic link ✨"
       magic_link: "Here's your link: %{link}"
