@@ -269,8 +269,6 @@ end
 ```
 </details>
 
-Be aware that this will lock your database while migrating. For a higher availability approach, see [this example gist](https://gist.github.com/JoeSouthan/78d3746e8d728d8ab47e67202b59c891).
-
 ### Overrides
 
 By default `passwordless` uses the `passwordless_with` column to _case insensitively_ fetch the resource.
