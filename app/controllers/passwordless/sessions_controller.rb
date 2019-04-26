@@ -7,7 +7,6 @@ module Passwordless
   class SessionsController < ApplicationController
     # Raise this exception when a session is expired.
     class SessionTimedOutError < StandardError; end
-    class TokenAlreadyUsedError < StandardError; end
 
     include ControllerHelpers
 
@@ -45,10 +44,7 @@ module Passwordless
 
       session = find_session
 
-      if Passwordless.claim_token_after_sign_in
-        raise TokenAlreadyUsedError if session.claimed?
-        session.claim!
-      end
+      session.claim! if Passwordless.restrict_token_reuse
 
       raise SessionTimedOutError if session.timed_out?
 
@@ -62,7 +58,7 @@ module Passwordless
       else
         redirect_to main_app.root_path
       end
-    rescue TokenAlreadyUsedError
+    rescue Session::TokenAlreadyClaimedError
       flash[:error] = I18n.t(".passwordless.sessions.create.token_claimed")
       redirect_to main_app.root_path
     rescue SessionTimedOutError

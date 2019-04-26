@@ -173,8 +173,8 @@ module Passwordless
     end
 
     test "trying to use a claimed token" do
-      default = Passwordless.claim_token_after_sign_in
-      Passwordless.claim_token_after_sign_in = true
+      default = Passwordless.restrict_token_reuse
+      Passwordless.restrict_token_reuse = true
       user = User.create email: "a@a"
       session = create_session_for user
 
@@ -194,7 +194,7 @@ module Passwordless
       assert_equal 200, status
       assert_equal "/", path
 
-      Passwordless.claim_token_after_sign_in = default
+      Passwordless.restrict_token_reuse = default
     end
   end
 end

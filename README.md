@@ -239,33 +239,37 @@ You can access user model through authenticatable.
 
 ### Claiming tokens
 
-Opt-in for marking tokens as `claimed` so that they can't be used again.
+Opt-in for marking tokens as `claimed` so they can only be used once.
 
 config/initializers/passwordless.rb
 
 ```ruby
 # Default is `false`
-Passwordless.claim_token_after_sign_in = true
+Passwordless.restrict_token_reuse = true
 ```
 
 #### Upgrading an existing Rails app
 
-For small, low traffic apps, you can probably get away with a single migration (not recommended though!), however it best practice to stagger the migrations to minimise locks to the table/database. For a “high availability migration”, follow this [example gist](https://gist.github.com/JoeSouthan/78d3746e8d728d8ab47e67202b59c891).
+The simplest way to update your sessions table is with a single migration:
 
-All in one migration (will lock database during migration, be cautious!):
+<details>
+<summary>Example migration</summary>
 
 ```bash
-bin/rails generate migration add_claimed_to_passwordless_sessions
+bin/rails generate migration add_claimed_at_to_passwordless_sessions
 ```
 
 ```ruby
-class AddClaimedToPasswordlessSessions < ActiveRecord::Migration[5.2]
+class AddClaimedAtToPasswordlessSessions < ActiveRecord::Migration[5.2]
   def change
-    add_column :passwordless_sessions, :claimed, :boolean, null: false, default: false
+    add_column :passwordless_sessions, :claimed_at, :datetime
   end
 end
 
 ```
+</details>
+
+Be aware that this will lock your database while migrating. For a higher availability approach, see [this example gist](https://gist.github.com/JoeSouthan/78d3746e8d728d8ab47e67202b59c891).
 
 ### Overrides
 

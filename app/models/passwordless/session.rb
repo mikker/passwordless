@@ -4,6 +4,8 @@ module Passwordless
   # The session responsible for holding the connection between the record
   # trying to log in and the unique tokens.
   class Session < ApplicationRecord
+    class TokenAlreadyClaimedError < StandardError; end
+
     belongs_to :authenticatable,
       polymorphic: true, inverse_of: :passwordless_sessions
 
@@ -31,7 +33,12 @@ module Passwordless
     end
 
     def claim!
-      update!(claimed: true)
+      raise TokenAlreadyClaimedError if claimed?
+      touch(:claimed_at)
+    end
+
+    def claimed?
+      !!claimed_at
     end
 
     private
