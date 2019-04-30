@@ -5,6 +5,7 @@ en:
       create:
         session_expired: 'Your session has expired, please sign in again.'
         email_sent_if_record_found: "If we found you in the system, we've sent you an email."
+        token_claimed: "This link has already been used, try requesting the link again"
       new:
         submit: 'Send magic link'
     mailer:

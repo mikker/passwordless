@@ -33,6 +33,12 @@ module Passwordless
       assert_equal timed_out_session.timed_out?, true
     end
 
+    test "claimed?" do
+      claimed_session = create_session claimed_at: 1.hour.ago
+
+      assert_equal claimed_session.claimed?, true
+    end
+
     test "it has defaults" do
       session = Session.new
       session.validate
@@ -84,6 +90,21 @@ module Passwordless
 
       assert_equal custom_timeout_at.to_s, session.timeout_at.to_s
       Passwordless.timeout_at = old_timeout_at
+    end
+
+    test "claim! - with unclaimed session" do
+      unclaimed_session = create_session
+      unclaimed_session.claim!
+
+      refute_nil unclaimed_session.claimed_at
+    end
+
+    test "claim! - with claimed session" do
+      claimed_session = create_session claimed_at: 1.hour.ago
+
+      assert_raises(Passwordless::Session::TokenAlreadyClaimedError) do
+        claimed_session.claim!
+      end
     end
   end
 end

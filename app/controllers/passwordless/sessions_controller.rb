@@ -43,6 +43,9 @@ module Passwordless
       BCrypt::Password.create(params[:token])
 
       session = find_session
+
+      session.claim! if Passwordless.restrict_token_reuse
+
       raise SessionTimedOutError if session.timed_out?
 
       sign_in session.authenticatable
@@ -55,6 +58,9 @@ module Passwordless
       else
         redirect_to main_app.root_path
       end
+    rescue Session::TokenAlreadyClaimedError
+      flash[:error] = I18n.t(".passwordless.sessions.create.token_claimed")
+      redirect_to main_app.root_path
     rescue SessionTimedOutError
       flash[:error] = I18n.t(".passwordless.sessions.create.session_expired")
       redirect_to main_app.root_path

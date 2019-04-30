@@ -16,6 +16,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
 * [Usage](#usage)
      * [Getting the current user, restricting access, the usual](#getting-the-current-user-restricting-access-the-usual)
      * [Providing your own templates](#providing-your-own-templates)
+     * [Claming tokens](#claiming-tokens)
      * [Overrides](#overrides)
      * [Registering new users](#registering-new-users)
      * [Generating tokens](#generating-tokens)
@@ -236,6 +237,37 @@ end
 
 You can access user model through authenticatable.
 
+### Claiming tokens
+
+Opt-in for marking tokens as `claimed` so they can only be used once.
+
+config/initializers/passwordless.rb
+
+```ruby
+# Default is `false`
+Passwordless.restrict_token_reuse = true
+```
+
+#### Upgrading an existing Rails app
+
+The simplest way to update your sessions table is with a single migration:
+
+<details>
+<summary>Example migration</summary>
+
+```bash
+bin/rails generate migration add_claimed_at_to_passwordless_sessions
+```
+
+```ruby
+class AddClaimedAtToPasswordlessSessions < ActiveRecord::Migration[5.2]
+  def change
+    add_column :passwordless_sessions, :claimed_at, :datetime
+  end
+end
+
+```
+</details>
 
 ### Overrides
 
