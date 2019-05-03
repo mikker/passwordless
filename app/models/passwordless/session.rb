@@ -39,6 +39,10 @@ module Passwordless
       !!claimed_at
     end
 
+    def valid_session?
+      !timed_out? && !expired?
+    end
+
     private
 
     def set_defaults
