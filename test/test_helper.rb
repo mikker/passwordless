@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require "simplecov"
-SimpleCov.start
+SimpleCov.start do
+  add_filter "test/dummy"
+end
 
 if ENV["CI"]
   require "codecov"
