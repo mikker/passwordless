@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "passwordless/errors"
 require "passwordless/engine"
 require "passwordless/url_safe_base_64_generator"
 
