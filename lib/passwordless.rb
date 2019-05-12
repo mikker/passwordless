@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "active_support"
 require "passwordless/errors"
 require "passwordless/engine"
 require "passwordless/url_safe_base_64_generator"
@@ -16,4 +17,6 @@ module Passwordless
   mattr_accessor(:timeout_at) { lambda { 1.hour.from_now } }
 
   mattr_accessor(:after_session_save) { lambda { |session| Mailer.magic_link(session).deliver_now } }
+
+  CookieDeprecation = ActiveSupport::Deprecation.new("0.8", "passwordless")
 end

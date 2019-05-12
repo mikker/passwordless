@@ -39,13 +39,9 @@ module Passwordless
       # Make it "slow" on purpose to make brute-force attacks more of a hassle
       BCrypt::Password.create(params[:token])
 
-      session = find_session
+      session = passwordless_session
 
-      session.claim! if Passwordless.restrict_token_reuse
-
-      raise Passwordless::Errors::SessionTimedOutError if session.timed_out?
-
-      sign_in session.authenticatable
+      sign_in session
 
       redirect_enabled = Passwordless.redirect_back_after_sign_in
       destination = reset_passwordless_redirect_location!(User)
@@ -101,8 +97,8 @@ module Passwordless
       end
     end
 
-    def find_session
-      Session.find_by!(
+    def passwordless_session
+      @passwordless_session ||= Session.find_by!(
         authenticatable_type: authenticatable_classname,
         token: params[:token]
       )
