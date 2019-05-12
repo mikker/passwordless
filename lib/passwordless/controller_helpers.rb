@@ -86,7 +86,7 @@ module Passwordless
       cookies.delete(key)
       # /deprecated
 
-      session.delete session_key(authenticatable_class)
+      reset_session
       true
     end
 

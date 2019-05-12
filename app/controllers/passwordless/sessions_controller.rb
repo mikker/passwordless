@@ -41,10 +41,10 @@ module Passwordless
 
       session = passwordless_session
 
-      sign_in session
-
       redirect_enabled = Passwordless.redirect_back_after_sign_in
       destination = reset_passwordless_redirect_location!(User)
+
+      sign_in session
 
       if redirect_enabled && destination
         redirect_to destination
