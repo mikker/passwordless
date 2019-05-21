@@ -3,3 +3,4 @@ parallel: true
 ruby_version: 2.4
 ignore:
   - 'test/dummy/bin/*'
+  - 'test/dummy/db/*'
