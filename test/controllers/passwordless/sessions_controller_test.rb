@@ -12,8 +12,8 @@ module Passwordless
       )
     end
 
-    def session_key(authenticatable_class)
-      Passwordless::SessionsController.new.send(:session_key, authenticatable_class)
+    class Helpers
+      extend Passwordless::ControllerHelpers
     end
 
     test "requesting a magic link as an existing user" do
@@ -105,7 +105,7 @@ module Passwordless
 
       assert_equal 200, status
       assert_equal "/", path
-      assert_not_nil session[session_key(user.class)]
+      assert_not_nil session[Helpers.session_key(user.class)]
     end
 
     test "signing in via a token as STI model" do
@@ -117,7 +117,7 @@ module Passwordless
 
       assert_equal 200, status
       assert_equal "/", path
-      assert_not_nil session[session_key(admin.class)]
+      assert_not_nil session[Helpers.session_key(admin.class)]
     end
 
     test "signing in and redirecting back" do
@@ -169,14 +169,14 @@ module Passwordless
 
       passwordless_session = create_session_for user
       get "/users/sign_in/#{passwordless_session.token}"
-      assert_not_nil session[session_key(user.class)]
+      assert_not_nil session[Helpers.session_key(user.class)]
 
       get "/users/sign_out"
       follow_redirect!
 
       assert_equal 200, status
       assert_equal "/", path
-      assert session[session_key(user.class)].blank?
+      assert session[Helpers.session_key(user.class)].blank?
     end
 
     test "trying to sign in with an timed out session" do
@@ -188,7 +188,7 @@ module Passwordless
       follow_redirect!
 
       assert_match "Your session has expired", flash[:error]
-      assert_nil session[session_key(user.class)]
+      assert_nil session[Helpers.session_key(user.class)]
       assert_equal 200, status
       assert_equal "/", path
     end
@@ -201,7 +201,7 @@ module Passwordless
 
       get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
-      assert_not_nil session[session_key(user.class)]
+      assert_not_nil session[Helpers.session_key(user.class)]
 
       get "/users/sign_out"
       follow_redirect!
@@ -210,7 +210,7 @@ module Passwordless
       get "/users/sign_in/#{passwordless_session.token}"
 
       assert_match "This link has already been used", flash[:error]
-      assert_nil session[session_key(user.class)]
+      assert_nil session[Helpers.session_key(user.class)]
       follow_redirect!
       assert_equal 200, status
       assert_equal "/", path

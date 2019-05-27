@@ -18,9 +18,16 @@ module Passwordless
 
     before_validation :set_defaults
 
-    scope :valid, lambda {
+    scope :available, lambda {
       where("timeout_at > ?", Time.current)
     }
+
+    def self.valid
+      available
+    end
+    class << self
+      deprecate :valid, deprecator: SessionValidDeprecation
+    end
 
     def expired?
       expires_at <= Time.current
@@ -39,7 +46,7 @@ module Passwordless
       !!claimed_at
     end
 
-    def valid_session?
+    def available?
       !timed_out? && !expired?
     end
 

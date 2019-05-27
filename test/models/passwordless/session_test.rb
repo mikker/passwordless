@@ -14,11 +14,11 @@ module Passwordless
       )
     end
 
-    test "scope: valid" do
-      valid = create_session
+    test "scope: available" do
+      available = create_session
       _timed_out = create_session timeout_at: 1.hour.ago
 
-      assert_equal [valid], Session.valid.all
+      assert_equal [available], Session.available.all
     end
 
     test "expired?" do
@@ -107,16 +107,16 @@ module Passwordless
       end
     end
 
-    test "valid_session? - valid session" do
-      valid_session = create_session
+    test "available? - when available" do
+      available_session = create_session
 
-      assert_equal valid_session.valid_session?, true
+      assert available_session.available?
     end
 
-    test "valid_session? - invalid session" do
-      invalid_session = create_session timeout_at: 2.years.ago, expires_at: 2.years.ago
+    test "available? - when unavailable" do
+      unavailable_session = create_session timeout_at: 2.years.ago, expires_at: 2.years.ago
 
-      assert_equal invalid_session.valid_session?, false
+      refute unavailable_session.available?
     end
   end
 end

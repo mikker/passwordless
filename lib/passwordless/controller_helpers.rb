@@ -49,7 +49,7 @@ module Passwordless
     #   in cookies.encrypted or nil if nothing is found.
     # @see ModelHelpers#passwordless_with
     def authenticate_by_session(authenticatable_class)
-      return unless current_passwordless_session(authenticatable_class)&.valid_session?
+      return unless current_passwordless_session(authenticatable_class)&.available?
       @current_authenticatable ||= current_passwordless_session(authenticatable_class).authenticatable
     end
 
@@ -107,6 +107,10 @@ module Passwordless
       session.delete redirect_session_key(authenticatable_class)
     end
 
+    def session_key(authenticatable_class)
+      :"passwordless_session_id_for_#{authenticatable_class_parameterized(authenticatable_class)}"
+    end
+
     private
 
     def authenticatable_class_parameterized(authenticatable_class)
@@ -115,10 +119,6 @@ module Passwordless
       end
 
       authenticatable_class.base_class.to_s.parameterize
-    end
-
-    def session_key(authenticatable_class)
-      :"passwordless_session_id_for_#{authenticatable_class_parameterized(authenticatable_class)}"
     end
 
     def redirect_session_key(authenticatable_class)

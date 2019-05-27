@@ -3,8 +3,10 @@
 class DeprecatedSecretsController < ApplicationController
   before_action :authenticate_user!, except: [:fake_login]
 
+  # Sign in using deprecated cookie implementation
   def fake_login
-    cookies.encrypted.permanent[cookie_name(fake_login_params[:authenticatable_type].constantize)] = params[:authenticatable_id]
+    key = cookie_name(fake_login_params[:authenticatable_type].constantize)
+    cookies.encrypted.permanent[key] = params[:authenticatable_id]
   end
 
   def index
