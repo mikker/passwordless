@@ -41,6 +41,21 @@ module Passwordless
     end
     deprecate :authenticate_by_cookie, deprecator: CookieDeprecation
 
+    def upgrade_passwordless_cookie(authenticatable_class)
+      key = cookie_name(authenticatable_class)
+
+      return unless authenticatable_id = cookies.encrypted[key]
+      cookies.encrypted.permanent[key] = {value: nil}
+      cookies.delete(key)
+
+      return unless record = authenticatable_class.find_by(id: authenticatable_id)
+      new_session = build_passwordless_session(record).tap { |s| s.save! }
+
+      sign_in new_session
+
+      new_session.authenticatable
+    end
+
     # Authenticate a record using the session. Looks for a session key corresponding to
     # the _authenticatable_class_. If found try to find it in the database.
     # @param authenticatable_class [ActiveRecord::Base] any Model connected to
@@ -67,9 +82,6 @@ module Passwordless
             "new Passwordless::Session"
           build_passwordless_session(record).tap { |s| s.save! }
         end
-
-      # Clear old cookie/session
-      sign_out(authenticatable_class)
 
       passwordless_session.claim! if Passwordless.restrict_token_reuse
 

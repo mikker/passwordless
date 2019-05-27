@@ -18,8 +18,4 @@ class DeprecatedSecretsController < ApplicationController
   def fake_login_params
     params.permit(:authenticatable_id, :authenticatable_type)
   end
-
-  def current_user
-    @current_user ||= authenticate_by_cookie(User)
-  end
 end

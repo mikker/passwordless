@@ -11,10 +11,6 @@ class DeprecatedSecretsControllerTest < ActionDispatch::IntegrationTest
     )
   end
 
-  def cookie_key(authenticatable_class)
-    DeprecatedSecretsController.new.send(:cookie_key, authenticatable_class)
-  end
-
   def login(passwordless_session)
     post "/deprecated_fake_login", params: {
       authenticatable_type: passwordless_session.authenticatable_type,
@@ -26,8 +22,12 @@ class DeprecatedSecretsControllerTest < ActionDispatch::IntegrationTest
     user = User.create(email: "foo@example.com")
     passwordless_session = create_session_for(user)
     login(passwordless_session)
+    refute cookies['user_id'].blank?
 
-    get "/deprecated_secret"
+    get "/deprecated_secret", headers: { 'User-Agent' => 'Thing' }
     assert_equal 200, status
+
+    # Session has been upgraded
+    assert cookies['user_id'].blank?
   end
 end
