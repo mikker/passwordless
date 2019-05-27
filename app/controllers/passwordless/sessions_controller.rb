@@ -43,18 +43,13 @@ module Passwordless
       # Make it "slow" on purpose to make brute-force attacks more of a hassle
       BCrypt::Password.create(params[:token])
 
-      session = passwordless_session
+      destination =
+        Passwordless.redirect_back_after_sign_in &&
+        reset_passwordless_redirect_location!(User)
 
-      redirect_enabled = Passwordless.redirect_back_after_sign_in
-      destination = reset_passwordless_redirect_location!(User)
+      sign_in passwordless_session
 
-      sign_in session
-
-      if redirect_enabled && destination
-        redirect_to destination
-      else
-        redirect_to main_app.root_path
-      end
+      redirect_to destination || main_app.root_path
     rescue Errors::TokenAlreadyClaimedError
       flash[:error] = I18n.t(".passwordless.sessions.create.token_claimed")
       redirect_to main_app.root_path

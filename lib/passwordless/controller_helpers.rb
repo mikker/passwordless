@@ -53,27 +53,36 @@ module Passwordless
       find_passwordless_session_for(authenticatable_class).authenticatable
     end
 
-    # Signs in user by assigning their id to the current session.
-    # @param authenticatable [ActiveRecord::Base, Passwordless::Session] Instance of Model to sign in
-    #   (e.g - @user when @user = User.find(id: some_id)).
+    # Signs in session
+    # @param authenticatable [Passwordless::Session] Instance of {Passwordless::Session}
+    # to sign in
     # @return [ActiveRecord::Base] the record that is passed in.
     def sign_in(record)
-      passwordless_session = if record.is_a?(Passwordless::Session)
-        record
-      else
-        build_passwordless_session(record).tap { |s| s.save! }
-      end
+      passwordless_session =
+        if record.is_a?(Passwordless::Session)
+          record
+        else
+          warn "Passwordless::ControllerHelpers#sign_in with authenticatable " \
+            "(`#{record.class}') is deprecated. Falling back to creating a " \
+            "new Passwordless::Session"
+          build_passwordless_session(record).tap { |s| s.save! }
+        end
 
+      # Clear old cookie/session
       sign_out(authenticatable_class)
 
       passwordless_session.claim! if Passwordless.restrict_token_reuse
+
       raise Passwordless::Errors::SessionTimedOutError if passwordless_session.timed_out?
 
-      session.update(
-        session_key(passwordless_session.authenticatable_type) => passwordless_session.id
-      )
+      key = session_key(passwordless_session.authenticatable_type)
+      session[key] = passwordless_session.id
 
-      passwordless_session.authenticatable
+      if record.is_a?(Passwordless::Session)
+        passwordless_session
+      else
+        passwordless_session.authenticatable
+      end
     end
 
     # Signs out user by deleting the session key.
@@ -104,11 +113,11 @@ module Passwordless
     # @return [String, nil] the redirect url that was just deleted,
     #   or nil if no url found for given Model.
     def reset_passwordless_redirect_location!(authenticatable_class)
-      session.delete redirect_session_key(authenticatable_class)
+      session.delete(redirect_session_key(authenticatable_class))
     end
 
     def session_key(authenticatable_class)
-      :"passwordless_session_id_for_#{authenticatable_class_parameterized(authenticatable_class)}"
+      :"passwordless_session_id--#{authenticatable_class_parameterized(authenticatable_class)}"
     end
 
     private

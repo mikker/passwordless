@@ -38,7 +38,7 @@ module Passwordless
     end
 
     def claim!
-      raise Passwordless::Errors::TokenAlreadyClaimedError if claimed?
+      raise Errors::TokenAlreadyClaimedError if claimed?
       touch(:claimed_at)
     end
 
