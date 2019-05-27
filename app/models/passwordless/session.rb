@@ -4,8 +4,6 @@ module Passwordless
   # The session responsible for holding the connection between the record
   # trying to log in and the unique tokens.
   class Session < ApplicationRecord
-    class TokenAlreadyClaimedError < StandardError; end
-
     belongs_to :authenticatable,
       polymorphic: true, inverse_of: :passwordless_sessions
 
@@ -20,9 +18,16 @@ module Passwordless
 
     before_validation :set_defaults
 
-    scope :valid, lambda {
+    scope :available, lambda {
       where("timeout_at > ?", Time.current)
     }
+
+    def self.valid
+      available
+    end
+    class << self
+      deprecate :valid, deprecator: SessionValidDeprecation
+    end
 
     def expired?
       expires_at <= Time.current
@@ -33,12 +38,16 @@ module Passwordless
     end
 
     def claim!
-      raise TokenAlreadyClaimedError if claimed?
+      raise Errors::TokenAlreadyClaimedError if claimed?
       touch(:claimed_at)
     end
 
     def claimed?
       !!claimed_at
+    end
+
+    def available?
+      !timed_out? && !expired?
     end
 
     private

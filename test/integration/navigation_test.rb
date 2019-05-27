@@ -32,8 +32,8 @@ class NavigationTest < ActionDispatch::IntegrationTest
     assert response.body.include?("If we found you in the system")
 
     # Expect session created for alice
-    session = Passwordless::Session.find_by! authenticatable: alice
-    assert_equal "Mosaic v.1", session.user_agent
+    user_session = Passwordless::Session.find_by! authenticatable: alice
+    assert_equal "Mosaic v.1", user_session.user_agent
 
     # Expect mail for alice
     assert_equal 1, ActionMailer::Base.deliveries.count
@@ -41,7 +41,7 @@ class NavigationTest < ActionDispatch::IntegrationTest
     assert_equal alice.email, email.to.first
 
     # Expect mail body to include session link
-    token_sign_in_path = "/users/sign_in/#{session.token}"
+    token_sign_in_path = "/users/sign_in/#{user_session.token}"
     assert email.body.to_s.include?(token_sign_in_path)
 
     # Follow link, Expect redirect to /secret path which has been unsuccessfully

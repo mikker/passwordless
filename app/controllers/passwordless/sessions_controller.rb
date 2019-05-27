@@ -5,9 +5,6 @@ require "bcrypt"
 module Passwordless
   # Controller for managing Passwordless sessions
   class SessionsController < ApplicationController
-    # Raise this exception when a session is expired.
-    class SessionTimedOutError < StandardError; end
-
     include ControllerHelpers
 
     # get '/sign_in'
@@ -46,26 +43,17 @@ module Passwordless
       # Make it "slow" on purpose to make brute-force attacks more of a hassle
       BCrypt::Password.create(params[:token])
 
-      session = find_session
+      destination =
+        Passwordless.redirect_back_after_sign_in &&
+        reset_passwordless_redirect_location!(User)
 
-      session.claim! if Passwordless.restrict_token_reuse
+      sign_in passwordless_session
 
-      raise SessionTimedOutError if session.timed_out?
-
-      sign_in session.authenticatable
-
-      redirect_enabled = Passwordless.redirect_back_after_sign_in
-      destination = reset_passwordless_redirect_location!(User)
-
-      if redirect_enabled && destination
-        redirect_to destination
-      else
-        redirect_to main_app.root_path
-      end
-    rescue Session::TokenAlreadyClaimedError
+      redirect_to destination || main_app.root_path
+    rescue Errors::TokenAlreadyClaimedError
       flash[:error] = I18n.t(".passwordless.sessions.create.token_claimed")
       redirect_to main_app.root_path
-    rescue SessionTimedOutError
+    rescue Errors::SessionTimedOutError
       flash[:error] = I18n.t(".passwordless.sessions.create.session_expired")
       redirect_to main_app.root_path
     end
@@ -108,8 +96,8 @@ module Passwordless
       end
     end
 
-    def find_session
-      Session.find_by!(
+    def passwordless_session
+      @passwordless_session ||= Session.find_by!(
         authenticatable_type: authenticatable_classname,
         token: params[:token]
       )

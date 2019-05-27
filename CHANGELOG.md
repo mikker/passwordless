@@ -2,9 +2,34 @@
 
 ## Unreleased
 
+### Breaking changes
+
+This version moves from storing the session information in the `cookies` to the `session`.
+Your users will therefore have to sign in again after upgrading.
+
+To provide a smoother experience, you can use the provided session upgrade helper like this:
+
+```ruby
+def current_user
+  @current_user ||=
+    authenticate_by_session(User) ||
+    upgrade_passwordless_cookie(User)
+end
+```
+
+### Deprecations
+
+- Deprecates `authenticate_by_cookie`, use `authenticate_by_session`.([#56](https://github.com/mikker/passwordless/pull/56))
+
+### Added
+
+- `restrict_token_reuse` disables session reuse ([#51](https://github.com/mikker/passwordless/pull/51))
+
 ### Changed
 
 - Optionally pass `request` to `after_session_save` ([#49](https://github.com/mikker/passwordless/pull/49))
+- Sign in via `Passwordless::Session` instead of authenticatable and store it in `session` instead of `cookies` ([#56](https://github.com/mikker/passwordless/pull/56))
+- `sign_in` helper now expects a `Passwordless::Session`.
 
 ## 0.7.0 (2019-03-06)
 
