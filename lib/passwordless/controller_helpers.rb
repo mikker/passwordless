@@ -5,8 +5,8 @@ module Passwordless
   module ControllerHelpers
     # Returns the {Passwordless::Session} (if set) from the session.
     # @return [Session, nil]
-    def current_passwordless_session(authenticatable_class)
-      @current_passwordless_session ||= Passwordless::Session.find_by(id: session[session_key(authenticatable_class)])
+    def find_passwordless_session_for(authenticatable_class)
+      Passwordless::Session.find_by(id: session[session_key(authenticatable_class)])
     end
 
     # Build a new Passwordless::Session from an _authenticatable_ record.
@@ -49,8 +49,8 @@ module Passwordless
     #   in cookies.encrypted or nil if nothing is found.
     # @see ModelHelpers#passwordless_with
     def authenticate_by_session(authenticatable_class)
-      return unless current_passwordless_session(authenticatable_class)&.available?
-      @current_authenticatable ||= current_passwordless_session(authenticatable_class).authenticatable
+      return unless find_passwordless_session_for(authenticatable_class)&.available?
+      find_passwordless_session_for(authenticatable_class).authenticatable
     end
 
     # Signs in user by assigning their id to the current session.
