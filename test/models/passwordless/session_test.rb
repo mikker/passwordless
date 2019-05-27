@@ -102,9 +102,21 @@ module Passwordless
     test "claim! - with claimed session" do
       claimed_session = create_session claimed_at: 1.hour.ago
 
-      assert_raises(Passwordless::Session::TokenAlreadyClaimedError) do
+      assert_raises(Passwordless::Errors::TokenAlreadyClaimedError) do
         claimed_session.claim!
       end
+    end
+
+    test "valid_session? - valid session" do
+      valid_session = create_session
+
+      assert_equal valid_session.valid_session?, true
+    end
+
+    test "valid_session? - invalid session" do
+      invalid_session = create_session timeout_at: 2.years.ago, expires_at: 2.years.ago
+
+      assert_equal invalid_session.valid_session?, false
     end
   end
 end

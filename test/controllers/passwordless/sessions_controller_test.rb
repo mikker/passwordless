@@ -12,6 +12,10 @@ module Passwordless
       )
     end
 
+    def session_key(authenticatable_class)
+      Passwordless::SessionsController.new.send(:session_key, authenticatable_class)
+    end
+
     test "requesting a magic link as an existing user" do
       User.create email: "a@a"
 
@@ -94,26 +98,26 @@ module Passwordless
 
     test "signing in via a token" do
       user = User.create email: "a@a"
-      session = create_session_for user
+      passwordless_session = create_session_for user
 
-      get "/users/sign_in/#{session.token}"
+      get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
 
       assert_equal 200, status
       assert_equal "/", path
-      assert_not_nil cookies[:user_id]
+      assert_not_nil session[session_key(user.class)]
     end
 
     test "signing in via a token as STI model" do
       admin = Admin.create email: "a@a"
-      session = create_session_for admin
+      passwordless_session = create_session_for admin
 
-      get "/users/sign_in/#{session.token}"
+      get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
 
       assert_equal 200, status
       assert_equal "/", path
-      assert_not_nil cookies[:user_id]
+      assert_not_nil session[session_key(admin.class)]
     end
 
     test "signing in and redirecting back" do
@@ -125,8 +129,8 @@ module Passwordless
       follow_redirect!
       assert_equal 200, status
 
-      session = create_session_for user
-      get "/users/sign_in/#{session.token}"
+      passwordless_session = create_session_for user
+      get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
 
       assert_equal 200, status
@@ -145,8 +149,8 @@ module Passwordless
       follow_redirect!
       assert_equal 200, status
 
-      session = create_session_for user
-      get "/users/sign_in/#{session.token}"
+      passwordless_session = create_session_for user
+      get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
 
       assert_equal "/", path
@@ -163,28 +167,28 @@ module Passwordless
     test "signing out" do
       user = User.create email: "a@a"
 
-      session = create_session_for user
-      get "/users/sign_in/#{session.token}"
-      assert_not_nil cookies[:user_id]
+      passwordless_session = create_session_for user
+      get "/users/sign_in/#{passwordless_session.token}"
+      assert_not_nil session[session_key(user.class)]
 
       get "/users/sign_out"
       follow_redirect!
 
       assert_equal 200, status
       assert_equal "/", path
-      assert cookies[:user_id].blank?
+      assert session[session_key(user.class)].blank?
     end
 
     test "trying to sign in with an timed out session" do
       user = User.create email: "a@a"
-      session = create_session_for user
-      session.update!(timeout_at: Time.current - 1.day)
+      passwordless_session = create_session_for user
+      passwordless_session.update!(timeout_at: Time.current - 1.day)
 
-      get "/users/sign_in/#{session.token}"
+      get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
 
       assert_match "Your session has expired", flash[:error]
-      assert_nil cookies[:user_id]
+      assert_nil session[session_key(user.class)]
       assert_equal 200, status
       assert_equal "/", path
     end
@@ -193,25 +197,39 @@ module Passwordless
       default = Passwordless.restrict_token_reuse
       Passwordless.restrict_token_reuse = true
       user = User.create email: "a@a"
-      session = create_session_for user
+      passwordless_session = create_session_for user
 
-      get "/users/sign_in/#{session.token}"
+      get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
-      assert_not_nil cookies[:user_id]
+      assert_not_nil session[session_key(user.class)]
 
       get "/users/sign_out"
       follow_redirect!
-      assert_equal true, session.reload.claimed?
+      assert_equal true, passwordless_session.reload.claimed?
 
-      get "/users/sign_in/#{session.token}"
+      get "/users/sign_in/#{passwordless_session.token}"
 
       assert_match "This link has already been used", flash[:error]
-      assert_equal cookies[:user_id], ""
+      assert_nil session[session_key(user.class)]
       follow_redirect!
       assert_equal 200, status
       assert_equal "/", path
 
       Passwordless.restrict_token_reuse = default
+    end
+
+    test "signing out removes cookies" do
+      user = User.create email: "a@a"
+
+      cookies[:user_id] = user.id
+      assert_not_nil cookies[:user_id]
+
+      get "/users/sign_out"
+      follow_redirect!
+
+      assert_equal 200, status
+      assert_equal "/", path
+      assert cookies[:user_id].blank?
     end
   end
 end
