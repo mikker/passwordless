@@ -44,11 +44,11 @@ module Passwordless
     def upgrade_passwordless_cookie(authenticatable_class)
       key = cookie_name(authenticatable_class)
 
-      return unless authenticatable_id = cookies.encrypted[key]
+      return unless (authenticatable_id = cookies.encrypted[key])
       cookies.encrypted.permanent[key] = {value: nil}
       cookies.delete(key)
 
-      return unless record = authenticatable_class.find_by(id: authenticatable_id)
+      return unless (record = authenticatable_class.find_by(id: authenticatable_id))
       new_session = build_passwordless_session(record).tap { |s| s.save! }
 
       sign_in new_session

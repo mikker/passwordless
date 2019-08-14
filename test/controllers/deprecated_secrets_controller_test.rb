@@ -22,12 +22,12 @@ class DeprecatedSecretsControllerTest < ActionDispatch::IntegrationTest
     user = User.create(email: "foo@example.com")
     passwordless_session = create_session_for(user)
     login(passwordless_session)
-    refute cookies['user_id'].blank?
+    refute cookies["user_id"].blank?
 
-    get "/deprecated_secret", headers: { 'User-Agent' => 'Thing' }
+    get "/deprecated_secret", headers: {"User-Agent" => "Thing"}
     assert_equal 200, status
 
     # Session has been upgraded
-    assert cookies['user_id'].blank?
+    assert cookies["user_id"].blank?
   end
 end
