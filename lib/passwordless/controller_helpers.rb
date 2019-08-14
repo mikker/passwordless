@@ -132,6 +132,10 @@ module Passwordless
       :"passwordless_session_id--#{authenticatable_class_parameterized(authenticatable_class)}"
     end
 
+    def redirect_session_key(authenticatable_class)
+      :"passwordless_prev_location--#{authenticatable_class_parameterized(authenticatable_class)}"
+    end
+
     private
 
     def authenticatable_class_parameterized(authenticatable_class)
@@ -140,10 +144,6 @@ module Passwordless
       end
 
       authenticatable_class.base_class.to_s.parameterize
-    end
-
-    def redirect_session_key(authenticatable_class)
-      :"passwordless_prev_location--#{authenticatable_class_parameterized(authenticatable_class)}"
     end
 
     # Deprecated

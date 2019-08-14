@@ -135,6 +135,7 @@ module Passwordless
 
       assert_equal 200, status
       assert_equal "/secret", path
+      assert_nil session[Helpers.redirect_session_key(User)]
     end
 
     test "disabling redirecting back after sign in" do

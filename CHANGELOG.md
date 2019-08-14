@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Fixes an issue with using a resource class not named `User` ([#58](https://github.com/mikker/passwordless/pull/58))
+
 ## 0.8.0 (2019-07-30)
 
 ### Breaking changes
