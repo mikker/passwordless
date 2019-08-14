@@ -45,7 +45,7 @@ module Passwordless
 
       destination =
         Passwordless.redirect_back_after_sign_in &&
-        reset_passwordless_redirect_location!(User)
+        reset_passwordless_redirect_location!(authenticatable_class)
 
       sign_in passwordless_session
 
