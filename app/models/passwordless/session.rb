@@ -19,7 +19,7 @@ module Passwordless
     before_validation :set_defaults
 
     scope :available, lambda {
-      where("timeout_at > ?", Time.current)
+      where("expires_at > ?", Time.current)
     }
 
     def self.valid
@@ -47,7 +47,7 @@ module Passwordless
     end
 
     def available?
-      !timed_out? && !expired?
+      !expired?
     end
 
     private

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Fixes session availability wrongly determined by _timeout_ not _expiry_ ([#61](https://github.com/mikker/passwordless/pull/61))
+
 ## 0.8.1 (2019-08-14)
 
 ### Fixed

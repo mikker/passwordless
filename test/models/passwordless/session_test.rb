@@ -16,7 +16,7 @@ module Passwordless
 
     test "scope: available" do
       available = create_session
-      _timed_out = create_session timeout_at: 1.hour.ago
+      _timed_out = create_session expires_at: 1.hour.ago
 
       assert_equal [available], Session.available.all
     end
@@ -114,7 +114,7 @@ module Passwordless
     end
 
     test "available? - when unavailable" do
-      unavailable_session = create_session timeout_at: 2.years.ago, expires_at: 2.years.ago
+      unavailable_session = create_session expires_at: 2.years.ago
 
       refute unavailable_session.available?
     end
