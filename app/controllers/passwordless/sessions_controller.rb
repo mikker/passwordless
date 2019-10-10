@@ -55,7 +55,7 @@ module Passwordless
       redirect_to main_app.root_path
     rescue Errors::SessionTimedOutError
       flash[:error] = I18n.t(".passwordless.sessions.create.session_expired")
-      redirect_to main_app.root_path
+      redirect_to Passwordless.default_redirect_path
     end
 
     # match '/sign_out', via: %i[get delete].
