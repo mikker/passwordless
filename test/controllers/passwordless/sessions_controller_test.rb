@@ -181,6 +181,7 @@ module Passwordless
     end
 
     test "trying to sign in with an timed out session" do
+      default_redirect_path = Passwordless.default_redirect_path
       user = User.create email: "a@a"
       passwordless_session = create_session_for user
       passwordless_session.update!(timeout_at: Time.current - 1.day)
@@ -191,7 +192,7 @@ module Passwordless
       assert_match "Your session has expired", flash[:error]
       assert_nil session[Helpers.session_key(user.class)]
       assert_equal 200, status
-      assert_equal "/", path
+      assert_equal default_redirect_path, path
     end
 
     test "trying to use a claimed token" do
