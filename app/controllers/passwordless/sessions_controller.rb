@@ -44,13 +44,13 @@ module Passwordless
       BCrypt::Password.create(params[:token])
       sign_in passwordless_session
 
-      redirect_to passwordless_redirect_path || Passwordless.default_redirect_path
+      redirect_to passwordless_redirect_path || passwordless_default_redirect_path
     rescue Errors::TokenAlreadyClaimedError
       flash[:error] = I18n.t(".passwordless.sessions.create.token_claimed")
-      redirect_to Passwordless.default_redirect_path
+      redirect_to passwordless_default_redirect_path
     rescue Errors::SessionTimedOutError
       flash[:error] = I18n.t(".passwordless.sessions.create.session_expired")
-      redirect_to Passwordless.default_redirect_path
+      redirect_to passwordless_default_redirect_path
     end
 
     # match '/sign_out', via: %i[get delete].
@@ -58,10 +58,14 @@ module Passwordless
     # @see ControllerHelpers#sign_out
     def destroy
       sign_out authenticatable_class
-      redirect_to Passwordless.default_redirect_path
+      redirect_to passwordless_default_redirect_path
     end
 
     protected
+
+    def passwordless_default_redirect_path
+      Passwordless.default_redirect_path
+    end
 
     def passwordless_redirect_path
       return nil unless Passwordless.redirect_back_after_sign_in
