@@ -16,7 +16,7 @@ class NavigationTest < ActionDispatch::IntegrationTest
     assert_equal "Not worthy!", flash["error"]
     follow_redirect!
     assert_equal 200, status
-    assert_equal "/", path
+    assert_equal Passwordless.default_redirect_path, path
 
     # Load login form
     get "/users/sign_in"

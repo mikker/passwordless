@@ -104,7 +104,7 @@ module Passwordless
       follow_redirect!
 
       assert_equal 200, status
-      assert_equal "/", path
+      assert_equal Passwordless.default_redirect_path, path
       assert_not_nil session[Helpers.session_key(user.class)]
     end
 
@@ -116,7 +116,7 @@ module Passwordless
       follow_redirect!
 
       assert_equal 200, status
-      assert_equal "/", path
+      assert_equal Passwordless.default_redirect_path, path
       assert_not_nil session[Helpers.session_key(admin.class)]
     end
 
@@ -138,6 +138,24 @@ module Passwordless
       assert_nil session[Helpers.redirect_session_key(User)]
     end
 
+    test "signing in and redirecting via query parameter" do
+      user = User.create! email: "a@a"
+
+      get "/secret"
+      assert_equal 302, status
+
+      follow_redirect!
+      assert_equal 200, status
+
+      passwordless_session = create_session_for user
+      get "/users/sign_in/#{passwordless_session.token}?url=/secret-alt"
+      follow_redirect!
+
+      assert_equal 200, status
+      assert_equal "/secret-alt", path
+      assert_nil session[Helpers.redirect_session_key(User)]
+    end
+
     test "disabling redirecting back after sign in" do
       default = Passwordless.redirect_back_after_sign_in
       Passwordless.redirect_back_after_sign_in = false
@@ -154,7 +172,7 @@ module Passwordless
       get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
 
-      assert_equal "/", path
+      assert_equal Passwordless.default_redirect_path, path
 
       Passwordless.redirect_back_after_sign_in = default
     end
@@ -176,7 +194,7 @@ module Passwordless
       follow_redirect!
 
       assert_equal 200, status
-      assert_equal "/", path
+      assert_equal Passwordless.default_redirect_path, path
       assert session[Helpers.session_key(user.class)].blank?
     end
 
@@ -191,7 +209,7 @@ module Passwordless
       assert_match "Your session has expired", flash[:error]
       assert_nil session[Helpers.session_key(user.class)]
       assert_equal 200, status
-      assert_equal "/", path
+      assert_equal Passwordless.default_redirect_path, path
     end
 
     test "trying to use a claimed token" do
@@ -214,7 +232,7 @@ module Passwordless
       assert_nil session[Helpers.session_key(user.class)]
       follow_redirect!
       assert_equal 200, status
-      assert_equal "/", path
+      assert_equal Passwordless.default_redirect_path, path
 
       Passwordless.restrict_token_reuse = default
     end
@@ -229,7 +247,7 @@ module Passwordless
       follow_redirect!
 
       assert_equal 200, status
-      assert_equal "/", path
+      assert_equal Passwordless.default_redirect_path, path
       assert cookies[:user_id].blank?
     end
   end
