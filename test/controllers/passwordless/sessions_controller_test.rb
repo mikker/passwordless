@@ -104,7 +104,7 @@ module Passwordless
       follow_redirect!
 
       assert_equal 200, status
-      assert_equal Passwordless.default_redirect_path, path
+      assert_equal Passwordless.success_redirect_path, path
       assert_not_nil session[Helpers.session_key(user.class)]
     end
 
@@ -116,7 +116,7 @@ module Passwordless
       follow_redirect!
 
       assert_equal 200, status
-      assert_equal Passwordless.default_redirect_path, path
+      assert_equal Passwordless.success_redirect_path, path
       assert_not_nil session[Helpers.session_key(admin.class)]
     end
 
@@ -172,7 +172,7 @@ module Passwordless
       get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
 
-      assert_equal Passwordless.default_redirect_path, path
+      assert_equal Passwordless.success_redirect_path, path
 
       Passwordless.redirect_back_after_sign_in = default
     end
@@ -194,7 +194,7 @@ module Passwordless
       follow_redirect!
 
       assert_equal 200, status
-      assert_equal Passwordless.default_redirect_path, path
+      assert_equal Passwordless.sign_out_redirect_path, path
       assert session[Helpers.session_key(user.class)].blank?
     end
 
@@ -209,7 +209,7 @@ module Passwordless
       assert_match "Your session has expired", flash[:error]
       assert_nil session[Helpers.session_key(user.class)]
       assert_equal 200, status
-      assert_equal Passwordless.default_redirect_path, path
+      assert_equal Passwordless.failure_redirect_path, path
     end
 
     test "trying to use a claimed token" do
@@ -232,7 +232,7 @@ module Passwordless
       assert_nil session[Helpers.session_key(user.class)]
       follow_redirect!
       assert_equal 200, status
-      assert_equal Passwordless.default_redirect_path, path
+      assert_equal Passwordless.failure_redirect_path, path
 
       Passwordless.restrict_token_reuse = default
     end
@@ -247,7 +247,7 @@ module Passwordless
       follow_redirect!
 
       assert_equal 200, status
-      assert_equal Passwordless.default_redirect_path, path
+      assert_equal Passwordless.sign_out_redirect_path, path
       assert cookies[:user_id].blank?
     end
   end

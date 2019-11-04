@@ -72,7 +72,7 @@ module Passwordless
     end
 
     def passwordless_success_redirect_path
-      return nil unless Passwordless.redirect_back_after_sign_in
+      return Passwordless.success_redirect_path unless Passwordless.redirect_back_after_sign_in
 
       redirect_url = reset_passwordless_redirect_location!(authenticatable_class)
       params[:url] || redirect_url || Passwordless.success_redirect_path
