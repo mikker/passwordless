@@ -42,20 +42,15 @@ module Passwordless
     def show
       # Make it "slow" on purpose to make brute-force attacks more of a hassle
       BCrypt::Password.create(params[:token])
-
-      destination =
-        Passwordless.redirect_back_after_sign_in &&
-        reset_passwordless_redirect_location!(authenticatable_class)
-
       sign_in passwordless_session
 
-      redirect_to destination || main_app.root_path
+      redirect_to passwordless_redirect_path || Passwordless.default_redirect_path
     rescue Errors::TokenAlreadyClaimedError
       flash[:error] = I18n.t(".passwordless.sessions.create.token_claimed")
-      redirect_to main_app.root_path
+      redirect_to Passwordless.default_redirect_path
     rescue Errors::SessionTimedOutError
       flash[:error] = I18n.t(".passwordless.sessions.create.session_expired")
-      redirect_to main_app.root_path
+      redirect_to Passwordless.default_redirect_path
     end
 
     # match '/sign_out', via: %i[get delete].
@@ -63,7 +58,15 @@ module Passwordless
     # @see ControllerHelpers#sign_out
     def destroy
       sign_out authenticatable_class
-      redirect_to main_app.root_path
+      redirect_to Passwordless.default_redirect_path
+    end
+
+    protected
+
+    def passwordless_redirect_path
+      return nil unless Passwordless.redirect_back_after_sign_in
+
+      reset_passwordless_redirect_location!(authenticatable_class)
     end
 
     private
