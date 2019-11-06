@@ -71,22 +71,18 @@ module Passwordless
       Passwordless.failure_redirect_path
     end
 
+    def passwordless_query_redirect_path
+      query_redirect_uri = URI(params[:destination_path])
+      query_redirect_uri.to_s if query_redirect_uri.host.nil? || query_redirect_uri.host == URI(request.url).host
+    rescue URI::InvalidURIError, ArgumentError
+      nil
+    end
+
     def passwordless_success_redirect_path
       return Passwordless.success_redirect_path unless Passwordless.redirect_back_after_sign_in
 
-      begin
-        uri = URI.parse(params[:destination_path])
-        query_redirect_path = StringIO.new
-        query_redirect_path << uri.path
-        query_redirect_path << '?' << uri.query if uri.query.present?
-        query_redirect_path << '#' << uri.fragment if uri.fragment.present?
-        query_redirect_path = query_redirect_path.string
-      rescue URI::InvalidURIError
-        query_redirect_path = nil
-      end
-
       session_redirect_url = reset_passwordless_redirect_location!(authenticatable_class)
-      query_redirect_path || session_redirect_url || Passwordless.success_redirect_path
+      passwordless_query_redirect_path || session_redirect_url || Passwordless.success_redirect_path
     end
 
     private

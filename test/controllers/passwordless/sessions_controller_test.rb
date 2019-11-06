@@ -139,6 +139,7 @@ module Passwordless
     end
 
     test "signing in and redirecting via query parameter" do
+      Passwordless.restrict_token_reuse = false
       user = User.create! email: "a@a"
 
       get "/secret"
@@ -147,33 +148,32 @@ module Passwordless
       follow_redirect!
       assert_equal 200, status
 
+      # Test without domain
       passwordless_session = create_session_for user
       get "/users/sign_in/#{passwordless_session.token}?destination_path=/secret-alt"
       follow_redirect!
 
       assert_equal 200, status
       assert_equal "/secret-alt", path
-      assert_nil session[Helpers.redirect_session_key(User)]
-    end
 
-    test "signing in and redirecting via insecure query parameter" do
-      user = User.create! email: "a@a"
-
-      get "/secret"
-      assert_equal 302, status
-
-      follow_redirect!
-      assert_equal 200, status
-
+      # Text complete url
       passwordless_session = create_session_for user
-      redirect_path = CGI.escape("http://google.com/secret-alt?query=param")
-      get "/users/sign_in/#{passwordless_session.token}?destination_path=#{redirect_path}"
+      get "/users/sign_in/#{passwordless_session.token}?destination_path=http://www.example.com/secret-alt"
       follow_redirect!
 
       assert_equal 200, status
       assert_equal "/secret-alt", path
-      assert_equal "param", controller.params[:query]
-      assert_nil session[Helpers.redirect_session_key(User)]
+    end
+
+    test "signing in and redirecting via insecure query parameter" do
+      user = User.create! email: "a@a"
+      passwordless_session = create_session_for user
+      get "/users/sign_in/#{passwordless_session.token}?destination_path=http://google.com/secret-alt"
+      follow_redirect!
+
+      assert_equal 200, status
+      assert_equal Passwordless.success_redirect_path, path
+
     end
 
     test "disabling redirecting back after sign in" do
