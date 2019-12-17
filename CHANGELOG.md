@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Customizable redirects ([#69](https://github.com/mikker/passwordless/pull/69))
+
 ## 0.8.2 (2019-08-30)
 
 ### Fixed
