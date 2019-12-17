@@ -14,17 +14,19 @@ Add authentication to your Rails app without all the icky-ness of passwords.
 
 * [Installation](#installation)
 * [Usage](#usage)
-     * [Getting the current user, restricting access, the usual](#getting-the-current-user-restricting-access-the-usual)
-     * [Providing your own templates](#providing-your-own-templates)
-     * [Claming tokens](#claiming-tokens)
-     * [Overrides](#overrides)
-     * [Registering new users](#registering-new-users)
-     * [Generating tokens](#generating-tokens)
-     * [Token and Session Expiry](#token-and-session-expiry)
-     * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
-     * [URLs and links](#urls-and-links)
-     * [Customize the way to send magic link](#customize-the-way-to-send-magic-link)
-     * [E-mail security](#e-mail-security)
+  * [Getting the current user, restricting access, the usual](#getting-the-current-user-restricting-access-the-usual)
+  * [Providing your own templates](#providing-your-own-templates)
+  * [Registering new users](#registering-new-users)
+  * [URLs and links](#urls-and-links)
+  * [Customize the way to send magic link](#customize-the-way-to-send-magic-link)
+  * [Generate your own magic links](#generate-your-own-magic-links)
+  * [Overrides](#overrides)
+* [Configuration](#configuration)
+  * [Customising token generation](#generating-tokens)
+  * [Token and Session Expiry](#token-and-session-expiry)
+  * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
+  * [Claiming tokens](#claiming-tokens)
+* [E-mail security](#e-mail-security)
 * [License](#license)
 
 ## Installation
@@ -90,7 +92,7 @@ class ApplicationController < ActionController::Base
 
   def require_user!
     return if current_user
-    redirect_to root_path, flash: {error: 'You are not worthy!'}
+    redirect_to root_path, flash: { error: 'You are not worthy!' }
   end
 end
 ```
@@ -136,7 +138,7 @@ class UsersController < ApplicationController
 
     if @user.save
       sign_in @user # <-- This!
-      redirect_to @user, flash: {notice: 'Welcome!'}
+      redirect_to @user, flash: { notice: 'Welcome!' }
     else
       render :new
     end
@@ -146,7 +148,97 @@ class UsersController < ApplicationController
 end
 ```
 
-### Generating tokens
+### URLs and links
+
+By default, Passwordless uses the resource name given to `passwordless_for` to generate its routes and helpers.
+
+```ruby
+passwordless_for :users
+  # <%= users.sign_in_path %> # => /users/sign_in
+
+passwordless_for :users, at: '/', as: :auth
+  # <%= auth.sign_in_path %> # => /sign_in
+```
+
+Also be sure to [specify ActionMailer's `default_url_options.host`](http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views).
+
+### Customize the way to send magic link
+
+By default, magic link will send by email. You can customize this method. For example, you can send magic link via SMS.
+
+config/initializers/passwordless.rb
+
+```
+Passwordless.after_session_save = lambda do |session, request|
+  # Default behavior is
+  # Passwordless::Mailer.magic_link(session).deliver_now
+
+  # You can change behavior to do something with session model. For example,
+  # session.authenticatable.send_sms
+end
+```
+
+You can access user model through authenticatable.
+
+### Generate your own magic links
+
+Currently there is not an officially supported way to generate your own magic links to send in your own mailers.
+
+However, you can accomplish this with the following snippet of code.
+
+```
+session = Passwordless::Session.new({
+  authenticatable: @manager,
+  user_agent: 'Command Line',
+  remote_addr: 'unknown',
+})
+session.save!
+@magic_link = send(Passwordless.mounted_as).token_sign_in_url(session.token)
+```
+
+You can further customize this URL by specifying the destination path to be redirected to after the user has logged in. You can do this by adding the `destination_path` query parameter to the end of the URL. For example
+```
+@magic_link = "#{@magic_link}?destination_path=/your-custom-path"
+```
+
+### Overrides
+
+By default `passwordless` uses the `passwordless_with` column to _case insensitively_ fetch the resource.
+
+You can override this and provide your own customer fetcher by defining a class method `fetch_resource_for_passwordless` in your passwordless model. The method will be called with the downcased email and should return an `ActiveRecord` instance of the model.
+
+Example time:
+
+Let's say we would like to fetch the record and if it doesn't exist, create automatically.
+
+```ruby
+class User < ApplicationRecord
+  def self.fetch_resource_for_passwordless(email)
+    find_or_create_by(email: email)
+  end
+end
+```
+
+## Configuration
+
+The following configuration parameters are supported. It is recommended to set these in `initializers/passwordless.rb`. The default values are shown below.
+
+```ruby
+Passwordless.default_from_address = "CHANGE_ME@example.com"
+Passwordless.token_generator = UrlSafeBase64Generator.new # Used to generate magic link tokens.
+Passwordless.restrict_token_reuse = false # By default a magic link token can be used multiple times.
+Passwordless.redirect_back_after_sign_in = true # When enabled the user will be redirected to their previous page, or a page specified by the `destination_path` query parameter, if available.
+
+Passwordless.expires_at = lambda { 1.year.from_now } # How long until a magic link expires.
+Passwordless.timeout_at = lambda { 1.hour.from_now } # How long until a passwordless session expires.
+
+# Default redirection paths
+Passwordless.success_redirect_path = '/' # When a user succeeds in logging in. 
+Passwordless.failure_redirect_path = '/' # When a a login is failed for any reason.
+Passwordless.sign_out_redirect_path = '/' # When a user logs out.
+```
+
+### Customizing token generation
 
 By default Passwordless generates tokens using `SecureRandom.urlsafe_base64` but you can change that by setting `Passwordless.token_generator` to something else that responds to `call(session)` eg.:
 
@@ -204,39 +296,6 @@ end
 
 This can be turned off with `Passwordless.redirect_back_after_sign_in = false` but if you just don't save the previous destination, you'll be fine.
 
-### URLs and links
-
-By default, Passwordless uses the resource name given to `passwordless_for` to generate its routes and helpers.
-
-```ruby
-passwordless_for :users
-  # <%= users.sign_in_path %> # => /users/sign_in
-
-passwordless_for :users, at: '/', as: :auth
-  # <%= auth.sign_in_path %> # => /sign_in
-```
-
-Also be sure to [specify ActionMailer's `default_url_options.host`](http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views).
-
-
-### Customize the way to send magic link
-
-By default, magic link will send by email. You can customize this method. For example, you can send magic link via SMS.
-
-config/initializers/passwordless.rb
-
-```
-Passwordless.after_session_save = lambda do |session, request|
-  # Default behavior is
-  # Passwordless::Mailer.magic_link(session).deliver_now
-
-  # You can change behavior to do something with session model. For example,
-  # session.authenticatable.send_sms
-end
-```
-
-You can access user model through authenticatable.
-
 ### Claiming tokens
 
 Opt-in for marking tokens as `claimed` so they can only be used once.
@@ -269,25 +328,7 @@ end
 ```
 </details>
 
-### Overrides
-
-By default `passwordless` uses the `passwordless_with` column to _case insensitively_ fetch the resource.
-
-You can override this and provide your own customer fetcher by defining a class method `fetch_resource_for_passwordless` in your passwordless model. The method will be called with the downcased email and should return an `ActiveRecord` instance of the model.
-
-Example time:
-
-Let's say we would like to fetch the record and if it doesn't exist, create automatically.
-
-```ruby
-class User < ApplicationRecord
-  def self.fetch_resource_for_passwordless(email)
-    find_or_create_by(email: email)
-  end
-end
-```
-
-### E-mail security
+## E-mail security
 
 There's no reason that this approach should be less secure than the usual username/password combo. In fact this is most often a more secure option, as users don't get to choose the weak passwords they still use. In a way this is just the same as having each user go through "Forgot password" on every login.
 

@@ -15,6 +15,9 @@ module Passwordless
 
   mattr_accessor(:expires_at) { lambda { 1.year.from_now } }
   mattr_accessor(:timeout_at) { lambda { 1.hour.from_now } }
+  mattr_accessor(:success_redirect_path) { '/' }
+  mattr_accessor(:failure_redirect_path) { '/' }
+  mattr_accessor(:sign_out_redirect_path) { '/' }
 
   mattr_accessor(:after_session_save) do
     lambda { |session, _request| Mailer.magic_link(session).deliver_now }
