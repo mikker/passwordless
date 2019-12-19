@@ -173,7 +173,6 @@ module Passwordless
 
       assert_equal 200, status
       assert_equal Passwordless.success_redirect_path, path
-
     end
 
     test "disabling redirecting back after sign in" do
