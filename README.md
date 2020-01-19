@@ -221,11 +221,13 @@ end
 
 ## Configuration
 
-The following configuration parameters are supported. It is recommended to set these in `initializers/passwordless.rb`. The default values are shown below.
+The following configuration parameters are supported. You can override these for example in `initializers/passwordless.rb`.
+
+The default values are shown below. It's recommended to only include the ones that you specifically want to override.
 
 ```ruby
 Passwordless.default_from_address = "CHANGE_ME@example.com"
-Passwordless.token_generator = UrlSafeBase64Generator.new # Used to generate magic link tokens.
+Passwordless.token_generator = Passwordless::UrlSafeBase64Generator.new # Used to generate magic link tokens.
 Passwordless.restrict_token_reuse = false # By default a magic link token can be used multiple times.
 Passwordless.redirect_back_after_sign_in = true # When enabled the user will be redirected to their previous page, or a page specified by the `destination_path` query parameter, if available.
 
