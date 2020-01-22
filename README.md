@@ -134,7 +134,7 @@ class UsersController < ApplicationController
   # (unless you already have it in your ApplicationController)
 
   def create
-    @user = User.new user_params
+    @user = User.new(user_params)
 
     if @user.save
       sign_in @user # <-- This!
