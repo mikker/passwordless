@@ -125,9 +125,9 @@ app/views/passwordless/mailer/magic_link.text.erb
 Example on create.html.erb
 ```erb
 <% if @resource.present? %>
-  <p>Message</p>
+  <p>User found, check your inbox</p>
 <% else %>
-  <p>Other Message</p>
+  <p>No user found with the provided email address</p>
 <% end %>
 ```
 
