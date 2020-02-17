@@ -122,7 +122,7 @@ app/views/passwordless/sessions/create.html.erb
 app/views/passwordless/mailer/magic_link.text.erb
 ```
 
-Example on create.html.erb
+If you'd like to let the user know whether or not a record was found, `@resource` is provided to the view. You may override `app/views/passwordless/session/create.html.erb` for example like so:
 ```erb
 <% if @resource.present? %>
   <p>User found, check your inbox</p>
