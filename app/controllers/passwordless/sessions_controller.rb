@@ -20,7 +20,8 @@ module Passwordless
     #   renders sessions/create.html.erb.
     # @see Mailer#magic_link Mailer#magic_link
     def create
-      session = build_passwordless_session(find_authenticatable)
+      @resource = find_authenticatable
+      session = build_passwordless_session(@resource)
 
       if session.save
         if Passwordless.after_session_save.arity == 2

@@ -122,6 +122,15 @@ app/views/passwordless/sessions/create.html.erb
 app/views/passwordless/mailer/magic_link.text.erb
 ```
 
+If you'd like to let the user know whether or not a record was found, `@resource` is provided to the view. You may override `app/views/passwordless/session/create.html.erb` for example like so:
+```erb
+<% if @resource.present? %>
+  <p>User found, check your inbox</p>
+<% else %>
+  <p>No user found with the provided email address</p>
+<% end %>
+```
+
 See [the bundled views](https://github.com/mikker/passwordless/tree/master/app/views/passwordless).
 
 ### Registering new users
@@ -235,7 +244,7 @@ Passwordless.expires_at = lambda { 1.year.from_now } # How long until a magic li
 Passwordless.timeout_at = lambda { 1.hour.from_now } # How long until a passwordless session expires.
 
 # Default redirection paths
-Passwordless.success_redirect_path = '/' # When a user succeeds in logging in. 
+Passwordless.success_redirect_path = '/' # When a user succeeds in logging in.
 Passwordless.failure_redirect_path = '/' # When a a login is failed for any reason.
 Passwordless.sign_out_redirect_path = '/' # When a user logs out.
 ```
