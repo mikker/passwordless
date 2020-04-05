@@ -46,12 +46,17 @@ module Passwordless
       refute_nil session.expires_at
       refute_nil session.timeout_at
       refute_nil session.token
+      refute_nil session.token_digest
     end
 
     test "with a custom token generator" do
       class AlwaysMeGenerator
-        def call(_session)
-          "ALWAYS ME"
+        def digest(_value)
+          "DIGESTED ME"
+        end
+
+        def generate(_klass)
+          ["ALWAYS ME", "DIGESTED ME"]
         end
       end
 
@@ -62,6 +67,7 @@ module Passwordless
       session.validate
 
       assert_equal "ALWAYS ME", session.token
+      assert_equal "DIGESTED ME", session.token_digest
 
       Passwordless.token_generator = old_generator
     end

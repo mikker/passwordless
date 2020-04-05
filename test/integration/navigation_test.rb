@@ -40,13 +40,13 @@ class NavigationTest < ActionDispatch::IntegrationTest
     email = ActionMailer::Base.deliveries.first
     assert_equal alice.email, email.to.first
 
-    # Expect mail body to include session link
-    token_sign_in_path = "/users/sign_in/#{user_session.token}"
-    assert email.body.to_s.include?(token_sign_in_path)
+    # Expect token in email to hash to the one in the session
+    token = email.body.to_s[/\/users\/sign_in\/(.+)/, 1]
+    assert_equal Passwordless.token_generator.digest(token)
 
     # Follow link, Expect redirect to /secret path which has been unsuccessfully
     # accessed in the beginning.
-    get token_sign_in_path
+    get "/users/sign_in/#{token}"
     assert_equal 302, status
     follow_redirect!
 
