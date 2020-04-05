@@ -42,7 +42,7 @@ class NavigationTest < ActionDispatch::IntegrationTest
 
     # Expect token in email to hash to the one in the session
     token = email.body.to_s[/\/users\/sign_in\/(.+)/, 1]
-    assert_equal Passwordless.token_generator.digest(token)
+    assert_equal Passwordless.token_generator.digest(token), user_session.token_digest
 
     # Follow link, Expect redirect to /secret path which has been unsuccessfully
     # accessed in the beginning.
