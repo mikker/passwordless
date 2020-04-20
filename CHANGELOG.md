@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Option to customize mailer inheritance with a new configuration `parent_mailer` ([#82](https://github.com/mikker/passwordless/pull/82))
+
 ## 0.9.0 (2019-12-19)
 
 ### Added

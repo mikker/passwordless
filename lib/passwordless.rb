@@ -7,6 +7,7 @@ require "passwordless/url_safe_base_64_generator"
 
 # The main Passwordless module
 module Passwordless
+  mattr_accessor(:parent_mailer) { "ActionMailer::Base" }
   mattr_accessor(:default_from_address) { "CHANGE_ME@example.com" }
   mattr_accessor(:token_generator) { UrlSafeBase64Generator.new }
   mattr_accessor(:restrict_token_reuse) { false }

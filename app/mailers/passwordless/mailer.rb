@@ -2,7 +2,7 @@
 
 module Passwordless
   # The mailer responsible for sending Passwordless' mails.
-  class Mailer < ActionMailer::Base
+  class Mailer < Passwordless.parent_mailer.constantize
     default from: Passwordless.default_from_address
 
     # Sends a magic link (secret token) email.
@@ -11,7 +11,7 @@ module Passwordless
       @session = session
 
       @magic_link = send(Passwordless.mounted_as)
-        .token_sign_in_url(session.token)
+                      .token_sign_in_url(session.token)
 
       email_field = @session.authenticatable.class.passwordless_email_field
       mail(
