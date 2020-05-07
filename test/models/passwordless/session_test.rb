@@ -49,14 +49,44 @@ module Passwordless
       refute_nil session.token_digest
     end
 
+    test "it generates a digest" do
+      session = Session.new
+      session.validate
+
+      assert_equal 64, session.token_digest.length
+      refute_equal session.token, session.token_digest
+    end
+
+    test "with a custom digest algorithm" do
+      old_digest_algorithm = Passwordless.digest_algorithm
+
+      Passwordless.digest_algorithm = "SHA1"
+
+      session = Session.new
+      session.validate
+
+      assert_equal 40, session.token_digest.length
+
+      Passwordless.digest_algorithm = old_digest_algorithm
+    end
+
+    test "with a custom digest secret" do
+      digest_a = Passwordless.digest("same_value")
+
+      old_digest_secret = Passwordless.digest_secret
+      Passwordless.digest_secret = lambda { "CUSTOM" }
+
+      digest_b = Passwordless.digest("same_value")
+
+      refute_equal digest_a, digest_b
+
+      Passwordless.digest_secret = old_digest_secret
+    end
+
     test "with a custom token generator" do
       class AlwaysMeGenerator
-        def digest(_value)
-          "DIGESTED ME"
-        end
-
-        def generate(_klass)
-          ["ALWAYS ME", "DIGESTED ME"]
+        def call(_value)
+          "ALWAYS ME"
         end
       end
 
@@ -67,7 +97,6 @@ module Passwordless
       session.validate
 
       assert_equal "ALWAYS ME", session.token
-      assert_equal "DIGESTED ME", session.token_digest
 
       Passwordless.token_generator = old_generator
     end

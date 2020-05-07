@@ -58,8 +58,12 @@ module Passwordless
       self.expires_at ||= Passwordless.expires_at.call
       self.timeout_at ||= Passwordless.timeout_at.call
 
-      if not self.token or not self.token_digest
-        self.token, self.token_digest = Passwordless.token_generator.generate(Session)
+      if !token || !token_digest
+        self.token, self.token_digest = loop {
+          token = Passwordless.token_generator.call(self)
+          token_digest = Passwordless.digest(token)
+          break [token, token_digest] unless Session.find_by(token_digest: token_digest)
+        }
       end
     end
   end
