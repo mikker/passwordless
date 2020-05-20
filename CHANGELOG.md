@@ -6,6 +6,10 @@
 
 - Option to customize mailer inheritance with a new configuration `parent_mailer` ([#82](https://github.com/mikker/passwordless/pull/82))
 
+### Fixed
+
+- Calls `strip` on passwordless field param
+
 ## 0.9.0 (2019-12-19)
 
 ### Added
