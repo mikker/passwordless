@@ -4,10 +4,13 @@ module Passwordless
   # The session responsible for holding the connection between the record
   # trying to log in and the unique tokens.
   class Session < ApplicationRecord
-    belongs_to :authenticatable,
-      polymorphic: true, inverse_of: :passwordless_sessions
+    belongs_to(
+      :authenticatable,
+      polymorphic: true,
+      inverse_of: :passwordless_sessions
+    )
 
-    validates \
+    validates(
       :authenticatable,
       :timeout_at,
       :expires_at,
@@ -15,16 +18,19 @@ module Passwordless
       :remote_addr,
       :token,
       presence: true
+    )
 
     before_validation :set_defaults
 
-    scope :available, lambda {
-      where("expires_at > ?", Time.current)
-    }
+    scope(
+      :available,
+      lambda { where("expires_at > ?", Time.current) }
+    )
 
     def self.valid
       available
     end
+
     class << self
       deprecate :valid, deprecator: SessionValidDeprecation
     end

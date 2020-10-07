@@ -16,30 +16,34 @@ module Passwordless
       extend Passwordless::ControllerHelpers
     end
 
-    test "requesting a magic link as an existing user" do
+    test("requesting a magic link as an existing user") do
       User.create email: "a@a"
 
       get "/users/sign_in"
       assert_equal 200, status
 
-      post "/users/sign_in",
+      post(
+        "/users/sign_in",
         params: {passwordless: {email: "A@a"}},
-        headers: {'User-Agent': "an actual monkey"}
+        headers: {:"User-Agent" => "an actual monkey"}
+      )
       assert_equal 200, status
 
       assert_equal 1, ActionMailer::Base.deliveries.size
     end
 
-    test "magic link will send by custom method" do
+    test("magic link will send by custom method") do
       old_proc = Passwordless.after_session_save
       called = false
-      Passwordless.after_session_save = ->(_) { called = true }
+      Passwordless.after_session_save = -> (_) { called = true }
 
       User.create email: "a@a"
 
-      post "/users/sign_in",
+      post(
+        "/users/sign_in",
         params: {passwordless: {email: "A@a"}},
-        headers: {'User-Agent': "an actual monkey"}
+        headers: {:"User-Agent" => "an actual monkey"}
+      )
       assert_equal 200, status
 
       assert_equal true, called
@@ -47,16 +51,18 @@ module Passwordless
       Passwordless.after_session_save = old_proc
     end
 
-    test "magic link will send by custom method (with request param)" do
+    test("magic link will send by custom method (with request param)") do
       old_proc = Passwordless.after_session_save
       called = false
-      Passwordless.after_session_save = ->(_, _) { called = true }
+      Passwordless.after_session_save = -> (_, _) { called = true }
 
       User.create email: "a@a"
 
-      post "/users/sign_in",
+      post(
+        "/users/sign_in",
         params: {passwordless: {email: "A@a"}},
-        headers: {'User-Agent': "an actual monkey"}
+        headers: {:"User-Agent" => "an actual monkey"}
+      )
       assert_equal 200, status
 
       assert_equal true, called
@@ -64,19 +70,21 @@ module Passwordless
       Passwordless.after_session_save = old_proc
     end
 
-    test "requesting a magic link as an unknown user" do
+    test("requesting a magic link as an unknown user") do
       get "/users/sign_in"
       assert_equal 200, status
 
-      post "/users/sign_in",
+      post(
+        "/users/sign_in",
         params: {passwordless: {email: "invalidemail"}},
-        headers: {'User-Agent': "an actual monkey"}
+        headers: {:"User-Agent" => "an actual monkey"}
+      )
       assert_equal 200, status
 
       assert_equal 0, ActionMailer::Base.deliveries.size
     end
 
-    test "requesting a magic link with overridden fetch method" do
+    test("requesting a magic link with overridden fetch method") do
       def User.fetch_resource_for_passwordless(email)
         User.find_or_create_by(email: email)
       end
@@ -84,9 +92,11 @@ module Passwordless
       get "/users/sign_in"
       assert_equal 200, status
 
-      post "/users/sign_in",
+      post(
+        "/users/sign_in",
         params: {passwordless: {email: "overriden_email@example"}},
-        headers: {'User-Agent': "an actual monkey"}
+        headers: {:"User-Agent" => "an actual monkey"}
+      )
       assert_equal 200, status
 
       assert_equal 1, ActionMailer::Base.deliveries.size
@@ -96,9 +106,9 @@ module Passwordless
       end
     end
 
-    test "signing in via a token" do
-      user = User.create email: "a@a"
-      passwordless_session = create_session_for user
+    test("signing in via a token") do
+      user = User.create(email: "a@a")
+      passwordless_session = create_session_for(user)
 
       get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
@@ -108,9 +118,9 @@ module Passwordless
       assert_not_nil session[Helpers.session_key(user.class)]
     end
 
-    test "signing in via a token as STI model" do
-      admin = Admin.create email: "a@a"
-      passwordless_session = create_session_for admin
+    test("signing in via a token as STI model") do
+      admin = Admin.create(email: "a@a")
+      passwordless_session = create_session_for(admin)
 
       get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
@@ -120,8 +130,8 @@ module Passwordless
       assert_not_nil session[Helpers.session_key(admin.class)]
     end
 
-    test "signing in and redirecting back" do
-      user = User.create! email: "a@a"
+    test("signing in and redirecting back") do
+      user = User.create!(email: "a@a")
 
       get "/secret"
       assert_equal 302, status
@@ -129,7 +139,7 @@ module Passwordless
       follow_redirect!
       assert_equal 200, status
 
-      passwordless_session = create_session_for user
+      passwordless_session = create_session_for(user)
       get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
 
@@ -138,9 +148,9 @@ module Passwordless
       assert_nil session[Helpers.redirect_session_key(User)]
     end
 
-    test "signing in and redirecting via query parameter" do
+    test("signing in and redirecting via query parameter") do
       Passwordless.restrict_token_reuse = false
-      user = User.create! email: "a@a"
+      user = User.create!(email: "a@a")
 
       get "/secret"
       assert_equal 302, status
@@ -149,7 +159,7 @@ module Passwordless
       assert_equal 200, status
 
       # Test without domain
-      passwordless_session = create_session_for user
+      passwordless_session = create_session_for(user)
       get "/users/sign_in/#{passwordless_session.token}?destination_path=/secret-alt"
       follow_redirect!
 
@@ -157,7 +167,7 @@ module Passwordless
       assert_equal "/secret-alt", path
 
       # Text complete url
-      passwordless_session = create_session_for user
+      passwordless_session = create_session_for(user)
       get "/users/sign_in/#{passwordless_session.token}?destination_path=http://www.example.com/secret-alt"
       follow_redirect!
 
@@ -165,9 +175,9 @@ module Passwordless
       assert_equal "/secret-alt", path
     end
 
-    test "signing in and redirecting via insecure query parameter" do
-      user = User.create! email: "a@a"
-      passwordless_session = create_session_for user
+    test("signing in and redirecting via insecure query parameter") do
+      user = User.create!(email: "a@a")
+      passwordless_session = create_session_for(user)
       get "/users/sign_in/#{passwordless_session.token}?destination_path=http://google.com/secret-alt"
       follow_redirect!
 
@@ -175,11 +185,11 @@ module Passwordless
       assert_equal Passwordless.success_redirect_path, path
     end
 
-    test "disabling redirecting back after sign in" do
+    test("disabling redirecting back after sign in") do
       default = Passwordless.redirect_back_after_sign_in
       Passwordless.redirect_back_after_sign_in = false
 
-      user = User.create! email: "a@a"
+      user = User.create!(email: "a@a")
 
       get "/secret"
       assert_equal 302, status
@@ -187,7 +197,7 @@ module Passwordless
       follow_redirect!
       assert_equal 200, status
 
-      passwordless_session = create_session_for user
+      passwordless_session = create_session_for(user)
       get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
 
@@ -196,16 +206,16 @@ module Passwordless
       Passwordless.redirect_back_after_sign_in = default
     end
 
-    test "trying to sign in with an unknown token" do
-      assert_raise ActiveRecord::RecordNotFound do
+    test("trying to sign in with an unknown token") do
+      assert_raise(ActiveRecord::RecordNotFound) do
         get "/users/sign_in/twin-hotdogs"
       end
     end
 
-    test "signing out" do
-      user = User.create email: "a@a"
+    test("signing out") do
+      user = User.create(email: "a@a")
 
-      passwordless_session = create_session_for user
+      passwordless_session = create_session_for(user)
       get "/users/sign_in/#{passwordless_session.token}"
       assert_not_nil session[Helpers.session_key(user.class)]
 
@@ -217,9 +227,9 @@ module Passwordless
       assert session[Helpers.session_key(user.class)].blank?
     end
 
-    test "trying to sign in with an timed out session" do
-      user = User.create email: "a@a"
-      passwordless_session = create_session_for user
+    test("trying to sign in with an timed out session") do
+      user = User.create(email: "a@a")
+      passwordless_session = create_session_for(user)
       passwordless_session.update!(timeout_at: Time.current - 1.day)
 
       get "/users/sign_in/#{passwordless_session.token}"
@@ -231,11 +241,11 @@ module Passwordless
       assert_equal "/", path
     end
 
-    test "trying to use a claimed token" do
+    test("trying to use a claimed token") do
       default = Passwordless.restrict_token_reuse
       Passwordless.restrict_token_reuse = true
-      user = User.create email: "a@a"
-      passwordless_session = create_session_for user
+      user = User.create(email: "a@a")
+      passwordless_session = create_session_for(user)
 
       get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
@@ -256,8 +266,8 @@ module Passwordless
       Passwordless.restrict_token_reuse = default
     end
 
-    test "signing out removes cookies" do
-      user = User.create email: "a@a"
+    test("signing out removes cookies") do
+      user = User.create(email: "a@a")
 
       cookies[:user_id] = user.id
       assert_not_nil cookies[:user_id]

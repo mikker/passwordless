@@ -5,7 +5,7 @@ require "test_helper"
 class NavigationTest < ActionDispatch::IntegrationTest
   fixtures :users
 
-  test "failed access, sign in and redirect to protected resource" do
+  test("failed access, sign in and redirect to protected resource") do
     alice = users(:alice)
 
     # Verify the user has no access to the /secret endpoint and
@@ -23,16 +23,19 @@ class NavigationTest < ActionDispatch::IntegrationTest
     assert_equal 200, status
 
     # Submit form
-    post "/users/sign_in",
+    post(
+      "/users/sign_in",
       params: {
-        passwordless: {email: alice.email},
+        passwordless: {email: alice.email}
       },
+
       headers: {"HTTP_USER_AGENT" => "Mosaic v.1"}
+    )
     assert_equal 200, status
     assert response.body.include?("If we found you in the system")
 
     # Expect session created for alice
-    user_session = Passwordless::Session.find_by! authenticatable: alice
+    user_session = Passwordless::Session.find_by!(authenticatable: alice)
     assert_equal "Mosaic v.1", user_session.user_agent
 
     # Expect mail for alice

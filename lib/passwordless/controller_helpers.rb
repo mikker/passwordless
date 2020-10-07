@@ -39,6 +39,7 @@ module Passwordless
 
       authenticate_by_session(authenticatable_class)
     end
+
     deprecate :authenticate_by_cookie, deprecator: CookieDeprecation
 
     def upgrade_passwordless_cookie(authenticatable_class)
@@ -51,7 +52,7 @@ module Passwordless
       return unless (record = authenticatable_class.find_by(id: authenticatable_id))
       new_session = build_passwordless_session(record).tap { |s| s.save! }
 
-      sign_in new_session
+      sign_in(new_session)
 
       new_session.authenticatable
     end
@@ -73,15 +74,16 @@ module Passwordless
     # to sign in
     # @return [ActiveRecord::Base] the record that is passed in.
     def sign_in(record)
-      passwordless_session =
-        if record.is_a?(Passwordless::Session)
-          record
-        else
-          warn "Passwordless::ControllerHelpers#sign_in with authenticatable " \
+      passwordless_session = if record.is_a?(Passwordless::Session)
+        record
+      else
+        warn(
+          "Passwordless::ControllerHelpers#sign_in with authenticatable " \
             "(`#{record.class}') is deprecated. Falling back to creating a " \
             "new Passwordless::Session"
-          build_passwordless_session(record).tap { |s| s.save! }
-        end
+        )
+        build_passwordless_session(record).tap { |s| s.save! }
+      end
 
       passwordless_session.claim! if Passwordless.restrict_token_reuse
 
@@ -105,8 +107,8 @@ module Passwordless
       key = cookie_name(authenticatable_class)
       cookies.encrypted.permanent[key] = {value: nil}
       cookies.delete(key)
-      # /deprecated
 
+      # /deprecated
       reset_session
       true
     end
