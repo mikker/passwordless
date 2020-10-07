@@ -14,32 +14,32 @@ module Passwordless
       )
     end
 
-    test "scope: available" do
+    test("scope: available") do
       available = create_session
-      _timed_out = create_session expires_at: 1.hour.ago
+      _timed_out = create_session(expires_at: 1.hour.ago)
 
       assert_equal [available], Session.available.all
     end
 
-    test "expired?" do
-      expired_session = create_session expires_at: 1.hour.ago
+    test("expired?") do
+      expired_session = create_session(expires_at: 1.hour.ago)
 
       assert_equal expired_session.expired?, true
     end
 
-    test "timed_out?" do
-      timed_out_session = create_session timeout_at: 1.hour.ago
+    test("timed_out?") do
+      timed_out_session = create_session(timeout_at: 1.hour.ago)
 
       assert_equal timed_out_session.timed_out?, true
     end
 
-    test "claimed?" do
-      claimed_session = create_session claimed_at: 1.hour.ago
+    test("claimed?") do
+      claimed_session = create_session(claimed_at: 1.hour.ago)
 
       assert_equal claimed_session.claimed?, true
     end
 
-    test "it has defaults" do
+    test("it has defaults") do
       session = Session.new
       session.validate
 
@@ -48,7 +48,7 @@ module Passwordless
       refute_nil session.token
     end
 
-    test "with a custom token generator" do
+    test("with a custom token generator") do
       class AlwaysMeGenerator
         def call(_session)
           "ALWAYS ME"
@@ -66,7 +66,7 @@ module Passwordless
       Passwordless.token_generator = old_generator
     end
 
-    test "with a custom expire at function" do
+    test("with a custom expire at function") do
       custom_expire_at = Time.parse("01-01-2100").utc
       old_expires_at = Passwordless.expires_at
 
@@ -79,7 +79,7 @@ module Passwordless
       Passwordless.expires_at = old_expires_at
     end
 
-    test "with a custom timeout at function" do
+    test("with a custom timeout at function") do
       custom_timeout_at = Time.parse("01-01-2100").utc
       old_timeout_at = Passwordless.timeout_at
 
@@ -92,29 +92,29 @@ module Passwordless
       Passwordless.timeout_at = old_timeout_at
     end
 
-    test "claim! - with unclaimed session" do
+    test("claim! - with unclaimed session") do
       unclaimed_session = create_session
       unclaimed_session.claim!
 
       refute_nil unclaimed_session.claimed_at
     end
 
-    test "claim! - with claimed session" do
-      claimed_session = create_session claimed_at: 1.hour.ago
+    test("claim! - with claimed session") do
+      claimed_session = create_session(claimed_at: 1.hour.ago)
 
       assert_raises(Passwordless::Errors::TokenAlreadyClaimedError) do
         claimed_session.claim!
       end
     end
 
-    test "available? - when available" do
+    test("available? - when available") do
       available_session = create_session
 
       assert available_session.available?
     end
 
-    test "available? - when unavailable" do
-      unavailable_session = create_session expires_at: 2.years.ago
+    test("available? - when unavailable") do
+      unavailable_session = create_session(expires_at: 2.years.ago)
 
       refute unavailable_session.available?
     end

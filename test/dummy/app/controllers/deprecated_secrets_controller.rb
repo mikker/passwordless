@@ -10,7 +10,7 @@ class DeprecatedSecretsController < ApplicationController
   end
 
   def index
-    render plain: "shhhh! secrets!"
+    render(plain: "shhhh! secrets!")
   end
 
   private

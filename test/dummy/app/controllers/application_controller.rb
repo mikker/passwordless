@@ -10,9 +10,7 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
-    @current_user ||=
-      authenticate_by_session(User) ||
-      upgrade_passwordless_cookie(User)
+    @current_user ||= authenticate_by_session(User) || upgrade_passwordless_cookie(User)
   end
 
   def authenticate_user!
@@ -20,6 +18,6 @@ class ApplicationController < ActionController::Base
 
     save_passwordless_redirect_location!(User)
 
-    redirect_to root_path, flash: {error: "Not worthy!"}
+    redirect_to(root_path, flash: {error: "Not worthy!"})
   end
 end

@@ -20,8 +20,10 @@ module Passwordless
       mount_at = at || resource.to_s
       mount_as = as || resource.to_s
       mount(
-        Passwordless::Engine, at: mount_at, as: mount_as,
-                              defaults: {authenticatable: resource.to_s.singularize}
+        Passwordless::Engine,
+        at: mount_at,
+        as: mount_as,
+        defaults: {authenticatable: resource.to_s.singularize}
       )
 
       Passwordless.mounted_as = mount_as

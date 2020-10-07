@@ -6,13 +6,13 @@ class RegistrationsController < ApplicationController
   end
 
   def create
-    @user = User.create params.require(:user).permit(:email)
+    @user = User.create(params.require(:user).permit(:email))
 
     if @user.save
-      sign_in @user
-      redirect_to root_path
+      sign_in(@user)
+      redirect_to(root_path)
     else
-      render :new
+      render(:new)
     end
   end
 end

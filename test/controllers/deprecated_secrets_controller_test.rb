@@ -12,13 +12,16 @@ class DeprecatedSecretsControllerTest < ActionDispatch::IntegrationTest
   end
 
   def login(passwordless_session)
-    post "/deprecated_fake_login", params: {
-      authenticatable_type: passwordless_session.authenticatable_type,
-      authenticatable_id: passwordless_session.authenticatable_id,
-    }
+    post(
+      "/deprecated_fake_login",
+      params: {
+        authenticatable_type: passwordless_session.authenticatable_type,
+        authenticatable_id: passwordless_session.authenticatable_id
+      }
+    )
   end
 
-  test "authenticate_by_cookies" do
+  test("authenticate_by_cookies") do
     user = User.create(email: "foo@example.com")
     passwordless_session = create_session_for(user)
     login(passwordless_session)
