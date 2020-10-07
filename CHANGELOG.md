@@ -9,6 +9,11 @@ Passwordless no longer _isolates namespace_.
 1. Update all your links with eg. `users.sign_in_path` to `users_sign_in_path`
 1. Remove all links with `main_app.whatever_path` to just `whatever_path`
 
+#### Removed
+
+- `ControllerHelpers#authenticate_by_cookie`
+- `ControllerHelpers#upgrade_passwordless_cookie`
+
 #### Changed
 
 - Remove `isolate_namespace`
