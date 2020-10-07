@@ -23,7 +23,4 @@ module Passwordless
   mattr_accessor(:after_session_save) do
     lambda { |session, _request| Mailer.magic_link(session).deliver_now }
   end
-
-  CookieDeprecation = ActiveSupport::Deprecation.new("0.9", "passwordless")
-  SessionValidDeprecation = ActiveSupport::Deprecation.new("0.9", "passwordless")
 end

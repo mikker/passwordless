@@ -2,6 +2,7 @@
 
 Rails.application.routes.draw do
   passwordless_for(:users)
+  passwordless_for(:admins)
 
   resources(:users)
   resources(:registrations, only: %i[new create])

@@ -12,25 +12,24 @@
 
 ActiveRecord::Schema.define(version: 2017_11_04_225303) do
 
-  create_table "passwordless_sessions", force: :cascade do |t|
-    t.string "authenticatable_type"
-    t.integer "authenticatable_id"
-    t.datetime "timeout_at", null: false
-    t.datetime "expires_at", null: false
-    t.datetime "claimed_at"
-    t.text "user_agent", null: false
-    t.string "remote_addr", null: false
-    t.string "token", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["authenticatable_type", "authenticatable_id"], name: "authenticatable"
+  create_table("passwordless_sessions", force: :cascade) do |t|
+    t.string("authenticatable_type")
+    t.integer("authenticatable_id")
+    t.datetime("timeout_at", null: false)
+    t.datetime("expires_at", null: false)
+    t.datetime("claimed_at")
+    t.text("user_agent", null: false)
+    t.string("remote_addr", null: false)
+    t.string("token", null: false)
+    t.datetime("created_at", null: false)
+    t.datetime("updated_at", null: false)
+    t.index(["authenticatable_type", "authenticatable_id"], name: "authenticatable")
   end
 
-  create_table "users", force: :cascade do |t|
-    t.string "email"
-    t.string "type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table("users", force: :cascade) do |t|
+    t.string("email")
+    t.string("type")
+    t.datetime("created_at", null: false)
+    t.datetime("updated_at", null: false)
   end
-
 end

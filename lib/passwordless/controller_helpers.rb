@@ -23,40 +23,6 @@ module Passwordless
       end
     end
 
-    # @deprecated Use {ControllerHelpers#authenticate_by_session}
-    # Authenticate a record using cookies. Looks for a cookie corresponding to
-    # the _authenticatable_class_. If found try to find it in the database.
-    # @param authenticatable_class [ActiveRecord::Base] any Model connected to
-    #   passwordless. (e.g - _User_ or _Admin_).
-    # @return [ActiveRecord::Base|nil] an instance of Model found by id stored
-    #   in cookies.encrypted or nil if nothing is found.
-    # @see ModelHelpers#passwordless_with
-    def authenticate_by_cookie(authenticatable_class)
-      key = cookie_name(authenticatable_class)
-      authenticatable_id = cookies.encrypted[key]
-
-      return authenticatable_class.find_by(id: authenticatable_id) if authenticatable_id
-
-      authenticate_by_session(authenticatable_class)
-    end
-
-    deprecate :authenticate_by_cookie, deprecator: CookieDeprecation
-
-    def upgrade_passwordless_cookie(authenticatable_class)
-      key = cookie_name(authenticatable_class)
-
-      return unless (authenticatable_id = cookies.encrypted[key])
-      cookies.encrypted.permanent[key] = {value: nil}
-      cookies.delete(key)
-
-      return unless (record = authenticatable_class.find_by(id: authenticatable_id))
-      new_session = build_passwordless_session(record).tap { |s| s.save! }
-
-      sign_in(new_session)
-
-      new_session.authenticatable
-    end
-
     # Authenticate a record using the session. Looks for a session key corresponding to
     # the _authenticatable_class_. If found try to find it in the database.
     # @param authenticatable_class [ActiveRecord::Base] any Model connected to
@@ -73,18 +39,7 @@ module Passwordless
     # @param authenticatable [Passwordless::Session] Instance of {Passwordless::Session}
     # to sign in
     # @return [ActiveRecord::Base] the record that is passed in.
-    def sign_in(record)
-      passwordless_session = if record.is_a?(Passwordless::Session)
-        record
-      else
-        warn(
-          "Passwordless::ControllerHelpers#sign_in with authenticatable " \
-            "(`#{record.class}') is deprecated. Falling back to creating a " \
-            "new Passwordless::Session"
-        )
-        build_passwordless_session(record).tap { |s| s.save! }
-      end
-
+    def sign_in(passwordless_session)
       passwordless_session.claim! if Passwordless.restrict_token_reuse
 
       raise Passwordless::Errors::SessionTimedOutError if passwordless_session.timed_out?
@@ -92,24 +47,14 @@ module Passwordless
       key = session_key(passwordless_session.authenticatable_type)
       session[key] = passwordless_session.id
 
-      if record.is_a?(Passwordless::Session)
-        passwordless_session
-      else
-        passwordless_session.authenticatable
-      end
+      passwordless_session
     end
 
     # Signs out user by deleting the session key.
     # @param (see #authenticate_by_session)
     # @return [boolean] Always true
     def sign_out(authenticatable_class)
-      # Deprecated - cookies
-      key = cookie_name(authenticatable_class)
-      cookies.encrypted.permanent[key] = {value: nil}
-      cookies.delete(key)
-
-      # /deprecated
-      reset_session
+      session.delete(session_key(authenticatable_class))
       true
     end
 
@@ -146,11 +91,6 @@ module Passwordless
       end
 
       authenticatable_class.base_class.to_s.parameterize
-    end
-
-    # Deprecated
-    def cookie_name(authenticatable_class)
-      :"#{authenticatable_class.base_class.to_s.underscore}_id"
     end
   end
 end

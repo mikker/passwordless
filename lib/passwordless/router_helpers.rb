@@ -20,7 +20,7 @@ module Passwordless
       at == :na && at = "/#{resource.to_s}"
       as == :na && as = "#{resource.to_s}_"
 
-      scope defaults: {authenticatable: resource.to_s.singularize, resource: resource} do
+      scope(defaults: {authenticatable: resource.to_s.singularize, resource: resource}) do
         get("#{at}/sign_in", to: "passwordless/sessions#new", as: :"#{as}sign_in")
         post("#{at}/sign_in", to: "passwordless/sessions#create")
         get("#{at}/sign_in/:token", to: "passwordless/sessions#show", as: :"#{as}token_sign_in")

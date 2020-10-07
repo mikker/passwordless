@@ -11,6 +11,7 @@ module Passwordless
 
       ActiveRecord::Base.extend ModelHelpers
       require "passwordless/controller_helpers"
+
     end
 
     config.before_initialize do |app|

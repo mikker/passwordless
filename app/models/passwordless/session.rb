@@ -4,7 +4,7 @@ module Passwordless
   # The session responsible for holding the connection between the record
   # trying to log in and the unique tokens.
   class Session < ApplicationRecord
-    self.table_name = 'passwordless_sessions'
+    self.table_name = "passwordless_sessions"
 
     belongs_to(
       :authenticatable,
@@ -31,10 +31,6 @@ module Passwordless
 
     def self.valid
       available
-    end
-
-    class << self
-      deprecate :valid, deprecator: SessionValidDeprecation
     end
 
     def expired?

@@ -48,6 +48,24 @@ module Passwordless
       end
     end
 
+    test("multiple mounts") do
+      assert_routes(
+        {method: :get, path: "/users/sign_in"},
+        controller: "passwordless/sessions",
+        action: "new",
+        authenticatable: "user",
+        resource: :users
+      )
+
+      assert_routes(
+        {method: :get, path: "/admins/sign_in"},
+        controller: "passwordless/sessions",
+        action: "new",
+        authenticatable: "admin",
+        resource: :admins
+      )
+    end
+
     private
 
     def assert_routes(expected, parameters)
