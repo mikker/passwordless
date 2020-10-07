@@ -4,7 +4,7 @@
   <br />
 </p>
 
-[![Travis](https://travis-ci.org/mikker/passwordless.svg?branch=master)](https://travis-ci.org/mikker/passwordless) [![Rubygems](https://img.shields.io/gem/v/passwordless.svg)](https://rubygems.org/gems/passwordless) [![codecov](https://codecov.io/gh/mikker/passwordless/branch/master/graph/badge.svg)](https://codecov.io/gh/mikker/passwordless) [![Ruby Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://github.com/testdouble/standard)
+[![Travis](https://travis-ci.org/mikker/passwordless.svg?branch=master)](https://travis-ci.org/mikker/passwordless) [![Rubygems](https://img.shields.io/gem/v/passwordless.svg)](https://rubygems.org/gems/passwordless) [![codecov](https://codecov.io/gh/mikker/passwordless/branch/master/graph/badge.svg)](https://codecov.io/gh/mikker/passwordless)
 
 Add authentication to your Rails app without all the icky-ness of passwords.
 

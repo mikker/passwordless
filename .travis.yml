@@ -4,6 +4,7 @@ rvm:
  - 2.4
  - 2.5
  - 2.6
+ - 2.7
 script:
   - bin/rails db:migrate RAILS_ENV=test
   - bin/rails test
