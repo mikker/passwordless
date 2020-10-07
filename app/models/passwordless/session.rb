@@ -13,10 +13,12 @@ module Passwordless
       :expires_at,
       :user_agent,
       :remote_addr,
-      :token,
+      :token_digest,
       presence: true
 
     before_validation :set_defaults
+
+    attr_accessor :token
 
     scope :available, lambda {
       where("expires_at > ?", Time.current)
@@ -55,10 +57,14 @@ module Passwordless
     def set_defaults
       self.expires_at ||= Passwordless.expires_at.call
       self.timeout_at ||= Passwordless.timeout_at.call
-      self.token ||= loop {
-        token = Passwordless.token_generator.call(self)
-        break token unless Session.find_by(token: token)
-      }
+
+      if !token || !token_digest
+        self.token, self.token_digest = loop {
+          token = Passwordless.token_generator.call(self)
+          token_digest = Passwordless.digest(token)
+          break [token, token_digest] unless Session.find_by(token_digest: token_digest)
+        }
+      end
     end
   end
 end

@@ -117,7 +117,7 @@ module Passwordless
     def passwordless_session
       @passwordless_session ||= Session.find_by!(
         authenticatable_type: authenticatable_classname,
-        token: params[:token]
+        token_digest: Passwordless.digest(params[:token])
       )
     end
   end
