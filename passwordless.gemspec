@@ -22,4 +22,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "sqlite3", "~> 1.4.1"
   s.add_development_dependency "yard"
   s.add_development_dependency "standard"
+  s.add_development_dependency "minitest"
 end

@@ -16,17 +16,16 @@ module Passwordless
     #   helpers (using the above example in a view:
     #   <%= link_to 'Sign in', user_session_things.sign_in_path %>).
     #   (Default: resource.to_s)
-    def passwordless_for(resource, at: nil, as: nil)
-      mount_at = at || resource.to_s
-      mount_as = as || resource.to_s
-      mount(
-        Passwordless::Engine,
-        at: mount_at,
-        as: mount_as,
-        defaults: {authenticatable: resource.to_s.singularize}
-      )
+    def passwordless_for(resource, at: :na, as: :na)
+      at == :na && at = "/#{resource.to_s}"
+      as == :na && as = "#{resource.to_s}_"
 
-      Passwordless.mounted_as = mount_as
+      scope defaults: {authenticatable: resource.to_s.singularize, resource: resource} do
+        get("#{at}/sign_in", to: "passwordless/sessions#new", as: :"#{as}sign_in")
+        post("#{at}/sign_in", to: "passwordless/sessions#create")
+        get("#{at}/sign_in/:token", to: "passwordless/sessions#show", as: :"#{as}token_sign_in")
+        match("#{at}/sign_out", to: "passwordless/sessions#destroy", via: %i[get delete], as: :"#{as}sign_out")
+      end
     end
   end
 end
