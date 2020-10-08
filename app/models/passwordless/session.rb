@@ -18,11 +18,15 @@ module Passwordless
       :expires_at,
       :user_agent,
       :remote_addr,
-      :token,
+      :token_digest,
       presence: true
     )
 
     before_validation :set_defaults
+
+    # save the token in memory so we can put it in emails but only save the
+    # hashed version in the database
+    attr_accessor :token
 
     scope(
       :available,
@@ -59,9 +63,13 @@ module Passwordless
     def set_defaults
       self.expires_at ||= Passwordless.expires_at.call
       self.timeout_at ||= Passwordless.timeout_at.call
-      self.token ||= loop {
+
+      return if self.token && self.token_digest
+
+      self.token, self.token_digest = loop {
         token = Passwordless.token_generator.call(self)
-        break token unless Session.find_by(token: token)
+        digest = Passwordless.digest(token)
+        break [token, digest] unless Session.find_by(token_digest: digest)
       }
     end
   end

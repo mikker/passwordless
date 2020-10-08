@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 2017_11_04_225303) do
     t.datetime("claimed_at")
     t.text("user_agent", null: false)
     t.string("remote_addr", null: false)
-    t.string("token", null: false)
+    t.string("token_digest", null: false)
     t.datetime("created_at", null: false)
     t.datetime("updated_at", null: false)
     t.index(["authenticatable_type", "authenticatable_id"], name: "authenticatable")
