@@ -10,9 +10,9 @@ module Passwordless
     def magic_link(session)
       @session = session
 
-      @magic_link = send(Passwordless.mounted_as).token_sign_in_url(session.token)
-
+      @magic_link = send(:"#{session.authenticatable_type.downcase.pluralize}_token_sign_in_url", session.token)
       email_field = @session.authenticatable.class.passwordless_email_field
+
       mail(
         to: @session.authenticatable.send(email_field),
         subject: I18n.t("passwordless.mailer.subject")

@@ -3,6 +3,12 @@
 require "test_helper"
 
 module Passwordless
-  class Test < ActiveSupport::TestCase
+  class PasswordlessTest < ActiveSupport::TestCase
+    test(".digest(str)") do
+      a = Passwordless.digest("string")
+      b = Passwordless.digest("string")
+
+      assert_equal a, b
+    end
   end
 end

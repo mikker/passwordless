@@ -27,6 +27,7 @@ module Passwordless
         params: {passwordless: {email: "A@a"}},
         headers: {:"User-Agent" => "an actual monkey"}
       )
+
       assert_equal 200, status
 
       assert_equal 1, ActionMailer::Base.deliveries.size
@@ -44,6 +45,7 @@ module Passwordless
         params: {passwordless: {email: "A@a"}},
         headers: {:"User-Agent" => "an actual monkey"}
       )
+
       assert_equal 200, status
 
       assert_equal true, called
@@ -63,6 +65,7 @@ module Passwordless
         params: {passwordless: {email: "A@a"}},
         headers: {:"User-Agent" => "an actual monkey"}
       )
+
       assert_equal 200, status
 
       assert_equal true, called
@@ -79,6 +82,7 @@ module Passwordless
         params: {passwordless: {email: "invalidemail"}},
         headers: {:"User-Agent" => "an actual monkey"}
       )
+
       assert_equal 200, status
 
       assert_equal 0, ActionMailer::Base.deliveries.size
@@ -97,6 +101,7 @@ module Passwordless
         params: {passwordless: {email: "overriden_email@example"}},
         headers: {:"User-Agent" => "an actual monkey"}
       )
+
       assert_equal 200, status
 
       assert_equal 1, ActionMailer::Base.deliveries.size
@@ -264,20 +269,6 @@ module Passwordless
       assert_equal "/", path
 
       Passwordless.restrict_token_reuse = default
-    end
-
-    test("signing out removes cookies") do
-      user = User.create(email: "a@a")
-
-      cookies[:user_id] = user.id
-      assert_not_nil cookies[:user_id]
-
-      get "/users/sign_out"
-      follow_redirect!
-
-      assert_equal 200, status
-      assert_equal "/", path
-      assert cookies[:user_id].blank?
     end
   end
 end

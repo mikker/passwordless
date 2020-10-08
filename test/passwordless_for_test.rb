@@ -9,7 +9,8 @@ module Passwordless
         {method: :get, path: "/users/sign_in"},
         controller: "passwordless/sessions",
         action: "new",
-        authenticatable: "user"
+        authenticatable: "user",
+        resource: :users
       )
 
       assert_routes(
@@ -23,14 +24,16 @@ module Passwordless
 
         controller: "passwordless/sessions",
         action: "create",
-        authenticatable: "user"
+        authenticatable: "user",
+        resource: :users
       )
 
       assert_routes(
         {method: :delete, path: "/users/sign_out"},
         controller: "passwordless/sessions",
         action: "destroy",
-        authenticatable: "user"
+        authenticatable: "user",
+        resource: :users
       )
 
       assert_raises(ActiveRecord::RecordNotFound) do
@@ -39,9 +42,28 @@ module Passwordless
           controller: "passwordless/sessions",
           action: "show",
           params: {token: "abc123"},
-          authenticatable: "user"
+          authenticatable: "user",
+          resource: :users
         )
       end
+    end
+
+    test("multiple mounts") do
+      assert_routes(
+        {method: :get, path: "/users/sign_in"},
+        controller: "passwordless/sessions",
+        action: "new",
+        authenticatable: "user",
+        resource: :users
+      )
+
+      assert_routes(
+        {method: :get, path: "/admins/sign_in"},
+        controller: "passwordless/sessions",
+        action: "new",
+        authenticatable: "admin",
+        resource: :admins
+      )
     end
 
     private

@@ -46,6 +46,7 @@ module Passwordless
       refute_nil session.expires_at
       refute_nil session.timeout_at
       refute_nil session.token
+      refute_nil session.token_digest
     end
 
     test("with a custom token generator") do
@@ -62,6 +63,7 @@ module Passwordless
       session.validate
 
       assert_equal "ALWAYS ME", session.token
+      assert_equal Passwordless.digest("ALWAYS ME"), session.token_digest
 
       Passwordless.token_generator = old_generator
     end

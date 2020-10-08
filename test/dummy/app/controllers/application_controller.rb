@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   private
 
   def current_user
-    @current_user ||= authenticate_by_session(User) || upgrade_passwordless_cookie(User)
+    @current_user ||= authenticate_by_session(User)
   end
 
   def authenticate_user!

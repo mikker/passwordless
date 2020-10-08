@@ -3,10 +3,16 @@
 require "active_support"
 require "passwordless/errors"
 require "passwordless/engine"
+require "passwordless/token_digest"
 require "passwordless/url_safe_base_64_generator"
 
 # The main Passwordless module
 module Passwordless
+  def self.digest(token)
+    TokenDigest.new(token).digest
+  end
+
+  # TODO: Move all these to some sort of config object
   mattr_accessor(:parent_mailer) { "ActionMailer::Base" }
   mattr_accessor(:default_from_address) { "CHANGE_ME@example.com" }
   mattr_accessor(:token_generator) { UrlSafeBase64Generator.new }
@@ -23,7 +29,4 @@ module Passwordless
   mattr_accessor(:after_session_save) do
     lambda { |session, _request| Mailer.magic_link(session).deliver_now }
   end
-
-  CookieDeprecation = ActiveSupport::Deprecation.new("0.9", "passwordless")
-  SessionValidDeprecation = ActiveSupport::Deprecation.new("0.9", "passwordless")
 end
