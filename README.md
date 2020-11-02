@@ -49,7 +49,7 @@ $ bin/rails passwordless:install:migrations
 
 Passwordless creates a single model called `Passwordless::Session`. It doesn't come with its own `User` model, it expects you to create one:
 
-```
+```sh
 $ bin/rails generate model User email
 ```
 
@@ -178,7 +178,7 @@ By default, magic link will send by email. You can customize this method. For ex
 
 config/initializers/passwordless.rb
 
-```
+```ruby
 Passwordless.after_session_save = lambda do |session, request|
   # Default behavior is
   # Passwordless::Mailer.magic_link(session).deliver_now
@@ -196,7 +196,7 @@ Currently there is not an officially supported way to generate your own magic li
 
 However, you can accomplish this with the following snippet of code.
 
-```
+```ruby
 session = Passwordless::Session.new({
   authenticatable: @manager,
   user_agent: 'Command Line',
