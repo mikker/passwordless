@@ -26,7 +26,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
   * [Token and Session Expiry](#token-and-session-expiry)
   * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
   * [Claiming tokens](#claiming-tokens)
-* [Testing](#testing)
+* [Testing helpers](#testing-helpers)
 * [E-mail security](#e-mail-security)
 * [License](#license)
 
@@ -341,18 +341,18 @@ end
 ```
 </details>
 
-## Testing
+## Testing helpers
 
-To test controller that are protected by a `before_action :require_user`, require Passwordless's test helpers in your test suite.
+To help with testing, a set of test helpers are provided.
 
-For `rspec`, add the following line to your `spec/rails_helper.rb` or
-`spec/spec_helper` if `rails_helper` does not exist:
+If you are using RSpec, add the following line to your `spec/rails_helper.rb` or
+`spec/spec_helper.rb` if `rails_helper.rb` does not exist:
 
 ```ruby
 require "passwordless/test_helpers"
 ```
 
-For `test-unit`, add this line to your `test/test_helper.rb`:
+If you are using TestUnit, add this line to your `test/test_helper.rb`:
 
 ```ruby
 require "passwordless/test_helpers"
