@@ -6,14 +6,10 @@ module Passwordless
         follow_redirect!
       end
 
-      def passwordless_sign_in(resource = nil)
-        if resource
-          session = Passwordless::Session.create!(authenticatable: resource, user_agent: "TestAgent", remote_addr: "unknown")
-          get Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token)
-          follow_redirect!
-        else
-          get Passwordless::Engine.routes.url_helpers.sign_in_path
-        end
+      def passwordless_sign_in(resource)
+        session = Passwordless::Session.create!(authenticatable: resource, user_agent: "TestAgent", remote_addr: "unknown")
+        get Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token)
+        follow_redirect!
       end
     end
 
@@ -22,13 +18,9 @@ module Passwordless
         visit Passwordless::Engine.routes.url_helpers.sign_out_path
       end
 
-      def passwordless_sign_in(resource = nil)
-        if resource
-          session = Passwordless::Session.create!(authenticatable: resource, user_agent: "TestAgent", remote_addr: "unknown")
-          visit Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token)
-        else
-          visit Passwordless::Engine.routes.url_helpers.sign_in_path
-        end
+      def passwordless_sign_in(resource)
+        session = Passwordless::Session.create!(authenticatable: resource, user_agent: "TestAgent", remote_addr: "unknown")
+        visit Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token)
       end
     end
   end

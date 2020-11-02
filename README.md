@@ -362,7 +362,6 @@ require "passwordless/test_helpers"
 Then in your controller, request, and system tests/specs, you can utilize the following methods:
 
 ```ruby
-passwordless_sign_in # takes you to the sign in path
 passwordless_sign_in(user) # signs you in as a user
 passwordless_sign_out # signs out user
 ```
