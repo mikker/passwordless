@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Test helpers for MiniTest and RSpec ([#90](https://github.com/mikker/passwordless/pull/90))
+
 ## 0.10.0 (2020-10-07)
 
 ### Added
