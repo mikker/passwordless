@@ -338,6 +338,8 @@ class SupportUuidInPasswordlessSessions < ActiveRecord::Migration[6.0]
 end
 ```
 
+Alternatively, you can use `add_reference` with `type: :uuid` in your migration (see its docs here: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_reference).
+
 #### Upgrading an existing Rails app
 
 The simplest way to update your sessions table is with a single migration:
