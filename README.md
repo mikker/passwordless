@@ -26,6 +26,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
   * [Token and Session Expiry](#token-and-session-expiry)
   * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
   * [Claiming tokens](#claiming-tokens)
+  * [Supporting a database that uses UUIDs as its primary key type](#supporting-a-database-that-uses-uuids-as-its-primary-key-type)
 * [Testing helpers](#testing-helpers)
 * [E-mail security](#e-mail-security)
 * [License](#license)
@@ -318,6 +319,25 @@ config/initializers/passwordless.rb
 ```ruby
 # Default is `false`
 Passwordless.restrict_token_reuse = true
+```
+
+### Supporting a database that uses UUIDs as its primary key type
+
+If your database uses a type other than `int` as the primary key type (e.g. you use `uuid`), you will need to add a migration
+to change the type of `passwordless`' `authenticatable_id` field to match your primary key type (this will also involve dropping and recreating associated indices).
+
+This is because the migration that `passwordless` installs uses `t.belongs(...)` with a polymorphic relationship to the models you will be authenticating, and `t.belongs` will set the foreign key type to `int` even if your table uses `uuid` as your primary key type (see https://github.com/rails/rails/issues/23422 for a discussion of this behavior).
+
+Here is an example migration you can use:
+```ruby
+class SupportUuidInPasswordlessSessions < ActiveRecord::Migration[6.0]
+  def change
+    remove_index :passwordless_sessions, column: [:authenticatable_type, :authenticatable_id] if index_exists? :authenticatable_type, :authenticatable_id
+    remove_column :passwordless_sessions, :authenticatable_id
+    add_column :passwordless_sessions, :authenticatable_id, :uuid
+    add_index :passwordless_sessions, [:authenticatable_type, :authenticatable_id], name: 'authenticatable'
+  end
+end
 ```
 
 #### Upgrading an existing Rails app
