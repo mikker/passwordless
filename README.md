@@ -26,6 +26,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
   * [Token and Session Expiry](#token-and-session-expiry)
   * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
   * [Claiming tokens](#claiming-tokens)
+  * [Supporting UUID primary keys](#supporting-uuid-primary-keys)
 * [Testing helpers](#testing-helpers)
 * [E-mail security](#e-mail-security)
 * [License](#license)
@@ -319,6 +320,25 @@ config/initializers/passwordless.rb
 # Default is `false`
 Passwordless.restrict_token_reuse = true
 ```
+
+### Supporting UUID primary keys
+
+If your `users` table uses UUIDs for its primary keys, you will need to add a migration
+to change the type of `passwordless`' `authenticatable_id` field to match your primary key type (this will also involve dropping and recreating associated indices).
+
+Here is an example migration you can use:
+```ruby
+class SupportUuidInPasswordlessSessions < ActiveRecord::Migration[6.0]
+  def change
+    remove_index :passwordless_sessions, column: [:authenticatable_type, :authenticatable_id] if index_exists? :authenticatable_type, :authenticatable_id
+    remove_column :passwordless_sessions, :authenticatable_id
+    add_column :passwordless_sessions, :authenticatable_id, :uuid
+    add_index :passwordless_sessions, [:authenticatable_type, :authenticatable_id], name: 'authenticatable'
+  end
+end
+```
+
+Alternatively, you can use `add_reference` with `type: :uuid` in your migration (see its docs here: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_reference).
 
 #### Upgrading an existing Rails app
 
