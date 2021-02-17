@@ -27,6 +27,7 @@ Add authentication to your Rails app without all the icky-ness of passwords.
   * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
   * [Claiming tokens](#claiming-tokens)
   * [Supporting UUID primary keys](#supporting-uuid-primary-keys)
+  * [Integration with RailsAdmin](#integration-with-railsadmin)
 * [Testing helpers](#testing-helpers)
 * [E-mail security](#e-mail-security)
 * [License](#license)
@@ -360,6 +361,30 @@ end
 
 ```
 </details>
+
+### Integration with RailsAdmin
+
+[RailsAdmin](https://github.com/sferik/rails_admin) provides a user-friendly interface for admins to manage your application's records. It provides a hook for integration with outside auth frameworks, so you can use Passwordless to prevent unauthorized access to the RailsAdmin interface.
+
+In your `config/initializers/rails_admin.rb`, configure the `authorize_with` block to include Passwordless in its controller and verify the current session against Passwordless.
+
+This example ensures that RailsAdmin is only accessible if the user is signed in as a `User` with the attribute `superuser: true`:
+
+```rb
+RailsAdmin.config do |config|
+  config.authorize_with do |controller|
+    class RailsAdmin::MainController
+      include Passwordless::ControllerHelpers
+    end
+    
+    unless controller.authenticate_by_session(User)&.superuser?
+      raise ActionController::RoutingError, 'Not Found'
+    end
+  end
+
+  # ...the rest of your RailsAdmin config goes here...
+end
+```
 
 ## Testing helpers
 
