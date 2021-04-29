@@ -1,11 +1,17 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
+APP_ROOT = File.expand_path('..', __dir__)
+Dir.chdir(APP_ROOT) do
+  yarn = ENV["PATH"].split(File::PATH_SEPARATOR).
+    select { |dir| File.expand_path(dir) != __dir__ }.
+    product(["yarn", "yarn.cmd", "yarn.ps1"]).
+    map { |dir, file| File.expand_path(file, dir) }.
+    find { |file| File.executable?(file) }
 
-VENDOR_PATH = File.expand_path("..", __dir__)
-Dir.chdir(VENDOR_PATH) do
-  exec "yarnpkg #{ARGV.join(" ")}"
-rescue Errno::ENOENT
-  warn "Yarn executable was not detected in the system."
-  warn "Download Yarn at https://yarnpkg.com/en/docs/install"
-  exit 1
+  if yarn
+    exec yarn, *ARGV
+  else
+    $stderr.puts "Yarn executable was not detected in the system."
+    $stderr.puts "Download Yarn at https://yarnpkg.com/en/docs/install"
+    exit 1
+  end
 end
