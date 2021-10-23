@@ -133,6 +133,8 @@ If you'd like to let the user know whether or not a record was found, `@resource
 <% end %>
 ```
 
+Please note that, from a security standpoint, this is a **bad practice** because you'd be giving information about which users are registered on your system. It is recommended to use a single message similar to the default one: "If we found you in the system, we've sent you an email". The **best practice** is to never expose which emails are registered on your system.
+
 See [the bundled views](https://github.com/mikker/passwordless/tree/master/app/views/passwordless).
 
 ### Registering new users
