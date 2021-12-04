@@ -118,6 +118,18 @@ module Passwordless
       assert_not_nil session[Helpers.session_key(user.class)]
     end
 
+    test("reset session id when signing in via a token") do
+      user = User.create(email: "a@a")
+      passwordless_session = create_session_for(user)
+
+      get "/users/sign_in/#{passwordless_session.token}"
+      old_session_id = @request.session_options[:id].to_s
+      get "/users/sign_in/#{passwordless_session.token}"
+      new_session_id = @request.session_options[:id].to_s
+
+      assert_not_equal old_session_id, new_session_id
+    end
+
     test("signing in via a token as STI model") do
       admin = Admin.create(email: "a@a")
       passwordless_session = create_session_for(admin)
