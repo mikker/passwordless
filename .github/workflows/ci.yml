@@ -1,0 +1,25 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: ["2.6", "2.7", "3.0"]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: install dependencies
+        run: bundle install --jobs 3 --retry 3
+      - name: migration
+        run: |
+          bin/rails db:create RAILS_ENV=test
+          bin/rails db:migrate RAILS_ENV=test
+      - name: test
+        run: bin/rails test
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
