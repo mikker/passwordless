@@ -6,7 +6,7 @@ SimpleCov.start do
   add_filter("test/dummy")
 end
 
-if ENV["CI"]
+if ENV["CI"] && !ENV["CODECOV_TOKEN"].empty?
   require "codecov"
 
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
