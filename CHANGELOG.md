@@ -2,8 +2,9 @@
 
 ## Unreleased
 
-### Added
+### 0.11.0 (2021-12-19)
 
+- Reset session at sign_in to protect from session fixation attacks ([108](https://github.com/mikker/passwordless/pull/108))
 - Test helpers for MiniTest and RSpec ([#90](https://github.com/mikker/passwordless/pull/90))
 
 ## 0.10.0 (2020-10-07)
