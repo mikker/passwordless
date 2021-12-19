@@ -89,6 +89,10 @@ module Passwordless
 
       raise Passwordless::Errors::SessionTimedOutError if passwordless_session.timed_out?
 
+      old_session = session.dup.to_hash
+      reset_session
+      old_session.each_pair { |k, v| session[k.to_sym] = v }
+
       key = session_key(passwordless_session.authenticatable_type)
       session[key] = passwordless_session.id
 
