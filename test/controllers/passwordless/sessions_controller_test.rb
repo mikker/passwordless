@@ -190,7 +190,7 @@ module Passwordless
     test("signing in and redirecting via insecure query parameter") do
       user = User.create!(email: "a@a")
       passwordless_session = create_session_for(user)
-      get "/users/sign_in/#{passwordless_session.token}?destination_path=http://google.com/secret-alt"
+      get "/users/sign_in/#{passwordless_session.token}?destination_path=http://insecure.example.org/secret-alt"
       follow_redirect!
 
       assert_equal 200, status
