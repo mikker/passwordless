@@ -79,7 +79,7 @@ module Passwordless
         params: {passwordless: {email: "invalidemail"}},
         headers: {:"User-Agent" => "an actual monkey"}
       )
-      assert_equal 200, status
+      assert_equal 422, status
 
       assert_equal 0, ActionMailer::Base.deliveries.size
     end
