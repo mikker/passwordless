@@ -33,16 +33,10 @@ Add authentication to your Rails app without all the icky-ness of passwords.
 
 ## Installation
 
-Add the `passwordless` gem to your `Gemfile`:
-
-```ruby
-gem 'passwordless'
-```
-
-Install it and copy over the migrations:
+Install the gem and copy over the migrations:
 
 ```sh
-$ bundle
+$ bundle add passwordless
 $ bin/rails passwordless:install:migrations
 ```
 
