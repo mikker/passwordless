@@ -29,9 +29,11 @@ module Passwordless
         else
           Passwordless.after_session_save.call(session)
         end
-      end
 
-      render
+        render :create, status: :ok
+      else
+        render :create, status: :unprocessable_entity
+      end
     end
 
     # get '/sign_in/:token'
