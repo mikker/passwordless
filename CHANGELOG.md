@@ -2,10 +2,17 @@
 
 ## Unreleased
 
-### 0.11.0 (2021-12-19)
+### Changed
 
-- Reset session at sign_in to protect from session fixation attacks ([108](https://github.com/mikker/passwordless/pull/108))
+- Reset session at sign_in to protect from session fixation attacks ([#108](https://github.com/mikker/passwordless/pull/108))
+
+### Added
+
 - Test helpers for MiniTest and RSpec ([#90](https://github.com/mikker/passwordless/pull/90))
+
+### Fixed
+
+- Fixed support for Turbo Drive ([#116](https://github.com/mikker/passwordless/pull/116))
 
 ## 0.10.0 (2020-10-07)
 
