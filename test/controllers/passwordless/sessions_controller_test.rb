@@ -27,7 +27,8 @@ module Passwordless
         params: {passwordless: {email: "A@a"}},
         headers: {:"User-Agent" => "an actual monkey"}
       )
-      assert_equal 200, status
+      assert_equal 302, status
+      assert_equal "/users/sign_in", path
 
       assert_equal 1, ActionMailer::Base.deliveries.size
     end
@@ -44,7 +45,7 @@ module Passwordless
         params: {passwordless: {email: "A@a"}},
         headers: {:"User-Agent" => "an actual monkey"}
       )
-      assert_equal 200, status
+      assert_equal 302, status
 
       assert_equal true, called
 
@@ -63,7 +64,7 @@ module Passwordless
         params: {passwordless: {email: "A@a"}},
         headers: {:"User-Agent" => "an actual monkey"}
       )
-      assert_equal 200, status
+      assert_equal 302, status
 
       assert_equal true, called
 
@@ -79,7 +80,7 @@ module Passwordless
         params: {passwordless: {email: "invalidemail"}},
         headers: {:"User-Agent" => "an actual monkey"}
       )
-      assert_equal 422, status
+      assert_equal 302, status
 
       assert_equal 0, ActionMailer::Base.deliveries.size
     end
@@ -97,7 +98,7 @@ module Passwordless
         params: {passwordless: {email: "overriden_email@example"}},
         headers: {:"User-Agent" => "an actual monkey"}
       )
-      assert_equal 200, status
+      assert_equal 302, status
 
       assert_equal 1, ActionMailer::Base.deliveries.size
 

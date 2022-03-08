@@ -17,7 +17,7 @@ module Passwordless
 
     # post '/sign_in'
     #   Creates a new Session record then sends the magic link
-    #   renders sessions/create.html.erb.
+    #   redirects to sign in page with generic flash message.
     # @see Mailer#magic_link Mailer#magic_link
     def create
       @resource = find_authenticatable
@@ -29,11 +29,10 @@ module Passwordless
         else
           Passwordless.after_session_save.call(session)
         end
-
-        render :create, status: :ok
-      else
-        render :create, status: :unprocessable_entity
       end
+
+      flash[:notice] = I18n.t('passwordless.sessions.create.email_sent_if_record_found')
+      redirect_to(sign_in_path)
     end
 
     # get '/sign_in/:token'
