@@ -323,26 +323,7 @@ config/initializers/passwordless.rb
 Passwordless.restrict_token_reuse = true
 ```
 
-### Supporting UUID primary keys
-
-If your `users` table uses UUIDs for its primary keys, you will need to add a migration
-to change the type of `passwordless`' `authenticatable_id` field to match your primary key type (this will also involve dropping and recreating associated indices).
-
-Here is an example migration you can use:
-```ruby
-class SupportUuidInPasswordlessSessions < ActiveRecord::Migration[6.0]
-  def change
-    remove_index :passwordless_sessions, column: [:authenticatable_type, :authenticatable_id] if index_exists? :authenticatable_type, :authenticatable_id
-    remove_column :passwordless_sessions, :authenticatable_id
-    add_column :passwordless_sessions, :authenticatable_id, :uuid
-    add_index :passwordless_sessions, [:authenticatable_type, :authenticatable_id], name: 'authenticatable'
-  end
-end
-```
-
-Alternatively, you can use `add_reference` with `type: :uuid` in your migration (see its docs here: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_reference).
-
-#### Upgrading an existing Rails app
+#### Upgrading an existing Rails app to use claim token
 
 The simplest way to update your sessions table is with a single migration:
 
@@ -362,6 +343,25 @@ end
 
 ```
 </details>
+
+### Supporting UUID primary keys
+
+If your `users` table uses UUIDs for its primary keys, you will need to add a migration
+to change the type of `passwordless`' `authenticatable_id` field to match your primary key type (this will also involve dropping and recreating associated indices).
+
+Here is an example migration you can use:
+```ruby
+class SupportUuidInPasswordlessSessions < ActiveRecord::Migration[6.0]
+  def change
+    remove_index :passwordless_sessions, column: [:authenticatable_type, :authenticatable_id] if index_exists? :authenticatable_type, :authenticatable_id
+    remove_column :passwordless_sessions, :authenticatable_id
+    add_column :passwordless_sessions, :authenticatable_id, :uuid
+    add_index :passwordless_sessions, [:authenticatable_type, :authenticatable_id], name: 'authenticatable'
+  end
+end
+```
+
+Alternatively, you can use `add_reference` with `type: :uuid` in your migration (see docs [here](https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_reference)).
 
 ## Testing helpers
 
