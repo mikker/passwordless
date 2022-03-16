@@ -361,7 +361,8 @@ class SupportUuidInPasswordlessSessions < ActiveRecord::Migration[6.0]
 end
 ```
 
-Alternatively, you can use `add_reference` with `type: :uuid` in your migration (see its docs here: https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_reference).
+Alternatively, you can use `add_reference` with `type: :uuid` in your migration (see docs [here](https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-add_reference)).
+
 ## Testing helpers
 
 To help with testing, a set of test helpers are provided.
