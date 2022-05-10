@@ -392,7 +392,7 @@ passwordless_sign_out # signs out user
 
 There's no reason that this approach should be less secure than the usual username/password combo. In fact this is most often a more secure option, as users don't get to choose the weak passwords they still use. In a way this is just the same as having each user go through "Forgot password" on every login.
 
-But be aware that when everyone authenticates via emails you send, the way you send those mails becomes a weak spot. Email services usually provide a log of all the mails you send so if your app's account is compromised, every user in the system is as well. (This is the same for "Forgot password".) [Reddit was compromised](https://thenextweb.com/hardfork/2018/01/05/reddit-bitcoin-cash-hack/) using this method.
+But be aware that when everyone authenticates via emails you send, the way you send those mails becomes a weak spot. Email services usually provide a log of all the mails you send so if your app's account is compromised, every user in the system is as well. (This is the same for "Forgot password".) [Reddit was compromised](https://thenextweb.com/hardfork/2018/01/05/reddit-bitcoin-cash-stolen-hack/) using this method.
 
 Ideally you should set up your email provider to not log these mails. And be sure to turn on 2-factor auth if your provider supports it.
 
