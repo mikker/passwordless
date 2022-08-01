@@ -113,7 +113,9 @@ end
 
 ### Providing your own templates
 
-Override `passwordless`' bundled views by adding your own. `passwordless` has 2 action views and 1 mailer view:
+Override `passwordless`' bundled views by adding your own. You can manually copy the specific views that you need or copy them to your application with `rails generate passwordless:views`.
+
+`passwordless` has 2 action views and 1 mailer view:
 
 ```sh
 # the form where the user inputs their email address
