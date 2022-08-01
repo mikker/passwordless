@@ -9,6 +9,8 @@
 ### Added
 
 - Test helpers for MiniTest and RSpec ([#90](https://github.com/mikker/passwordless/pull/90))
+- Generator to copy the bundled views ([#123](https://github.com/mikker/passwordless/issues/123))
+
 
 ### Fixed
 
