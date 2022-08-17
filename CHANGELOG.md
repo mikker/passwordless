@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Fix  `Passwordless#ControllerHelpers` to be used outside controllers (#124)
+
 ## 0.11.0
 
 ### Changed
