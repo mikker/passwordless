@@ -1,4 +1,4 @@
-<%= form_for @user, url: registrations_path do |f| %>
+<%= form_with model: @user, url: registrations_path do |f| %>
   <%= f.label :email %>
   <%= f.email_field :email %>
   <%= f.submit %>
