@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Changed
+
+- Replaced `form_for` with `form_with`
+- Added frontend validation for email presence in views
+
 ### Fixed
 
 - Fix  `Passwordless#ControllerHelpers` to be used outside controllers (#124)
