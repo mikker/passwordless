@@ -76,12 +76,31 @@ module Passwordless
 
       post(
         "/users/sign_in",
-        params: {passwordless: {email: "invalidemail"}},
-        headers: {:"User-Agent" => "an actual monkey"}
+        params: { passwordless: { email: "invalidemail" } },
+        headers: { :"User-Agent" => "an actual monkey" },
       )
       assert_equal 422, status
 
       assert_equal 0, ActionMailer::Base.deliveries.size
+    end
+
+    test("requesting a magic link as an unknown user when paranoid: true") do
+      default = Passwordless.paranoid
+
+      get "/users/sign_in"
+      assert_equal 200, status
+
+      Passwordless.paranoid = true
+
+      post(
+        "/users/sign_in",
+        params: { passwordless: { email: "invalidemail" } },
+        headers: { :"User-Agent" => "an actual monkey" },
+      )
+      assert_equal 200, status
+      assert_equal 0, ActionMailer::Base.deliveries.size
+
+      Passwordless.paranoid = default
     end
 
     test("requesting a magic link with overridden fetch method") do

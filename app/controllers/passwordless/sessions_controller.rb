@@ -32,7 +32,8 @@ module Passwordless
 
         render :create, status: :ok
       else
-        render :create, status: :unprocessable_entity
+        render :create, status: :ok if Passwordless.paranoid
+        render :create, status: :unprocessable_entity unless Passwordless.paranoid
       end
     end
 
