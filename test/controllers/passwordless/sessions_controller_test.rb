@@ -84,6 +84,24 @@ module Passwordless
       assert_equal 0, ActionMailer::Base.deliveries.size
     end
 
+    test("requesting a magic link with an empty email") do
+      post(
+        "/users/sign_in",
+        params: {passwordless: {email: ""}},
+        headers: {:"User-Agent" => "an actual monkey"}
+      )
+      assert_equal 422, status
+    end
+
+    test("requesting a magic link with an invalid email") do
+      post(
+        "/users/sign_in",
+        params: {passwordless: {email: "false_email"}},
+        headers: {:"User-Agent" => "an actual monkey"}
+      )
+      assert_equal 422, status
+    end
+
     test("requesting a magic link with overridden fetch method") do
       def User.fetch_resource_for_passwordless(email)
         User.find_or_create_by(email: email)

@@ -108,6 +108,8 @@ module Passwordless
 
     def find_authenticatable
       email = params[:passwordless][email_field].downcase.strip
+      
+      return unless email.match(URI::MailTo::EMAIL_REGEXP)
 
       if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
         authenticatable_class.fetch_resource_for_passwordless(email)
