@@ -8,6 +8,10 @@ en:
         token_claimed: "This link has already been used, try requesting the link again"
       new:
         submit: 'Send magic link'
+      show:
+        explanation: 'Your magic link is no longer valid, but you can request a new one.'
+        submit: 'Resend magic link'
+        new: 'Or go to the sign in page.'
     mailer:
       subject: "Your magic link ✨"
       magic_link: "Here's your link: %{link}"

@@ -24,6 +24,10 @@ module Passwordless
       session = build_passwordless_session(@resource)
 
       if session.save
+        if params[:passwordless][:destination_path]
+          save_passwordless_redirect_location!(@resource.class, params[:passwordless][:destination_path])
+        end
+
         if Passwordless.after_session_save.arity == 2
           Passwordless.after_session_save.call(session, request)
         else
@@ -45,15 +49,18 @@ module Passwordless
     def show
       # Make it "slow" on purpose to make brute-force attacks more of a hassle
       BCrypt::Password.create(params[:token])
-      sign_in(passwordless_session)
+      @email_field = email_field
+      @session = passwordless_session
+      @destination_path = params[:destination_path] || ''
+      sign_in(@session)
 
       redirect_to(passwordless_success_redirect_path)
     rescue Errors::TokenAlreadyClaimedError
       flash[:error] = I18n.t(".passwordless.sessions.create.token_claimed")
-      redirect_to(passwordless_failure_redirect_path)
+      redirect_to(passwordless_failure_redirect_path) unless Passwordless.allow_token_resend
     rescue Errors::SessionTimedOutError
       flash[:error] = I18n.t(".passwordless.sessions.create.session_expired")
-      redirect_to(passwordless_failure_redirect_path)
+      redirect_to(passwordless_failure_redirect_path) unless Passwordless.allow_token_resend
     end
 
     # match '/sign_out', via: %i[get delete].
@@ -107,12 +114,16 @@ module Passwordless
     end
 
     def find_authenticatable
-      email = params[:passwordless][email_field].downcase.strip
-
-      if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
-        authenticatable_class.fetch_resource_for_passwordless(email)
+      if params[:passwordless][:token]
+        Passwordless::Session.find_by(token: params[:passwordless][:token]).authenticatable
       else
-        authenticatable_class.where("lower(#{email_field}) = ?", email).first
+        email = params[:passwordless][email_field].downcase.strip
+
+        if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
+          authenticatable_class.fetch_resource_for_passwordless(email)
+        else
+          authenticatable_class.where("lower(#{email_field}) = ?", email).first
+        end
       end
     end
 

@@ -1,0 +1,7 @@
+<%= form_with model: @session, method: :post, url: send(Passwordless.mounted_as).sign_in_path, data: { turbo: 'false' } do |f| %>
+  <%= hidden_field_tag 'passwordless[destination_path]', @destination_path %>
+  <%= hidden_field_tag 'passwordless[token]', @session.token %>
+  <%= I18n.t('passwordless.sessions.show.explanation') %>
+  <%= f.submit I18n.t('passwordless.sessions.show.submit') %>
+<% end %>
+<%= link_to I18n.t('passwordless.sessions.show.new'), send(Passwordless.mounted_as).sign_in_path %>
