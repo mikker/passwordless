@@ -197,6 +197,19 @@ module Passwordless
       assert_equal Passwordless.success_redirect_path, path
     end
 
+    test("signing in and redirecting with redirect_to options") do
+      Passwordless.redirect_to_response_options = { notice: 'hello!' }
+
+      user = User.create!(email: "a@a")
+      passwordless_session = create_session_for(user)
+      get "/users/sign_in/#{passwordless_session.token}"
+      follow_redirect!
+
+      assert_equal 'hello!', flash[:notice]
+      assert_equal 200, status
+      assert_equal Passwordless.success_redirect_path, path
+    end
+
     test("disabling redirecting back after sign in") do
       default = Passwordless.redirect_back_after_sign_in
       Passwordless.redirect_back_after_sign_in = false
