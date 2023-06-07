@@ -47,13 +47,13 @@ module Passwordless
       BCrypt::Password.create(params[:token])
       sign_in(passwordless_session)
 
-      redirect_to(passwordless_success_redirect_path)
+      redirect_to(passwordless_success_redirect_path, Passwordless.redirect_to_response_options)
     rescue Errors::TokenAlreadyClaimedError
       flash[:error] = I18n.t(".passwordless.sessions.create.token_claimed")
-      redirect_to(passwordless_failure_redirect_path)
+      redirect_to(passwordless_failure_redirect_path, Passwordless.redirect_to_response_options)
     rescue Errors::SessionTimedOutError
       flash[:error] = I18n.t(".passwordless.sessions.create.session_expired")
-      redirect_to(passwordless_failure_redirect_path)
+      redirect_to(passwordless_failure_redirect_path, Passwordless.redirect_to_response_options)
     end
 
     # match '/sign_out', via: %i[get delete].
