@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- Added option `redirect_to_response_options` ([#142](https://github.com/mikker/passwordless/pull/142))
+
 ### Changed
 
 - Replaced `form_for` with `form_with` in view template ([#128](https://github.com/mikker/passwordless/pull/128))
