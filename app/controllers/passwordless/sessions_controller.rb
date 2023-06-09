@@ -44,16 +44,17 @@ module Passwordless
     # @see ControllerHelpers#save_passwordless_redirect_location!
     def show
       # Make it "slow" on purpose to make brute-force attacks more of a hassle
+      redirect_to_options = Passwordless.redirect_to_response_options.dup
       BCrypt::Password.create(params[:token])
       sign_in(passwordless_session)
 
-      redirect_to(passwordless_success_redirect_path, Passwordless.redirect_to_response_options)
+      redirect_to(passwordless_success_redirect_path, redirect_to_options)
     rescue Errors::TokenAlreadyClaimedError
       flash[:error] = I18n.t(".passwordless.sessions.create.token_claimed")
-      redirect_to(passwordless_failure_redirect_path, Passwordless.redirect_to_response_options)
+      redirect_to(passwordless_failure_redirect_path, redirect_to_options)
     rescue Errors::SessionTimedOutError
       flash[:error] = I18n.t(".passwordless.sessions.create.session_expired")
-      redirect_to(passwordless_failure_redirect_path, Passwordless.redirect_to_response_options)
+      redirect_to(passwordless_failure_redirect_path, redirect_to_options)
     end
 
     # match '/sign_out', via: %i[get delete].
@@ -61,7 +62,7 @@ module Passwordless
     # @see ControllerHelpers#sign_out
     def destroy
       sign_out(authenticatable_class)
-      redirect_to(passwordless_sign_out_redirect_path)
+      redirect_to(passwordless_sign_out_redirect_path, Passwordless.redirect_to_response_options.dup)
     end
 
     protected
