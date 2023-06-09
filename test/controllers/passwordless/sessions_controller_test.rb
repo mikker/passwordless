@@ -252,6 +252,24 @@ module Passwordless
       assert session[Helpers.session_key(user.class)].blank?
     end
 
+    test("signing out with redirect_to options") do
+      Passwordless.redirect_to_response_options = { notice: 'bye!' }
+
+      user = User.create(email: "a@a")
+      passwordless_session = create_session_for(user)
+      get "/users/sign_in/#{passwordless_session.token}"
+      assert_not_nil session[Helpers.session_key(user.class)]
+
+      get "/users/sign_out"
+
+      follow_redirect!
+
+      assert_equal 'bye!', flash[:notice]
+      assert_equal 200, status
+      assert_equal "/", path
+      assert session[Helpers.session_key(user.class)].blank?
+    end
+
     test("trying to sign in with an timed out session") do
       user = User.create(email: "a@a")
       passwordless_session = create_session_for(user)
