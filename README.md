@@ -12,24 +12,24 @@ Add authentication to your Rails app without all the icky-ness of passwords.
 
 ## Table of Contents
 
-* [Installation](#installation)
-* [Usage](#usage)
-  * [Getting the current user, restricting access, the usual](#getting-the-current-user-restricting-access-the-usual)
-  * [Providing your own templates](#providing-your-own-templates)
-  * [Registering new users](#registering-new-users)
-  * [URLs and links](#urls-and-links)
-  * [Customize the way to send magic link](#customize-the-way-to-send-magic-link)
-  * [Generate your own magic links](#generate-your-own-magic-links)
-  * [Overrides](#overrides)
-* [Configuration](#configuration)
-  * [Customising token generation](#generating-tokens)
-  * [Token and Session Expiry](#token-and-session-expiry)
-  * [Redirecting back after sign-in](#redirecting-back-after-sign-in)
-  * [Claiming tokens](#claiming-tokens)
-  * [Supporting UUID primary keys](#supporting-uuid-primary-keys)
-* [Testing helpers](#testing-helpers)
-* [E-mail security](#e-mail-security)
-* [License](#license)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Getting the current user, restricting access, the usual](#getting-the-current-user-restricting-access-the-usual)
+  - [Providing your own templates](#providing-your-own-templates)
+  - [Registering new users](#registering-new-users)
+  - [URLs and links](#urls-and-links)
+  - [Customize the way to send magic link](#customize-the-way-to-send-magic-link)
+  - [Generate your own magic links](#generate-your-own-magic-links)
+  - [Overrides](#overrides)
+- [Configuration](#configuration)
+  - [Customising token generation](#customizing-token-generation)
+  - [Token and Session Expiry](#token-and-session-expiry)
+  - [Redirecting back after sign-in](#redirecting-back-after-sign-in)
+  - [Claiming tokens](#claiming-tokens)
+  - [Supporting UUID primary keys](#supporting-uuid-primary-keys)
+- [Testing helpers](#testing-helpers)
+- [E-mail security](#e-mail-security)
+- [License](#license)
 
 ## Installation
 
@@ -130,6 +130,7 @@ app/views/passwordless/mailer/magic_link.text.erb
 ```
 
 If you'd like to let the user know whether or not a record was found, `@resource` is provided to the view. You may override `app/views/passwordless/session/create.html.erb` for example like so:
+
 ```erb
 <% if @resource.present? %>
   <p>User found, check your inbox</p>
@@ -215,6 +216,7 @@ session.save!
 ```
 
 You can further customize this URL by specifying the destination path to be redirected to after the user has logged in. You can do this by adding the `destination_path` query parameter to the end of the URL. For example
+
 ```
 @magic_link = "#{@magic_link}?destination_path=/your-custom-path"
 ```
@@ -350,6 +352,7 @@ class AddClaimedAtToPasswordlessSessions < ActiveRecord::Migration[5.2]
 end
 
 ```
+
 </details>
 
 ### Supporting UUID primary keys
@@ -358,6 +361,7 @@ If your `users` table uses UUIDs for its primary keys, you will need to add a mi
 to change the type of `passwordless`' `authenticatable_id` field to match your primary key type (this will also involve dropping and recreating associated indices).
 
 Here is an example migration you can use:
+
 ```ruby
 class SupportUuidInPasswordlessSessions < ActiveRecord::Migration[6.0]
   def change
@@ -387,7 +391,6 @@ If you are using TestUnit, add this line to your `test/test_helper.rb`:
 ```ruby
 require "passwordless/test_helpers"
 ```
-
 
 Then in your controller, request, and system tests/specs, you can utilize the following methods:
 

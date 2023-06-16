@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Breaking changes
+
+Tokens are now encrypted in the database. If you are upgrading from a previous version, you'll need to add a field to your passwordless table:
+
+```sh
+$ bin/rails g migration AddTokenDigestToPasswordlessSessions token_digest:string:index
+```
+
+### Changed
+
+- Tokens are now encrypted in the database ([#145](https://github.com/mikker/passwordless/pull/145))
+
 ## 0.12.0 (2023-06-16)
 
 ### Added

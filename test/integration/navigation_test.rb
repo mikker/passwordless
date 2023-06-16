@@ -25,9 +25,7 @@ class NavigationTest < ActionDispatch::IntegrationTest
     # Submit form
     post(
       "/users/sign_in",
-      params: {
-        passwordless: {email: alice.email}
-      },
+      params: {passwordless: {email: alice.email}},
 
       headers: {"HTTP_USER_AGENT" => "Mosaic v.1"}
     )
@@ -42,9 +40,10 @@ class NavigationTest < ActionDispatch::IntegrationTest
     assert_equal 1, ActionMailer::Base.deliveries.count
     email = ActionMailer::Base.deliveries.first
     assert_equal alice.email, email.to.first
+    token = email.body.match(/sign_in\/([\w\-_]+)/)[1]
 
     # Expect mail body to include session link
-    token_sign_in_path = "/users/sign_in/#{user_session.token}"
+    token_sign_in_path = "/users/sign_in/#{token}"
     assert email.body.to_s.include?(token_sign_in_path)
 
     # Follow link, Expect redirect to /secret path which has been unsuccessfully
