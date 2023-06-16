@@ -10,6 +10,7 @@
 
 - Replaced `form_for` with `form_with` in view template ([#128](https://github.com/mikker/passwordless/pull/128))
 - Added frontend validation for email presence in views ([#128](https://github.com/mikker/passwordless/pull/128))
+- Always redirect magic link requests back to the sign_in page and render generic flash ([#120](https://github.com/mikker/passwordless/pull/120))
 
 ### Fixed
 
