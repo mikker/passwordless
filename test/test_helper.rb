@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "simplecov"
+require "minitest/pride"
 
 SimpleCov.start do
   add_filter("test/dummy")
