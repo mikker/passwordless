@@ -31,7 +31,7 @@ module Passwordless
         end
       end
 
-      flash[:notice] = I18n.t('passwordless.sessions.create.email_sent_if_record_found')
+      flash[:notice] = I18n.t("passwordless.sessions.create.email_sent_if_record_found")
       redirect_to(sign_in_path)
     end
 
@@ -119,7 +119,7 @@ module Passwordless
     def passwordless_session
       @passwordless_session ||= Session.find_by!(
         authenticatable_type: authenticatable_classname,
-        token: params[:token]
+        token_digest: Passwordless.digest(params[:token])
       )
     end
   end

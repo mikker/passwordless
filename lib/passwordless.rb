@@ -3,10 +3,15 @@
 require "active_support"
 require "passwordless/errors"
 require "passwordless/engine"
+require "passwordless/token_digest"
 require "passwordless/url_safe_base_64_generator"
 
 # The main Passwordless module
 module Passwordless
+  def self.digest(token)
+    TokenDigest.new(token).digest
+  end
+
   mattr_accessor(:parent_mailer) { "ActionMailer::Base" }
   mattr_accessor(:default_from_address) { "CHANGE_ME@example.com" }
   mattr_accessor(:token_generator) { UrlSafeBase64Generator.new }

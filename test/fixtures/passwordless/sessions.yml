@@ -5,19 +5,19 @@ one:
   expires_at: 2017-11-04 23:17:35
   user_agent: MyText
   remote_addr: MyString
-  token: MyString
+  token_digest: MyString
 
 two:
   timeout_at: 2017-11-04 23:17:35
   expires_at: 2017-11-04 23:17:35
   user_agent: MyText
   remote_addr: MyString
-  token: MyString
+  token_digest: MyString
 
 john:
   timeout_at: 2017-11-04 23:17:35
   expires_at: 2017-11-04 23:17:35
   user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.62 Safari/537.36"
   remote_addr: 127.0.0.1
-  token: 3veDCdFw4VedgZtZZkCJ7um7rsc2bFNCZGB51Iih024
+  token_digest: 3veDCdFw4VedgZtZZkCJ7um7rsc2bFNCZGB51Iih024
   authenticatable: john (User)
