@@ -37,10 +37,6 @@ module Passwordless
       available
     end
 
-    class << self
-      deprecate :valid, deprecator: SessionValidDeprecation
-    end
-
     def expired?
       expires_at <= Time.current
     end

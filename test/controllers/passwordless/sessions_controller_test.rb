@@ -125,6 +125,7 @@ module Passwordless
 
       get "/users/sign_in/#{passwordless_session.token}"
       old_session_id = @request.session_options[:id].to_s
+
       get "/users/sign_in/#{passwordless_session.token}"
       new_session_id = @request.session_options[:id].to_s
 
@@ -199,14 +200,14 @@ module Passwordless
     end
 
     test("signing in and redirecting with redirect_to options") do
-      Passwordless.redirect_to_response_options = { notice: 'hello!' }
+      Passwordless.redirect_to_response_options = {notice: "hello!"}
 
       user = User.create!(email: "a@a")
       passwordless_session = create_session_for(user)
       get "/users/sign_in/#{passwordless_session.token}"
       follow_redirect!
 
-      assert_equal 'hello!', flash[:notice]
+      assert_equal "hello!", flash[:notice]
       assert_equal 200, status
       assert_equal Passwordless.success_redirect_path, path
     end
@@ -253,8 +254,20 @@ module Passwordless
       assert session[Helpers.session_key(user.class)].blank?
     end
 
+    test("reset session id when signing out") do
+      user = User.create(email: "a@a")
+      passwordless_session = create_session_for(user)
+      get "/users/sign_in/#{passwordless_session.token}"
+
+      old_session_id = @request.session_options[:id].to_s
+      get "/users/sign_out"
+      new_session_id = @request.session_options[:id].to_s
+
+      assert_not_equal old_session_id, new_session_id
+    end
+
     test("signing out with redirect_to options") do
-      Passwordless.redirect_to_response_options = { notice: 'bye!' }
+      Passwordless.redirect_to_response_options = {notice: "bye!"}
 
       user = User.create(email: "a@a")
       passwordless_session = create_session_for(user)
@@ -265,7 +278,7 @@ module Passwordless
 
       follow_redirect!
 
-      assert_equal 'bye!', flash[:notice]
+      assert_equal "bye!", flash[:notice]
       assert_equal 200, status
       assert_equal "/", path
       assert session[Helpers.session_key(user.class)].blank?
@@ -308,20 +321,6 @@ module Passwordless
       assert_equal "/", path
 
       Passwordless.restrict_token_reuse = default
-    end
-
-    test("signing out removes cookies") do
-      user = User.create(email: "a@a")
-
-      cookies[:user_id] = user.id
-      assert_not_nil cookies[:user_id]
-
-      get "/users/sign_out"
-      follow_redirect!
-
-      assert_equal 200, status
-      assert_equal "/", path
-      assert cookies[:user_id].blank?
     end
   end
 end
