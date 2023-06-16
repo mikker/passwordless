@@ -29,6 +29,7 @@ module Dummy
 
     routes.default_url_options[:host] = "localhost:3000"
     config.action_mailer.default_url_options = {host: "localhost", port: "3000"}
+    config.hosts << "www.example.com"
 
     # Configuration for the application, engines, and railties goes here.
     #
