@@ -2,25 +2,33 @@ module Passwordless
   module TestHelpers
     module TestCase
       def passwordless_sign_out
-        delete Passwordless::Engine.routes.url_helpers.sign_out_path
+        delete(Passwordless::Engine.routes.url_helpers.sign_out_path)
         follow_redirect!
       end
 
       def passwordless_sign_in(resource)
-        session = Passwordless::Session.create!(authenticatable: resource, user_agent: "TestAgent", remote_addr: "unknown")
-        get Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token)
+        session = Passwordless::Session.create!(
+          authenticatable: resource,
+          user_agent: "TestAgent",
+          remote_addr: "unknown"
+        )
+        get(Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token))
         follow_redirect!
       end
     end
 
     module SystemTestCase
       def passwordless_sign_out
-        visit Passwordless::Engine.routes.url_helpers.sign_out_path
+        visit(Passwordless::Engine.routes.url_helpers.sign_out_path)
       end
 
       def passwordless_sign_in(resource)
-        session = Passwordless::Session.create!(authenticatable: resource, user_agent: "TestAgent", remote_addr: "unknown")
-        visit Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token)
+        session = Passwordless::Session.create!(
+          authenticatable: resource,
+          user_agent: "TestAgent",
+          remote_addr: "unknown"
+        )
+        visit(Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token))
       end
     end
   end
@@ -36,8 +44,8 @@ end
 
 if defined?(RSpec)
   RSpec.configure do |config|
-    config.include ::Passwordless::TestHelpers::TestCase, type: :request
-    config.include ::Passwordless::TestHelpers::TestCase, type: :controller
-    config.include ::Passwordless::TestHelpers::SystemTestCase, type: :system
+    config.include(::Passwordless::TestHelpers::TestCase, type: :request)
+    config.include(::Passwordless::TestHelpers::TestCase, type: :controller)
+    config.include(::Passwordless::TestHelpers::SystemTestCase, type: :system)
   end
 end
