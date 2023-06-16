@@ -4,15 +4,25 @@
 
 ### Breaking changes
 
+#### 1. Encrypted tokens
+
 Tokens are now encrypted in the database. If you are upgrading from a previous version, you'll need to add a field to your passwordless table:
 
 ```sh
 $ bin/rails g migration AddTokenDigestToPasswordlessSessions token_digest:string:index
 ```
 
+#### 2. Un-isolated namespace
+
+Passwordless no longer [_isolates namespace_](https://guides.rubyonrails.org/engines.html#routes).
+
+1.  Update all your links with eg. `users.sign_in_path` to `users_sign_in_path`
+1.  Remove all links with `main_app.whatever_path` to just `whatever_path`
+
 ### Changed
 
 - Tokens are now encrypted in the database ([#145](https://github.com/mikker/passwordless/pull/145))
+- Un-isolate namespace ([#146](https://github.com/mikker/passwordless/pull/146))
 
 ## 0.12.0 (2023-06-16)
 

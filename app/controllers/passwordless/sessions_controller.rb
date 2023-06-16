@@ -7,7 +7,7 @@ module Passwordless
   class SessionsController < ApplicationController
     include ControllerHelpers
 
-    # get '/sign_in'
+    # get '/:resource/sign_in'
     #   Assigns an email_field and new Session to be used by new view.
     #   renders sessions/new.html.erb.
     def new
@@ -15,7 +15,7 @@ module Passwordless
       @session = Session.new
     end
 
-    # post '/sign_in'
+    # post '/:resource/sign_in'
     #   Creates a new Session record then sends the magic link
     #   redirects to sign in page with generic flash message.
     # @see Mailer#magic_link Mailer#magic_link
@@ -32,10 +32,10 @@ module Passwordless
       end
 
       flash[:notice] = I18n.t("passwordless.sessions.create.email_sent_if_record_found")
-      redirect_to(sign_in_path)
+      redirect_back(fallback_location: root_path)
     end
 
-    # get '/sign_in/:token'
+    # get '/:resource/sign_in/:token'
     #   Looks up session record by provided token. Signs in user if a match
     #   is found. Redirects to either the user's original destination
     #   or _root_path_
@@ -56,7 +56,7 @@ module Passwordless
       redirect_to(passwordless_failure_redirect_path, redirect_to_options)
     end
 
-    # match '/sign_out', via: %i[get delete].
+    # match '/:resource/sign_out', via: %i[get delete].
     #   Signs user out. Redirects to root_path
     # @see ControllerHelpers#sign_out
     def destroy

@@ -24,6 +24,8 @@ Bundler.require(*Rails.groups)
 
 module Dummy
   class Application < Rails::Application
+    config.load_defaults 7.0
+
     routes.default_url_options[:host] = "localhost:3000"
     config.action_mailer.default_url_options = {host: "localhost", port: "3000"}
     config.hosts << "www.example.com"
