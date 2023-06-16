@@ -33,10 +33,6 @@ module Passwordless
       lambda { where("expires_at > ?", Time.current) }
     )
 
-    def self.valid
-      available
-    end
-
     def expired?
       expires_at <= Time.current
     end

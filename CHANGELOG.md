@@ -19,10 +19,18 @@ Passwordless no longer [_isolates namespace_](https://guides.rubyonrails.org/eng
 1.  Update all your links with eg. `users.sign_in_path` to `users_sign_in_path`
 1.  Remove all links with `main_app.whatever_path` to just `whatever_path`
 
+#### 3. Remove deprecated methods and helpers
+
+Removes `authenticate_by_cookie` and `upgrade_passwordless_cookie` from controller helpers.
+
 ### Changed
 
 - Tokens are now encrypted in the database ([#145](https://github.com/mikker/passwordless/pull/145))
 - Un-isolate namespace ([#146](https://github.com/mikker/passwordless/pull/146))
+
+### Removed
+
+- Deprecated methods and helpers ([#147](https://github.com/mikker/passwordless/pull/147))
 
 ## 0.12.0 (2023-06-16)
 
