@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.12.0 (2023-06-16)
 
 ### Added
 
@@ -14,7 +14,7 @@
 
 ### Fixed
 
-- Fix  `Passwordless#ControllerHelpers` to be used outside controllers (#124)
+- Fix `Passwordless#ControllerHelpers` to be used outside controllers (#124)
 
 ## 0.11.0
 
@@ -26,7 +26,6 @@
 
 - Test helpers for MiniTest and RSpec ([#90](https://github.com/mikker/passwordless/pull/90))
 - Generator to copy the bundled views ([#123](https://github.com/mikker/passwordless/issues/123))
-
 
 ### Fixed
 
