@@ -68,6 +68,12 @@ module Passwordless
       Passwordless.token_generator = old_generator
     end
 
+    test("setting token manually") do
+      session = Session.new(token: "hi")
+      assert_equal "hi", session.token
+      assert_equal Passwordless.digest("hi"), session.token_digest
+    end
+
     test("with a custom expire at function") do
       custom_expire_at = Time.parse("01-01-2100").utc
       old_expires_at = Passwordless.expires_at

@@ -24,14 +24,19 @@ module Passwordless
 
     before_validation :set_defaults
 
-    # save the token in memory so we can put it in emails but only save the
-    # hashed version in the database
-    attr_accessor :token
-
     scope(
       :available,
       lambda { where("expires_at > ?", Time.current) }
     )
+
+    # save the token in memory so we can put it in emails but only save the
+    # hashed version in the database
+    attr_reader :token
+
+    def token=(plaintext)
+      self.token_digest = Passwordless.digest(plaintext)
+      @token = (plaintext)
+    end
 
     def expired?
       expires_at <= Time.current
