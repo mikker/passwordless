@@ -32,6 +32,10 @@ Removes `authenticate_by_cookie` and `upgrade_passwordless_cookie` from controll
 
 - Deprecated methods and helpers ([#147](https://github.com/mikker/passwordless/pull/147))
 
+### Fixed
+
+- Remove reference to deleted generator file ([#149](https://github.com/mikker/passwordless/pull/149))
+
 ## 0.12.0 (2023-06-16)
 
 ### Added
