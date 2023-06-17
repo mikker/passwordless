@@ -27,6 +27,8 @@ module Passwordless
   mattr_accessor(:sign_out_redirect_path) { "/" }
 
   mattr_accessor(:after_session_save) do
-    lambda { |session, _request| Mailer.magic_link(session).deliver_now }
+    lambda do |session, _request|
+      Mailer.magic_link(session, session.token).deliver_now
+    end
   end
 end
