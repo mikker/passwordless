@@ -61,16 +61,20 @@ module Passwordless
 
     private
 
+    def token_digest_available?(token_digest)
+      Session.available.where(token_digest: token_digest).none?
+    end
+
     def set_defaults
       self.expires_at ||= Passwordless.expires_at.call
       self.timeout_at ||= Passwordless.timeout_at.call
 
-      return if self.token || self.token_digest
+      return if self.token_digest
 
       self.token, self.token_digest = loop {
         token = Passwordless.token_generator.call(self)
         digest = Passwordless.digest(token)
-        break [token, digest] unless Session.find_by(token_digest: digest)
+        break [token, digest] if token_digest_available?(digest)
       }
     end
   end
