@@ -118,13 +118,11 @@ end
 
 Override `passwordless`' bundled views by adding your own. You can manually copy the specific views that you need or copy them to your application with `rails generate passwordless:views`.
 
-`passwordless` has 2 action views and 1 mailer view:
+`passwordless` has 1 action view and 1 mailer view:
 
 ```sh
 # the form where the user inputs their email address
 app/views/passwordless/sessions/new.html.erb
-# shown after a user requests a magic link
-app/views/passwordless/sessions/create.html.erb
 # the mail with the magic link that gets sent
 app/views/passwordless/mailer/magic_link.text.erb
 ```
