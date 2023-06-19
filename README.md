@@ -141,6 +141,20 @@ Please note that, from a security standpoint, this is a **bad practice** because
 
 See [the bundled views](https://github.com/mikker/passwordless/tree/master/app/views/passwordless).
 
+### Using a custom controller
+
+``` ruby
+Rails.application.routes.draw do
+  passwordless_for :users, controller: 'sessions'
+
+  # other routes
+end
+
+class SessionsController < Passwordless::SessionsController
+end
+```
+
+
 ### Registering new users
 
 Because your `User` record is like any other record, you create one like you normally would. Passwordless provides a helper method to sign in the created user after it is saved – like so:
