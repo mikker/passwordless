@@ -21,7 +21,7 @@ module Passwordless
     # @param controller [String] Optional - provide a custom controller for
     #  sessions to use (using the above example the controller called would be MyCustomController
     #  (Default: 'passwordless/sessions')
-    def passwordless_for(resource, at: :na, as: :na, controller: 'passwordless/sessions', )
+    def passwordless_for(resource, at: :na, as: :na, controller: 'passwordless/sessions')
       at == :na && at = "/#{resource.to_s}"
       as == :na && as = resource.to_s
 
