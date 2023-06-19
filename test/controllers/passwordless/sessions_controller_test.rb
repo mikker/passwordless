@@ -322,5 +322,17 @@ module Passwordless
 
       Passwordless.restrict_token_reuse = default
     end
+
+    test("responding to HEAD requests") do
+      user = User.create(email: "a@a")
+      passwordless_session = create_session_for(user)
+
+      token_path = "/users/sign_in/#{passwordless_session.token}"
+      head token_path
+
+      assert_equal 200, status
+      assert_equal token_path, path
+      assert_nil session[Helpers.session_key(user.class)]
+    end
   end
 end

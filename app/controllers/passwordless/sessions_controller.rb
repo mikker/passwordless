@@ -42,6 +42,10 @@ module Passwordless
     # @see ControllerHelpers#sign_in
     # @see ControllerHelpers#save_passwordless_redirect_location!
     def show
+      # Some email clients will visit links in emails to check if they are
+      # safe. We don't want to sign in the user in that case.
+      return head(:ok) if request.head?
+
       # Make it "slow" on purpose to make brute-force attacks more of a hassle
       redirect_to_options = Passwordless.redirect_to_response_options.dup
       BCrypt::Password.create(params[:token])

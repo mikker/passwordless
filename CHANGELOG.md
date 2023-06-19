@@ -35,6 +35,7 @@ Removes `authenticate_by_cookie` and `upgrade_passwordless_cookie` from controll
 ### Fixed
 
 - Remove reference to deleted generator file ([#149](https://github.com/mikker/passwordless/pull/149))
+- Return early on HEAD requests ([#151](https://github.com/mikker/passwordless/pull/151))
 
 ## 0.12.0 (2023-06-16)
 
