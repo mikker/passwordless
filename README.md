@@ -171,10 +171,10 @@ By default, Passwordless uses the resource name given to `passwordless_for` to g
 
 ```ruby
 passwordless_for :users
-  # <%= users.sign_in_path %> # => /users/sign_in
+  # <%= users_sign_in_path %> # => /users/sign_in
 
 passwordless_for :users, at: '/', as: :auth
-  # <%= auth.sign_in_path %> # => /sign_in
+  # <%= auth_sign_in_path %> # => /sign_in
 ```
 
 Also be sure to [specify ActionMailer's `default_url_options.host`](http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views).
@@ -204,13 +204,13 @@ Currently there is not an officially supported way to generate your own magic li
 However, you can accomplish this with the following snippet of code.
 
 ```ruby
-session = Passwordless::Session.new({
+session = Passwordless::Session.create!({
   authenticatable: @manager,
   user_agent: 'Command Line',
   remote_addr: 'unknown',
 })
-session.save!
-@magic_link = send(Passwordless.mounted_as).token_sign_in_url(session.token)
+
+@magic_link = users_token_sign_in_url(session.token)
 ```
 
 You can further customize this URL by specifying the destination path to be redirected to after the user has logged in. You can do this by adding the `destination_path` query parameter to the end of the URL. For example
