@@ -4,9 +4,7 @@
 
 ### Breaking changes
 
-#### 1. Encrypted tokens
-
-Tokens are now encrypted in the database. If you are upgrading from a previous version, you'll need to add a field to your passwordless table:
+If you're already running Passwordless, you'll need to update your database schema.
 
 ```sh
 $ bin/rails g migration UpgradePassswordless
@@ -26,6 +24,10 @@ class UpgradePassswordless < ActiveRecord::Migration[7.0]
   end
 end
 ```
+
+#### 1. Encrypted tokens
+
+Tokens are now encrypted in the database.
 
 #### 2. Un-isolated namespace
 
@@ -51,7 +53,7 @@ add it to your `after_session_save` callback.
 ### Removed
 
 - Deprecated methods and helpers ([#147](https://github.com/mikker/passwordless/pull/147))
-- Collection of PII (IP address, User Agent) ([]())
+- Collection of PII (IP address, User Agent) ([#153](https://github.com/mikker/passwordless/pull/153))
 
 ### Fixed
 
