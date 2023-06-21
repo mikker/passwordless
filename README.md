@@ -19,7 +19,6 @@ Add authentication to your Rails app without all the icky-ness of passwords.
   - [Registering new users](#registering-new-users)
   - [URLs and links](#urls-and-links)
   - [Customize the way to send magic link](#customize-the-way-to-send-magic-link)
-  - [Generate your own magic links](#generate-your-own-magic-links)
   - [Overrides](#overrides)
 - [Configuration](#configuration)
   - [Customising token generation](#customizing-token-generation)
@@ -196,28 +195,6 @@ end
 ```
 
 You can access user model through authenticatable.
-
-### Generate your own magic links
-
-Currently there is not an officially supported way to generate your own magic links to send in your own mailers.
-
-However, you can accomplish this with the following snippet of code.
-
-```ruby
-session = Passwordless::Session.create!({
-  authenticatable: @manager,
-  user_agent: 'Command Line',
-  remote_addr: 'unknown',
-})
-
-@magic_link = users_token_sign_in_url(session.token)
-```
-
-You can further customize this URL by specifying the destination path to be redirected to after the user has logged in. You can do this by adding the `destination_path` query parameter to the end of the URL. For example
-
-```
-@magic_link = "#{@magic_link}?destination_path=/your-custom-path"
-```
 
 ### Overrides
 

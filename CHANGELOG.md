@@ -9,7 +9,22 @@
 Tokens are now encrypted in the database. If you are upgrading from a previous version, you'll need to add a field to your passwordless table:
 
 ```sh
-$ bin/rails g migration AddTokenDigestToPasswordlessSessions token_digest:string:index
+$ bin/rails g migration UpgradePassswordless
+```
+
+```ruby
+class UpgradePassswordless < ActiveRecord::Migration[7.0]
+  def change
+    # Encrypted tokens
+    add_column(:passwordless_sessions, :token_digest, :string)
+    add_index(:passwordless_sessions, :token_digest)
+    remove_column(:passwordless_sessions, :token, :string, null: false)
+
+    # Remove PII
+    remove_column(:passwordless_sessions, :user_agent, :string, null: false)
+    remove_column(:passwordless_sessions, :remote_addr, :string, null: false)
+  end
+end
 ```
 
 #### 2. Un-isolated namespace
@@ -23,6 +38,11 @@ Passwordless no longer [_isolates namespace_](https://guides.rubyonrails.org/eng
 
 Removes `authenticate_by_cookie` and `upgrade_passwordless_cookie` from controller helpers.
 
+#### 4. Stop collecting PII
+
+Passwordless no longer collects users' IP addresses. If you need this information, you can
+add it to your `after_session_save` callback.
+
 ### Changed
 
 - Tokens are now encrypted in the database ([#145](https://github.com/mikker/passwordless/pull/145))
@@ -31,6 +51,7 @@ Removes `authenticate_by_cookie` and `upgrade_passwordless_cookie` from controll
 ### Removed
 
 - Deprecated methods and helpers ([#147](https://github.com/mikker/passwordless/pull/147))
+- Collection of PII (IP address, User Agent) ([]())
 
 ### Fixed
 

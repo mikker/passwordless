@@ -10,17 +10,12 @@ module Passwordless
     end
 
     # Build a new Passwordless::Session from an _authenticatable_ record.
-    # Set's `user_agent` and `remote_addr` from Rails' `request`.
     # @param authenticatable [ActiveRecord::Base] Instance of an
     #   authenticatable Rails model
     # @return [Session] the new Session object
     # @see ModelHelpers#passwordless_with
     def build_passwordless_session(authenticatable)
-      Session.new.tap do |us|
-        us.remote_addr = request.remote_addr
-        us.user_agent = request.env["HTTP_USER_AGENT"]
-        us.authenticatable = authenticatable
-      end
+      Session.new(authenticatable: authenticatable)
     end
 
     # Authenticate a record using the session. Looks for a session key corresponding to

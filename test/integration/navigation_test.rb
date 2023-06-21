@@ -33,8 +33,7 @@ class NavigationTest < ActionDispatch::IntegrationTest
     assert flash["notice"].include?("If we found you in the system")
 
     # Expect session created for alice
-    user_session = Passwordless::Session.find_by!(authenticatable: alice)
-    assert_equal "Mosaic v.1", user_session.user_agent
+    Passwordless::Session.find_by!(authenticatable: alice)
 
     # Expect mail for alice
     assert_equal 1, ActionMailer::Base.deliveries.count
