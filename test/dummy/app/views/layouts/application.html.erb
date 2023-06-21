@@ -2,17 +2,21 @@
 <html>
   <head>
     <title>Dummy</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/holiday.css@0.11.0"/>
     <%= csrf_meta_tags %>
   </head>
 
   <body>
     <% if current_user %>
-      <%= link_to "Sign out", users_sign_out_path %>
+      <p><%= link_to "Sign out", users_sign_out_path %></p>
     <% else %>
-      <%= link_to "Sign in", users_sign_in_path %>
+      <p><%= link_to "Sign in", users_sign_in_path %></p>
     <% end %>
 
-    <%= debug current_user.inspect %>
+    <div style="border: 1px solid gray; padding: 10px; margin-bottom: 10px;">
+      <p><strong>Current user:</strong></p>
+      <%= debug current_user.inspect %>
+    </div>
 
     <% flash.each do |kind, msg| %>
       <%= tag.div(class: kind) { msg } %>

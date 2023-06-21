@@ -1,4 +1,4 @@
-require "passwordless/url_safe_base_64_generator"
+require "passwordless/short_token_generator"
 
 module Passwordless
   module Options
@@ -29,8 +29,8 @@ module Passwordless
 
     option :parent_mailer, default: "ActionMailer::Base"
     option :default_from_address, default: "CHANGE_ME@example.com"
-    option :token_generator, default: UrlSafeBase64Generator.new
-    option :restrict_token_reuse, default: false
+    option :token_generator, default: ShortTokenGenerator.new
+    option :restrict_token_reuse, default: true
     option :redirect_back_after_sign_in, default: true
     option :expires_at, default: lambda { 1.year.from_now }
     option :timeout_at, default: lambda { 1.hour.from_now }

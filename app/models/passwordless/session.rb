@@ -36,6 +36,10 @@ module Passwordless
       @token = (plaintext)
     end
 
+    def authenticate(token)
+      token_digest == Passwordless.digest(token)
+    end
+
     def expired?
       expires_at <= Time.current
     end

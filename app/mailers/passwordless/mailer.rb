@@ -13,7 +13,7 @@ module Passwordless
       @session = session
       @token = token || session.token
 
-      @magic_link = send(:"#{session.authenticatable_type.tableize}_token_sign_in_url", token)
+      @magic_link = send(:"confirm_#{session.authenticatable_type.tableize}_sign_in_url", session, token)
 
       email_field = @session.authenticatable.class.passwordless_email_field
       mail(

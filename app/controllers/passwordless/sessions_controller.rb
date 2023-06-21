@@ -5,62 +5,71 @@ require "bcrypt"
 module Passwordless
   # Controller for managing Passwordless sessions
   class SessionsController < ApplicationController
-    class MissingEmailFieldError < StandardError
-    end
-
     include ControllerHelpers
+
+    helper_method :email_field
 
     # get '/:resource/sign_in'
     #   Assigns an email_field and new Session to be used by new view.
     #   renders sessions/new.html.erb.
     def new
-      @email_field = email_field
       @session = Session.new
     end
 
     # post '/:resource/sign_in'
     #   Creates a new Session record then sends the magic link
     #   redirects to sign in page with generic flash message.
-    # @see Mailer#magic_link Mailer#magic_link
     def create
       @resource = find_authenticatable
-      session = build_passwordless_session(@resource)
+      @session = build_passwordless_session(@resource)
 
-      if session.save
+      if @session.save
         if Passwordless.config.after_session_save.arity == 2
-          Passwordless.config.after_session_save.call(session, request)
+          Passwordless.config.after_session_save.call(@session, request)
         else
-          Passwordless.config.after_session_save.call(session)
+          Passwordless.config.after_session_save.call(@session)
         end
-      end
 
-      flash[:notice] = I18n.t("passwordless.sessions.create.email_sent_if_record_found")
-      redirect_back(fallback_location: root_path)
+        redirect_to(
+          url_for(id: @session.id, action: "show"),
+          flash: {notice: I18n.t(".email_sent_if_record_found")}
+        )
+      else
+        render(:new, status: :unprocessable_entity)
+      end
     end
 
-    # get '/:resource/sign_in/:token'
+    # get '/:resource/sign_in/:id'
+    #   Shows the form for confirming a Session record.
+    #   renders sessions/show.html.erb.
+    def show
+      @session = find_session
+    end
+
+    # patch "/:resource/sign_in/:id"
     #   Looks up session record by provided token. Signs in user if a match
     #   is found. Redirects to either the user's original destination
-    #   or _root_path_
+    #   or _Passwordless.config.success_redirect_path_.
     # @see ControllerHelpers#sign_in
     # @see ControllerHelpers#save_passwordless_redirect_location!
-    def show
+    def update
+      @session = find_session
+
+      artificially_slow_down_brute_force_attacks(passwordless_session_params[:token])
+
+      authenticate_and_sign_in(@session, passwordless_session_params[:token])
+    end
+
+    def confirm
       # Some email clients will visit links in emails to check if they are
       # safe. We don't want to sign in the user in that case.
       return head(:ok) if request.head?
 
-      # Make it "slow" on purpose to make brute-force attacks more of a hassle
-      redirect_to_options = Passwordless.config.redirect_to_response_options.dup
-      BCrypt::Password.create(params[:token])
-      sign_in(passwordless_session)
+      @session = find_session
 
-      redirect_to(passwordless_success_redirect_path, redirect_to_options)
-    rescue Errors::TokenAlreadyClaimedError
-      flash[:error] = I18n.t(".passwordless.sessions.create.token_claimed")
-      redirect_to(passwordless_failure_redirect_path, redirect_to_options)
-    rescue Errors::SessionTimedOutError
-      flash[:error] = I18n.t(".passwordless.sessions.create.session_expired")
-      redirect_to(passwordless_failure_redirect_path, redirect_to_options)
+      artificially_slow_down_brute_force_attacks(params[:token])
+
+      authenticate_and_sign_in(@session, params[:token])
     end
 
     # match '/:resource/sign_out', via: %i[get delete].
@@ -97,16 +106,50 @@ module Passwordless
 
     private
 
+    def artificially_slow_down_brute_force_attacks(token)
+      # Make it "slow" on purpose to make brute-force attacks more of a hassle
+      BCrypt::Password.create(token)
+    end
+
+    def passwordless_session_params
+      params.require(:passwordless_session).permit(:token, authenticatable_class.passwordless_email_field)
+    end
+
+    def authenticate_and_sign_in(session, token)
+      if session.authenticate(token)
+        sign_in(session)
+        redirect_to(passwordless_success_redirect_path, redirect_to_options)
+      else
+        flash[:error] = I18n.t(".passwordless.sessions.errors.invalid_token")
+        render(status: :forbidden, action: "show")
+      end
+
+    rescue Errors::TokenAlreadyClaimedError
+      flash[:error] = I18n.t("passwordless.sessions.errors.token_claimed")
+      redirect_to(passwordless_failure_redirect_path, **redirect_to_options)
+    rescue Errors::SessionTimedOutError
+      flash[:error] = I18n.t("passwordless.sessions.errors.session_expired")
+      redirect_to(passwordless_failure_redirect_path, **redirect_to_options)
+    end
+
     def authenticatable
       params.fetch(:authenticatable)
     end
 
-    def authenticatable_classname
+    def authenticatable_type
       authenticatable.to_s.camelize
     end
 
     def authenticatable_class
-      authenticatable_classname.constantize
+      authenticatable_type.constantize
+    end
+
+    def redirect_to_options
+      @redirect_to_options ||= (Passwordless.config.redirect_to_response_options.dup || {})
+    end
+
+    def find_session
+      Session.find_by!(id: params[:id], authenticatable_type: authenticatable_type)
     end
 
     def email_field
@@ -114,29 +157,30 @@ module Passwordless
     rescue NoMethodError => e
       raise(
         MissingEmailFieldError,
-        <<~MSG.strip_heredoc,
-          undefined method `passwordless_email_field' for #{authenticatable_class}
+        <<~MSG
+          undefined method `passwordless_email_field' for #{authenticatable_type}
 
                   Remember to add something like `passwordless_with :email` to you model
         MSG
+          .strip_heredoc,
         caller[1..-1]
       )
     end
 
     def find_authenticatable
-      email = params[:passwordless][email_field].downcase.strip
+      email = passwordless_session_params[email_field]
 
       if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
         authenticatable_class.fetch_resource_for_passwordless(email)
       else
-        authenticatable_class.where("lower(#{email_field}) = ?", email).first
+        authenticatable_class.where("lower(#{email_field}) = ?", email.downcase).first
       end
     end
 
     def passwordless_session
       @passwordless_session ||= Session.find_by!(
-        authenticatable_type: authenticatable_classname,
-        token_digest: Passwordless.digest(params[:token])
+        id: params[:id],
+        authenticatable_type: authenticatable_type
       )
     end
   end

@@ -2,6 +2,10 @@
 
 module Passwordless
   module Errors
+    # Raised when the authenticatable class is not found.
+    class MissingEmailFieldError < StandardError
+    end
+
     # Raise this exception when a session is expired.
     class SessionTimedOutError < StandardError
     end
