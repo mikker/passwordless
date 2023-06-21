@@ -5,6 +5,9 @@ require "bcrypt"
 module Passwordless
   # Controller for managing Passwordless sessions
   class SessionsController < ApplicationController
+    class MissingEmailFieldError < StandardError
+    end
+
     include ControllerHelpers
 
     # get '/:resource/sign_in'
@@ -108,6 +111,16 @@ module Passwordless
 
     def email_field
       authenticatable_class.passwordless_email_field
+    rescue NoMethodError => e
+      raise(
+        MissingEmailFieldError,
+        <<~MSG.strip_heredoc,
+          undefined method `passwordless_email_field' for #{authenticatable_class}
+
+                  Remember to add something like `passwordless_with :email` to you model
+        MSG
+        caller[1..-1]
+      )
     end
 
     def find_authenticatable

@@ -1,15 +1,7 @@
-# frozen_string_literal: true
-
 require "test_helper"
 
 module Passwordless
   class SessionTest < ActiveSupport::TestCase
-    def create_session(attrs = {})
-      Session.create!(
-        attrs.reverse_merge(authenticatable: User.create(email: "session_test_valid@a"))
-      )
-    end
-
     test("scope: available") do
       available = create_session
       _timed_out = create_session(expires_at: 1.hour.ago)
@@ -121,6 +113,17 @@ module Passwordless
       unavailable_session = create_session(expires_at: 2.years.ago)
 
       refute unavailable_session.available?
+    end
+
+    def next_email(prefix = "email")
+      @@i ||= 0
+      @@i += 1
+      [prefix, @@i, "@example.com"].join
+    end
+
+    def create_session(attrs = {})
+      user = User.create(email: next_email("valid"))
+      Session.create!(attrs.reverse_merge(authenticatable: user))
     end
   end
 end
