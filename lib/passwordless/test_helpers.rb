@@ -7,11 +7,7 @@ module Passwordless
       end
 
       def passwordless_sign_in(resource)
-        session = Passwordless::Session.create!(
-          authenticatable: resource,
-          user_agent: "TestAgent",
-          remote_addr: "unknown"
-        )
+        session = Passwordless::Session.create!(authenticatable: resource)
         get(Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token))
         follow_redirect!
       end
@@ -23,11 +19,7 @@ module Passwordless
       end
 
       def passwordless_sign_in(resource)
-        session = Passwordless::Session.create!(
-          authenticatable: resource,
-          user_agent: "TestAgent",
-          remote_addr: "unknown"
-        )
+        session = Passwordless::Session.create!(authenticatable: resource)
         visit(Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token))
       end
     end

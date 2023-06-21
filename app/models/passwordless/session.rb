@@ -16,8 +16,6 @@ module Passwordless
       :authenticatable,
       :timeout_at,
       :expires_at,
-      :user_agent,
-      :remote_addr,
       :token_digest,
       presence: true
     )
