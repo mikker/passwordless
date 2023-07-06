@@ -17,8 +17,6 @@ ActiveRecord::Schema[7.0].define(version: 2017_11_04_225303) do
     t.datetime "timeout_at", precision: nil, null: false
     t.datetime "expires_at", precision: nil, null: false
     t.datetime "claimed_at", precision: nil
-    t.text "user_agent", null: false
-    t.string "remote_addr", null: false
     t.string "token_digest", null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false

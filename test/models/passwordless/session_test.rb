@@ -6,11 +6,7 @@ module Passwordless
   class SessionTest < ActiveSupport::TestCase
     def create_session(attrs = {})
       Session.create!(
-        attrs.reverse_merge(
-          remote_addr: "0.0.0.0",
-          user_agent: "wooden box",
-          authenticatable: User.create(email: "session_test_valid@a")
-        )
+        attrs.reverse_merge(authenticatable: User.create(email: "session_test_valid@a"))
       )
     end
 

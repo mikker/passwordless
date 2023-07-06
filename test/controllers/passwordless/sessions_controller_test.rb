@@ -5,11 +5,7 @@ require "test_helper"
 module Passwordless
   class SessionsControllerTest < ActionDispatch::IntegrationTest
     def create_session_for(user)
-      Session.create!(
-        authenticatable: user,
-        remote_addr: "yes",
-        user_agent: "James Bond"
-      )
+      Session.create!(authenticatable: user)
     end
 
     class Helpers
