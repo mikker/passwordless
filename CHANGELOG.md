@@ -45,6 +45,10 @@ Removes `authenticate_by_cookie` and `upgrade_passwordless_cookie` from controll
 Passwordless no longer collects users' IP addresses. If you need this information, you can
 add it to your `after_session_save` callback.
 
+### Added
+
+- Added an option to set a custom controller for `passwordless_for` routes ([#152](https://github.com/mikker/passwordless/pull/152))
+
 ### Changed
 
 - Tokens are now encrypted in the database ([#145](https://github.com/mikker/passwordless/pull/145))
