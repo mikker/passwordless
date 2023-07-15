@@ -54,7 +54,7 @@ module Passwordless
     test("map sign in for admin") do
       assert_recognizes(
         {
-          controller: "passwordless/sessions",
+          controller: "admin/sessions",
           action: "new",
           authenticatable: "admin",
           resource: "admins"
@@ -65,7 +65,7 @@ module Passwordless
 
       assert_recognizes(
         {
-          controller: "passwordless/sessions",
+          controller: "admin/sessions",
           action: "create",
           authenticatable: "admin",
           resource: "admins"
@@ -76,7 +76,7 @@ module Passwordless
 
       assert_recognizes(
         {
-          controller: "passwordless/sessions",
+          controller: "admin/sessions",
           action: "show",
           authenticatable: "admin",
           resource: "admins",
@@ -88,7 +88,7 @@ module Passwordless
 
       assert_recognizes(
         {
-          controller: "passwordless/sessions",
+          controller: "admin/sessions",
           action: "destroy",
           authenticatable: "admin",
           resource: "admins"
