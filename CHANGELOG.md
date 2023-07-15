@@ -4,6 +4,8 @@
 
 ### Breaking changes
 
+#### 1. Upgrade your database
+
 If you're already running Passwordless, you'll need to update your database schema.
 
 ```sh
@@ -25,25 +27,35 @@ class UpgradePassswordless < ActiveRecord::Migration[7.0]
 end
 ```
 
-#### 1. Encrypted tokens
+#### 2. Encrypted tokens
 
 Tokens are now encrypted in the database.
 
-#### 2. Un-isolated namespace
+#### 3. Un-isolated namespace
 
 Passwordless no longer [_isolates namespace_](https://guides.rubyonrails.org/engines.html#routes).
 
 1.  Update all your links with eg. `users.sign_in_path` to `users_sign_in_path`
 1.  Remove all links with `main_app.whatever_path` to just `whatever_path`
 
-#### 3. Remove deprecated methods and helpers
+#### 4. Remove deprecated methods and helpers
 
 Removes `authenticate_by_cookie` and `upgrade_passwordless_cookie` from controller helpers.
 
-#### 4. Stop collecting PII
+#### 5. Stop collecting PII
 
 Passwordless no longer collects users' IP addresses. If you need this information, you can
 add it to your `after_session_save` callback.
+
+#### 6. Move configuration to `Passwordless.config`
+
+Passwordless is now configured like this. In `config/initializers/passwordless.rb`:
+
+```ruby
+Passwordless.configure do |config|
+  config.default_from_address = "admin@yourthing.app"
+end
+```
 
 ### Added
 
@@ -53,6 +65,7 @@ add it to your `after_session_save` callback.
 
 - Tokens are now encrypted in the database ([#145](https://github.com/mikker/passwordless/pull/145))
 - Un-isolate namespace ([#146](https://github.com/mikker/passwordless/pull/146))
+- Move configuration to `Passwordless.config` ([#155](https://github.com/mikker/passwordless/pull/155))
 
 ### Removed
 
