@@ -35,7 +35,7 @@ module Passwordless
     # to sign in
     # @return [ActiveRecord::Base] the record that is passed in.
     def sign_in(passwordless_session)
-      passwordless_session.claim! if Passwordless.restrict_token_reuse
+      passwordless_session.claim! if Passwordless.config.restrict_token_reuse
 
       raise Passwordless::Errors::SessionTimedOutError if passwordless_session.timed_out?
 

@@ -64,13 +64,13 @@ module Passwordless
     end
 
     def set_defaults
-      self.expires_at ||= Passwordless.expires_at.call
-      self.timeout_at ||= Passwordless.timeout_at.call
+      self.expires_at ||= Passwordless.config.expires_at.call
+      self.timeout_at ||= Passwordless.config.timeout_at.call
 
       return if self.token_digest
 
       self.token, self.token_digest = loop {
-        token = Passwordless.token_generator.call(self)
+        token = Passwordless.config.token_generator.call(self)
         digest = Passwordless.digest(token)
         break [token, digest] if token_digest_available?(digest)
       }

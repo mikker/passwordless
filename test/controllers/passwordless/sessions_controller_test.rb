@@ -30,9 +30,9 @@ module Passwordless
     end
 
     test("magic link will send by custom method") do
-      old_proc = Passwordless.after_session_save
+      old_proc = Passwordless.config.after_session_save
       called = false
-      Passwordless.after_session_save = -> (_) { called = true }
+      Passwordless.config.after_session_save = -> (_) { called = true }
 
       User.create email: "a@a"
 
@@ -45,13 +45,13 @@ module Passwordless
 
       assert_equal true, called
 
-      Passwordless.after_session_save = old_proc
+      Passwordless.config.after_session_save = old_proc
     end
 
     test("magic link will send by custom method (with request param)") do
-      old_proc = Passwordless.after_session_save
+      old_proc = Passwordless.config.after_session_save
       called = false
-      Passwordless.after_session_save = -> (_, _) { called = true }
+      Passwordless.config.after_session_save = -> (_, _) { called = true }
 
       User.create email: "a@a"
 
@@ -64,7 +64,7 @@ module Passwordless
 
       assert_equal true, called
 
-      Passwordless.after_session_save = old_proc
+      Passwordless.config.after_session_save = old_proc
     end
 
     test("requesting a magic link as an unknown user") do
@@ -159,7 +159,7 @@ module Passwordless
     end
 
     test("signing in and redirecting via query parameter") do
-      Passwordless.restrict_token_reuse = false
+      Passwordless.config.restrict_token_reuse = false
       user = User.create!(email: "a@a")
 
       get "/secret"
@@ -192,11 +192,11 @@ module Passwordless
       follow_redirect!
 
       assert_equal 200, status
-      assert_equal Passwordless.success_redirect_path, path
+      assert_equal Passwordless.config.success_redirect_path, path
     end
 
     test("signing in and redirecting with redirect_to options") do
-      Passwordless.redirect_to_response_options = {notice: "hello!"}
+      Passwordless.config.redirect_to_response_options = {notice: "hello!"}
 
       user = User.create!(email: "a@a")
       passwordless_session = create_session_for(user)
@@ -205,12 +205,12 @@ module Passwordless
 
       assert_equal "hello!", flash[:notice]
       assert_equal 200, status
-      assert_equal Passwordless.success_redirect_path, path
+      assert_equal Passwordless.config.success_redirect_path, path
     end
 
     test("disabling redirecting back after sign in") do
-      default = Passwordless.redirect_back_after_sign_in
-      Passwordless.redirect_back_after_sign_in = false
+      default = Passwordless.config.redirect_back_after_sign_in
+      Passwordless.config.redirect_back_after_sign_in = false
 
       user = User.create!(email: "a@a")
 
@@ -226,7 +226,7 @@ module Passwordless
 
       assert_equal "/", path
 
-      Passwordless.redirect_back_after_sign_in = default
+      Passwordless.config.redirect_back_after_sign_in = default
     end
 
     test("trying to sign in with an unknown token") do
@@ -263,7 +263,7 @@ module Passwordless
     end
 
     test("signing out with redirect_to options") do
-      Passwordless.redirect_to_response_options = {notice: "bye!"}
+      Passwordless.config.redirect_to_response_options = {notice: "bye!"}
 
       user = User.create(email: "a@a")
       passwordless_session = create_session_for(user)
@@ -295,8 +295,8 @@ module Passwordless
     end
 
     test("trying to use a claimed token") do
-      default = Passwordless.restrict_token_reuse
-      Passwordless.restrict_token_reuse = true
+      default = Passwordless.config.restrict_token_reuse
+      Passwordless.config.restrict_token_reuse = true
       user = User.create(email: "a@a")
       passwordless_session = create_session_for(user)
 
@@ -316,7 +316,7 @@ module Passwordless
       assert_equal 200, status
       assert_equal "/", path
 
-      Passwordless.restrict_token_reuse = default
+      Passwordless.config.restrict_token_reuse = default
     end
 
     test("responding to HEAD requests") do
