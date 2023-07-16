@@ -2,8 +2,8 @@
 
 module Passwordless
   # The mailer responsible for sending Passwordless' mails.
-  class Mailer < Passwordless.parent_mailer.constantize
-    default from: Passwordless.default_from_address
+  class Mailer < Passwordless.config.parent_mailer.constantize
+    default from: Passwordless.config.default_from_address
 
     # Sends a magic link (secret token) email.
     # @param session [Session] A Passwordless Session
