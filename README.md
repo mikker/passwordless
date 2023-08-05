@@ -1,3 +1,7 @@
+**NOTE:** Passwordless is currently going through some breaking changes. Be aware that the docs in `master` aren't necessarily the same as for you installed version.
+
+---
+
 <p align='center'>
   <img src='https://s3.brnbw.com/Passwordless-title-gaIVkX0sPg.svg' alt='Passwordless' />
   <br />
