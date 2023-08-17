@@ -30,6 +30,14 @@ module Passwordless
       find_passwordless_session_for(authenticatable_class).authenticatable
     end
 
+    # Signs in an authenticatable 
+    # @param authenticatable [ActiveRecord::Base] An an instance of a user Model
+    # @return [ActiveRecord::Base|boolean] a Passwordless::Session for the Model
+    def sign_in_authenticatable(authenticatable)
+      session = build_passwordless_session(authenticatable)
+      session.save && sign_in(session)
+    end
+
     # Signs in session
     # @param authenticatable [Passwordless::Session] Instance of {Passwordless::Session}
     # to sign in
