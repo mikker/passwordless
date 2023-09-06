@@ -39,7 +39,7 @@ module Passwordless
       end
     end
 
-    # get '/:resource/sign_in/:id'
+    # get "/:resource/sign_in/:id"
     #   Shows the form for confirming a Session record.
     #   renders sessions/show.html.erb.
     def show
@@ -47,9 +47,11 @@ module Passwordless
     end
 
     # patch "/:resource/sign_in/:id"
+    #   User submits the form for confirming a Session record.
     #   Looks up session record by provided token. Signs in user if a match
     #   is found. Redirects to either the user's original destination
     #   or _Passwordless.config.success_redirect_path_.
+    #
     # @see ControllerHelpers#sign_in
     # @see ControllerHelpers#save_passwordless_redirect_location!
     def update
@@ -60,6 +62,14 @@ module Passwordless
       authenticate_and_sign_in(@session, passwordless_session_params[:token])
     end
 
+    # get "/:resource/sign_in/:id/:token"
+    #   User visits the link sent to them via email.
+    #   Looks up session record by provided token. Signs in user if a match
+    #   is found. Redirects to either the user's original destination
+    #   or _Passwordless.config.success_redirect_path_.
+    #
+    # @see ControllerHelpers#sign_in
+    # @see ControllerHelpers#save_passwordless_redirect_location!
     def confirm
       # Some email clients will visit links in emails to check if they are
       # safe. We don't want to sign in the user in that case.
