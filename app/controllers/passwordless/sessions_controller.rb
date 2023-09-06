@@ -32,7 +32,7 @@ module Passwordless
 
         redirect_to(
           url_for(id: @session.id, action: "show"),
-          flash: {notice: I18n.t(".email_sent_if_record_found")}
+          flash: {notice: I18n.t("passwordless.sessions.create.email_sent_if_record_found")}
         )
       else
         render(:new, status: :unprocessable_entity)
@@ -120,7 +120,7 @@ module Passwordless
         sign_in(session)
         redirect_to(passwordless_success_redirect_path, redirect_to_options)
       else
-        flash[:error] = I18n.t(".passwordless.sessions.errors.invalid_token")
+        flash[:error] = I18n.t("passwordless.sessions.errors.invalid_token")
         render(status: :forbidden, action: "show")
       end
 
