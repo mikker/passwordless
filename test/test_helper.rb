@@ -34,3 +34,29 @@ end
 def Minitest.filter_backtrace(bt)
   bt.select { |line| line !~ %r{/gems/} }
 end
+
+module EmailHelper
+  def next_email(prefix = "email")
+    @i ||= 0
+    @i += 1
+    [prefix, @i, "@example.com"].join
+  end
+end
+
+include(EmailHelper)
+
+module WithConfig
+  def with_config(options)
+    Passwordless.configure do |config|
+      options.each do |key, value|
+        config.send("#{key}=", value)
+      end
+    end
+
+    yield
+  ensure
+    Passwordless.reset_config!
+  end
+end
+
+include(WithConfig)

@@ -1,7 +1,9 @@
-<%= form_with model: @session, url: send(:"#{params[:resource]}_sign_in_path"), data: { turbo: 'false' } do |f| %>
-  <% email_field_name = :"passwordless[#{@email_field}]" %>
+<%= form_with(model: @session, url: url_for(action: 'new'), data: { turbo: 'false' }) do |f| %>
+  <% email_field_name = :"passwordless[#{email_field}]" %>
+  <%= f.label email_field_name, t("passwordless.sessions.new.email.label") %>
   <%= text_field_tag email_field_name,
   params.fetch(email_field_name, nil),
-  required: true %>
-  <%= f.submit I18n.t("passwordless.sessions.new.submit") %>
+  required: true,
+  placeholder: t("passwordless.sessions.new.email.placeholder") %>
+  <%= f.submit t("passwordless.sessions.new.submit") %>
 <% end %>

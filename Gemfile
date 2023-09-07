@@ -1,7 +1,16 @@
-# frozen_string_literal: true
-
 source "https://rubygems.org"
 
 gemspec
 
-gem "codecov", require: false, group: :test
+gem "erb-formatter"
+gem "pry"
+gem "puma"
+gem "sqlite3"
+gem "yard"
+
+group :test do
+  gem "capybara", require: false
+  gem "codecov", require: false
+  gem "minitest"
+  gem "rails-controller-testing"
+end

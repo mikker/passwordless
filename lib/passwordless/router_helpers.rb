@@ -21,20 +21,25 @@ module Passwordless
     # @param controller [String] Optional - provide a custom controller for
     #  sessions to use (using the above example the controller called would be MyCustomController
     #  (Default: 'passwordless/sessions')
-    def passwordless_for(resource, at: :na, as: :na, controller: 'passwordless/sessions')
+    def passwordless_for(resource, at: :na, as: :na, controller: "passwordless/sessions")
       at == :na && at = "/#{resource.to_s}"
-      as == :na && as = resource.to_s
+      as == :na && as = "#{resource.to_s}_"
+
+      plural = resource.to_s
+      singular = plural.singularize
 
       defaults = {
-        authenticatable: resource.to_s.singularize,
-        resource: resource,
+        authenticatable: singular,
+        resource: resource
       }
 
       scope(defaults: defaults) do
-        get("#{at}/sign_in", to: "#{controller}#new", as: :"#{as}_sign_in")
-        post("#{at}/sign_in", to: "#{controller}#create")
-        get("#{at}/sign_in/:token", to: "#{controller}#show", as: :"#{as}_token_sign_in")
-        match("#{at}/sign_out", to: "#{controller}#destroy", via: %i[get delete], as: :"#{as}_sign_out")
+        get("#{at}/sign_in", to: "passwordless/sessions#new", as: :"#{as}sign_in")
+        post("#{at}/sign_in", to: "passwordless/sessions#create")
+        get("#{at}/sign_in/:id", to: "passwordless/sessions#show", as: :"verify_#{as}sign_in")
+        get("#{at}/sign_in/:id/:token", to: "passwordless/sessions#confirm", as: :"confirm_#{as}sign_in")
+        patch("#{at}/sign_in/:id", to: "passwordless/sessions#update")
+        match("#{at}/sign_out", to: "passwordless/sessions#destroy", via: %i[get delete], as: :"#{as}sign_out")
       end
     end
   end
