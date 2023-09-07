@@ -22,7 +22,19 @@ module Passwordless
     test("POST /:passwordless_for/sign_in -> SUCCESS") do
       create_user(email: "a@a")
 
-      post("/users/sign_in", params: {passwordless_session: {email: "A@a"}})
+      post("/users/sign_in", params: {passwordless_session: {email: "a@a"}})
+      assert_equal 302, status
+
+      assert_equal 1, ActionMailer::Base.deliveries.size
+
+      follow_redirect!
+      assert_equal "/users/sign_in/#{Session.last!.id}", path
+    end
+
+    test("POST /:passwordless_for/sign_in -> SUCCESS / malformed email") do
+      create_user(email: "a_XYZ@a")
+
+      post("/users/sign_in", params: {passwordless_session: {email: "     a_xyZ@a "}})
       assert_equal 302, status
 
       assert_equal 1, ActionMailer::Base.deliveries.size

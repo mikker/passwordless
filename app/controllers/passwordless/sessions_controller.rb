@@ -121,10 +121,6 @@ module Passwordless
       BCrypt::Password.create(token)
     end
 
-    def passwordless_session_params
-      params.require(:passwordless_session).permit(:token, authenticatable_class.passwordless_email_field)
-    end
-
     def authenticate_and_sign_in(session, token)
       if session.authenticate(token)
         sign_in(session)
@@ -154,12 +150,18 @@ module Passwordless
       authenticatable_type.constantize
     end
 
-    def redirect_to_options
-      @redirect_to_options ||= (Passwordless.config.redirect_to_response_options.dup || {})
-    end
-
     def find_session
       Session.find_by!(id: params[:id], authenticatable_type: authenticatable_type)
+    end
+
+    def find_authenticatable
+      email = passwordless_session_params[email_field].downcase.strip
+
+      if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
+        authenticatable_class.fetch_resource_for_passwordless(email)
+      else
+        authenticatable_class.where("lower(#{email_field}) = ?", email).first
+      end
     end
 
     def email_field
@@ -177,14 +179,8 @@ module Passwordless
       )
     end
 
-    def find_authenticatable
-      email = passwordless_session_params[email_field]
-
-      if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
-        authenticatable_class.fetch_resource_for_passwordless(email)
-      else
-        authenticatable_class.where("lower(#{email_field}) = ?", email.downcase).first
-      end
+    def redirect_to_options
+      @redirect_to_options ||= (Passwordless.config.redirect_to_response_options.dup || {})
     end
 
     def passwordless_session
@@ -192,6 +188,10 @@ module Passwordless
         id: params[:id],
         authenticatable_type: authenticatable_type
       )
+    end
+
+    def passwordless_session_params
+      params.require(:passwordless_session).permit(:token, authenticatable_class.passwordless_email_field)
     end
   end
 end
