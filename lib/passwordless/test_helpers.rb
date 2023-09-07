@@ -8,7 +8,12 @@ module Passwordless
 
       def passwordless_sign_in(resource)
         session = Passwordless::Session.create!(authenticatable: resource)
-        get(Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token))
+        magic_link = Passwordless::Engine.routes.url_helpers.send(
+          :"confirm_#{session.authenticatable_type.tableize}_sign_in_url",
+          session,
+          session.token
+        )
+        get(magic_link)
         follow_redirect!
       end
     end
@@ -20,7 +25,12 @@ module Passwordless
 
       def passwordless_sign_in(resource)
         session = Passwordless::Session.create!(authenticatable: resource)
-        visit(Passwordless::Engine.routes.url_helpers.token_sign_in_path(session.token))
+        magic_link = Passwordless::Engine.routes.url_helpers.send(
+          :"confirm_#{session.authenticatable_type.tableize}_sign_in_url",
+          session,
+          session.token
+        )
+        visit(magic_link)
       end
     end
   end

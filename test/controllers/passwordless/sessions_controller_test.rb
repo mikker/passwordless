@@ -82,14 +82,30 @@ module Passwordless
       end
     end
 
-    test("POST /:passwordless_for/sign_in -> ERROR") do
+    test("POST /:passwordless_for/sign_in -> ERROR / not found") do
       post("/users/sign_in", params: {passwordless: {email: "A@a"}})
+
+      assert_equal 404, status
+      assert_equal "/users/sign_in", path
+      assert_equal 0, ActionMailer::Base.deliveries.size
+
+      assert_template "passwordless/sessions/new"
+      assert_match "We couldn't find a user with that email address", flash[:error]
+    end
+
+    test("POST /:passwordless_for/sign_in -> ERROR / other error") do
+      create_user(email: "a@a")
+
+      with_config(expires_at: lambda { nil }) do
+        post("/users/sign_in", params: {passwordless: {email: "a@a"}})
+      end
 
       assert_equal 422, status
       assert_equal "/users/sign_in", path
       assert_equal 0, ActionMailer::Base.deliveries.size
 
       assert_template "passwordless/sessions/new"
+      assert_match "An error occured", flash[:error]
     end
 
     test("GET /:passwordless_for/sign_in/:id") do

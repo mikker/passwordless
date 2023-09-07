@@ -20,7 +20,13 @@ module Passwordless
     #   Creates a new Session record then sends the magic link
     #   redirects to sign in page with generic flash message.
     def create
-      @resource = find_authenticatable
+      unless @resource = find_authenticatable
+        raise(
+          ActiveRecord::RecordNotFound,
+          "Couldn't find #{authenticatable_type} with email #{passwordless_session_params[email_field]}"
+        )
+      end
+
       @session = build_passwordless_session(@resource)
 
       if @session.save
@@ -32,11 +38,16 @@ module Passwordless
 
         redirect_to(
           url_for(id: @session.id, action: "show"),
-          flash: {notice: I18n.t("passwordless.sessions.create.email_sent_if_record_found")}
+          flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
         )
       else
+        flash[:error] = I18n.t("passwordless.sessions.create.error")
         render(:new, status: :unprocessable_entity)
       end
+
+    rescue ActiveRecord::RecordNotFound
+      flash[:error] = I18n.t("passwordless.sessions.create.not_found")
+      render(:new, status: :not_found)
     end
 
     # get "/:resource/sign_in/:id"

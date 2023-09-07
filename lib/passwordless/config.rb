@@ -27,13 +27,15 @@ module Passwordless
   class Configuration
     include Options
 
-    option :parent_mailer, default: "ActionMailer::Base"
     option :default_from_address, default: "CHANGE_ME@example.com"
-    option :token_generator, default: ShortTokenGenerator.new
+    option :parent_mailer, default: "ActionMailer::Base"
     option :restrict_token_reuse, default: true
-    option :redirect_back_after_sign_in, default: true
+    option :token_generator, default: ShortTokenGenerator.new
+
     option :expires_at, default: lambda { 1.year.from_now }
     option :timeout_at, default: lambda { 10.minutes.from_now }
+
+    option :redirect_back_after_sign_in, default: true
     option :redirect_to_response_options, default: {}
     option :success_redirect_path, default: "/"
     option :failure_redirect_path, default: "/"

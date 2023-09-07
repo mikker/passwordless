@@ -8,7 +8,9 @@ en:
           placeholder: "user@example.com"
         submit: "Sign in"
       create:
-        email_sent_if_record_found: "If we found you in the system, we've sent you an email."
+        email_sent: "We've sent you an email with a secret token"
+        not_found: "We couldn't find a user with that email address"
+        error: "An error occured"
       errors:
         invalid_token: "Token is invalid"
         session_expired: "Your session has expired, please sign in again."

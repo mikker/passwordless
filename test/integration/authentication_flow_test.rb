@@ -24,7 +24,7 @@ class AuthenticationFlowTest < ActionDispatch::SystemTestCase
       click_button "Sign in"
     end
 
-    assert_content "If we found you in the system"
+    assert_content "We've sent you an email"
 
     email = ActionMailer::Base.deliveries.last
     assert_equal alice.email, email.to.first
@@ -33,6 +33,7 @@ class AuthenticationFlowTest < ActionDispatch::SystemTestCase
     fill_in "passwordless[token]", with: token
     click_button "Confirm"
 
+    assert_equal "/secret", current_path
     assert_content "shhhh! secrets!"
   end
 
@@ -47,7 +48,7 @@ class AuthenticationFlowTest < ActionDispatch::SystemTestCase
       click_button "Sign in"
     end
 
-    assert_content "If we found you in the system"
+    assert_content "We've sent you an email"
 
     email = ActionMailer::Base.deliveries.last
     assert_equal alice.email, email.to.first
@@ -55,6 +56,7 @@ class AuthenticationFlowTest < ActionDispatch::SystemTestCase
 
     visit magic_link
 
+    assert_equal "/", current_path
     assert_content "Current user: #{alice.email}"
   end
 end
