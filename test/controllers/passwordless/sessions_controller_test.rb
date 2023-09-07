@@ -107,7 +107,7 @@ module Passwordless
 
       patch("/users/sign_in/#{passwordless_session.id}", params: {passwordless: {token: "hi"}})
 
-      assert_equal 302, status
+      assert_equal 303, status
 
       follow_redirect!
       assert_equal 200, status
@@ -139,7 +139,7 @@ module Passwordless
         )
       end
 
-      assert_equal 302, status
+      assert_equal 303, status
 
       follow_redirect!
       assert_equal 200, status
@@ -158,7 +158,7 @@ module Passwordless
         params: {passwordless: {token: "hi"}}
       )
 
-      assert_equal 302, status
+      assert_equal 303, status
 
       follow_redirect!
       assert_equal 200, status

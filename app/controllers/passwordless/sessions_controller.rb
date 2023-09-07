@@ -124,7 +124,7 @@ module Passwordless
     def authenticate_and_sign_in(session, token)
       if session.authenticate(token)
         sign_in(session)
-        redirect_to(passwordless_success_redirect_path, redirect_to_options)
+        redirect_to(passwordless_success_redirect_path, status: :see_other, **redirect_to_options)
       else
         flash[:error] = I18n.t("passwordless.sessions.errors.invalid_token")
         render(status: :forbidden, action: "show")
@@ -132,10 +132,10 @@ module Passwordless
 
     rescue Errors::TokenAlreadyClaimedError
       flash[:error] = I18n.t("passwordless.sessions.errors.token_claimed")
-      redirect_to(passwordless_failure_redirect_path, **redirect_to_options)
+      redirect_to(passwordless_failure_redirect_path, status: :see_other, **redirect_to_options)
     rescue Errors::SessionTimedOutError
       flash[:error] = I18n.t("passwordless.sessions.errors.session_expired")
-      redirect_to(passwordless_failure_redirect_path, **redirect_to_options)
+      redirect_to(passwordless_failure_redirect_path, status: :see_other, **redirect_to_options)
     end
 
     def authenticatable
