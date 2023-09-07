@@ -33,7 +33,7 @@ module Passwordless
     option :restrict_token_reuse, default: true
     option :redirect_back_after_sign_in, default: true
     option :expires_at, default: lambda { 1.year.from_now }
-    option :timeout_at, default: lambda { 1.hour.from_now }
+    option :timeout_at, default: lambda { 10.minutes.from_now }
     option :redirect_to_response_options, default: {}
     option :success_redirect_path, default: "/"
     option :failure_redirect_path, default: "/"
