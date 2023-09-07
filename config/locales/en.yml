@@ -14,5 +14,10 @@ en:
         session_expired: "Your session has expired, please sign in again."
         token_claimed: "This link has already been used, try requesting the link again"
     mailer:
-      subject: "Your magic link ✨"
-      magic_link: "Here's your link: %{link}"
+      sign_in:
+        subject: "Signing in ✨"
+        body: |-
+          Use this token to complete your sign in: %{token}
+
+          Alternatively you can use this link to sign in directly:
+          %{magic_link}

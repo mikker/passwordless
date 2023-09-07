@@ -191,7 +191,7 @@ module Passwordless
     end
 
     def passwordless_session_params
-      params.require(:passwordless_session).permit(:token, authenticatable_class.passwordless_email_field)
+      params.require(:passwordless).permit(:token, authenticatable_class.passwordless_email_field)
     end
   end
 end

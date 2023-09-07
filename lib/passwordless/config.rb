@@ -41,7 +41,7 @@ module Passwordless
     option(
       :after_session_save,
       default: lambda do |session, _request|
-        Mailer.magic_link(session, session.token).deliver_now
+        Mailer.sign_in(session, session.token).deliver_now
       end
     )
 

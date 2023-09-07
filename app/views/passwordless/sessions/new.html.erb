@@ -1,5 +1,5 @@
 <%= form_with(model: @session, url: url_for(action: 'new'), data: { turbo: 'false' }) do |f| %>
-  <% email_field_name = :"passwordless_session[#{email_field}]" %>
+  <% email_field_name = :"passwordless[#{email_field}]" %>
   <%= f.label email_field_name, t("passwordless.sessions.new.email.label") %>
   <%= text_field_tag email_field_name,
   params.fetch(email_field_name, nil),

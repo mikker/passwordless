@@ -1,4 +1,4 @@
-<%= form_with(model: @session, url: url_for(action: 'update'), method: 'patch', data: { turbo: false }) do |f| %>
+<%= form_with(model: @session, url: url_for(action: 'update'), scope: 'passwordless', method: 'patch', data: { turbo: false }) do |f| %>
   <%= f.label :token %>
   <%= f.text_field :token %>
   <%= f.submit "Confirm" %>
