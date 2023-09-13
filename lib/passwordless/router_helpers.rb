@@ -31,16 +31,15 @@ module Passwordless
       defaults = {
         authenticatable: singular,
         resource: resource,
-        controller: controller,
       }
 
       scope(defaults: defaults) do
-        get("#{at}/sign_in", to: "passwordless/sessions#new", as: :"#{as}sign_in")
-        post("#{at}/sign_in", to: "passwordless/sessions#create")
-        get("#{at}/sign_in/:id", to: "passwordless/sessions#show", as: :"verify_#{as}sign_in")
-        get("#{at}/sign_in/:id/:token", to: "passwordless/sessions#confirm", as: :"confirm_#{as}sign_in")
-        patch("#{at}/sign_in/:id", to: "passwordless/sessions#update")
-        match("#{at}/sign_out", to: "passwordless/sessions#destroy", via: %i[get delete], as: :"#{as}sign_out")
+        get("#{at}/sign_in", to: "#{controller}#new", as: :"#{as}sign_in")
+        post("#{at}/sign_in", to: "#{controller}#create")
+        get("#{at}/sign_in/:id", to: "#{controller}#show", as: :"verify_#{as}sign_in")
+        get("#{at}/sign_in/:id/:token", to: "#{controller}#confirm", as: :"confirm_#{as}sign_in")
+        patch("#{at}/sign_in/:id", to: "#{controller}#update")
+        match("#{at}/sign_out", to: "#{controller}#destroy", via: %i[get delete], as: :"#{as}sign_out")
       end
     end
   end
