@@ -30,7 +30,8 @@ module Passwordless
 
       defaults = {
         authenticatable: singular,
-        resource: resource
+        resource: resource,
+        controller: controller,
       }
 
       scope(defaults: defaults) do
