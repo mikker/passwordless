@@ -75,6 +75,7 @@ Removes `authenticate_by_cookie` and `upgrade_passwordless_cookie` from controll
 ### Added
 
 - Added an option to set a custom controller for `passwordless_for` routes ([#152](https://github.com/mikker/passwordless/pull/152))
+- Added `ControllerHelpers#create_passwordless_session` ([#161](https://github.com/mikker/passwordless/pull/161))
 
 ### Changed
 
