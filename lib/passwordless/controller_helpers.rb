@@ -18,6 +18,27 @@ module Passwordless
       Session.new(authenticatable: authenticatable)
     end
 
+    # Create a new Passwordless::Session from an _authenticatable_ record.
+    # @param authenticatable [ActiveRecord::Base] Instance of an
+    #   authenticatable Rails model
+    # @return [Session] the new Session object
+    # @raise [ActiveRecord::RecordInvalid] if the Session is invalid
+    # @see ModelHelpers#passwordless_with
+    def create_passwordless_session!(authenticatable)
+      Session.create!(authenticatable: authenticatable)
+    end
+
+    # Create a new Passwordless::Session from an _authenticatable_ record.
+    # @param authenticatable [ActiveRecord::Base] Instance of an
+    #   authenticatable Rails model
+    # @return [Session, nil] the new Session object or nil
+    # @see ModelHelpers#passwordless_with
+    def create_passwordless_session(authenticatable)
+      create_passwordless_session!(authenticatable)
+    rescue ActiveRecord::RecordInvalid
+      nil
+    end
+
     # Authenticate a record using the session. Looks for a session key corresponding to
     # the _authenticatable_class_. If found try to find it in the database.
     # @param authenticatable_class [ActiveRecord::Base] any Model connected to
@@ -26,8 +47,10 @@ module Passwordless
     #   in cookies.encrypted or nil if nothing is found.
     # @see ModelHelpers#passwordless_with
     def authenticate_by_session(authenticatable_class)
-      return unless find_passwordless_session_for(authenticatable_class)&.available?
-      find_passwordless_session_for(authenticatable_class).authenticatable
+      pwless_session = find_passwordless_session_for(authenticatable_class)
+      return unless pwless_session&.available?
+
+      pwless_session.authenticatable
     end
 
     # Signs in session
