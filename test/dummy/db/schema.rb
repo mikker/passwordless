@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_21_085550) do
+ActiveRecord::Schema[7.1].define(version: 2023_06_21_085550) do
   create_table "passwordless_sessions", force: :cascade do |t|
     t.string "authenticatable_type"
     t.integer "authenticatable_id"
