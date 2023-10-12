@@ -1,7 +1,3 @@
-**NOTE:** Passwordless is currently going through some breaking changes. Be aware that the docs in `master` aren't necessarily the same as for you installed version.
-
----
-
 <p align='center'>
   <img src='https://s3.brnbw.com/Passwordless-title-gaIVkX0sPg.svg' alt='Passwordless' />
   <br />
@@ -14,30 +10,6 @@ Add authentication to your Rails app without all the icky-ness of passwords.
 
 ---
 
-## Table of Contents
-
-<!--toc:start-->
-
-- [Table of Contents](#table-of-contents)
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Getting the current user, restricting access, the usual](#getting-the-current-user-restricting-access-the-usual)
-  - [Providing your own templates](#providing-your-own-templates)
-  - [Registering new users](#registering-new-users)
-  - [URLs and links](#urls-and-links)
-- [Configuration](#configuration)
-  - [Delivery method](#delivery-method)
-  - [Token generation](#token-generation)
-  - [Timeout and Expiry](#timeout-and-expiry)
-  - [Redirection after sign-in](#redirection-after-sign-in)
-  - [Looking up the user](#looking-up-the-user)
-  - [Claiming tokens](#claiming-tokens)
-- [Test helpers](#test-helpers)
-- [Security considerations](#security-considerations)
-- [Alternatives](#alternatives)
-- [License](#license)
-<!--toc:end-->
-
 ## Installation
 
 Add to your bundle and copy over the migrations:
@@ -46,6 +18,10 @@ Add to your bundle and copy over the migrations:
 $ bundle add passwordless
 $ bin/rails passwordless:install:migrations
 ```
+
+### Upgrading
+
+See [Upgrading to Passwordless 1.0](docs/upgrading_to_1_0.md) for more details.
 
 ## Usage
 

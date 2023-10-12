@@ -1,12 +1,12 @@
 # Changelog
 
-## Unreleased
+## 1.0.0 (🎉)
 
 ### Breaking changes
 
 **This major release of Passwordless changes a lot of things and it is almost guaranteed that you will need to change your code to upgrade to this version.**
 
-Note that there is no _need_ to upgrade. The previous versions of Passwordless will continue to work for the foreseeable future.
+(Note that there is no _need_ to upgrade. The previous versions of Passwordless will continue to work for the foreseeable future.)
 
 See [Upgrading to Passwordless 1.0](docs/upgrading_to_1_0.md) for more details.
 
