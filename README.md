@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/mikker/passwordless/actions/workflows/ci.yml/badge.svg)](https://github.com/mikker/passwordless/actions/workflows/ci.yml) [![Rubygems](https://img.shields.io/gem/v/passwordless.svg)](https://rubygems.org/gems/passwordless) [![codecov](https://codecov.io/gh/mikker/passwordless/branch/master/graph/badge.svg)](https://codecov.io/gh/mikker/passwordless)
 
-Add authentication to your Rails app without all the icky-ness of passwords.
+Add authentication to your Rails app without all the icky-ness of passwords. _Magic link_ authentication, if you will. We call it _passwordless_.
 
 ---
 
