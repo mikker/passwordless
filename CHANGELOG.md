@@ -7,6 +7,7 @@
 - Fix sessions/new label for attribute (#172)
 - Adds `autocomplete: 'off'` to token field (#173)
 - Adds sessions/show "Confirm" to locale definition (#173)
+- Route generation with :as option (#174)
 
 ## 1.0.0 (🎉)
 
