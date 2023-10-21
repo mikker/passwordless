@@ -11,6 +11,8 @@ en:
         email_sent: "We've sent you an email with a secret token"
         not_found: "We couldn't find a user with that email address"
         error: "An error occured"
+      show:
+        confirm: "Confirm"
       errors:
         invalid_token: "Token is invalid"
         session_expired: "Your session has expired, please sign in again."
