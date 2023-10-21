@@ -4,7 +4,9 @@
 
 ### Fixed
 
-- Fix session/new label for attribute (#172)
+- Fix sessions/new label for attribute (#172)
+- Adds `autocomplete: 'off'` to token field (#173)
+- Adds sessions/show "Confirm" to locale definition (#173)
 
 ## 1.0.0 (🎉)
 
