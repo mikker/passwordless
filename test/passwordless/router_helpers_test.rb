@@ -51,6 +51,8 @@ module Passwordless
         {method: :get, path: "/users/sign_out"},
         defaults
       )
+
+      assert_equal "/users/sign_in", url_helpers.users_sign_in_path
     end
 
     test("map sign in for admin") do
@@ -100,7 +102,25 @@ module Passwordless
         {method: :get, path: "/admins/sign_out"},
         defaults
       )
+
+      assert_equal "/admins/sign_in", url_helpers.admins_sign_in_path
     end
 
+    test(":as option") do
+      defaults = {authenticatable: "dev", resource: "devs"}
+      assert_recognizes(
+        {controller: "passwordless/sessions", action: "new"}.merge(defaults),
+        {method: :get, path: "/sign_in"},
+        defaults
+      )
+
+      assert_equal "/sign_in", url_helpers.auth_sign_in_path
+    end
+
+    private
+
+    def url_helpers
+      Rails.application.routes.url_helpers
+    end
   end
 end
