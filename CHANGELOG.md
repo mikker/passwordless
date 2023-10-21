@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Fix session/new label for attribute (#172)
+
 ## 1.0.0 (🎉)
 
 ### Breaking changes
