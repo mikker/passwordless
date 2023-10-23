@@ -1,16 +1,19 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
+  identifier: 381a283e-4e64-4989-8b10-d5279bb7f338
   timeout_at: 2017-11-04 23:17:35
   expires_at: 2017-11-04 23:17:35
   token_digest: MyString
 
 two:
+  identifier: cb756ce8-62a0-4ac1-9cb2-7abce7eddf80
   timeout_at: 2017-11-04 23:17:35
   expires_at: 2017-11-04 23:17:35
   token_digest: MyString
 
 john:
+  identifier: 3d14ed2c-4eaa-4894-82fb-e2e6f92223e6
   timeout_at: 2017-11-04 23:17:35
   expires_at: 2017-11-04 23:17:35
   token_digest: 3veDCdFw4VedgZtZZkCJ7um7rsc2bFNCZGB51Iih024

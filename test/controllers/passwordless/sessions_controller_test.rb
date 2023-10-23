@@ -28,7 +28,7 @@ module Passwordless
       assert_equal 1, ActionMailer::Base.deliveries.size
 
       follow_redirect!
-      assert_equal "/users/sign_in/#{Session.last!.id}", path
+      assert_equal "/users/sign_in/#{Session.last!.identifier}", path
     end
 
     test("POST /:passwordless_for/sign_in -> SUCCESS / malformed email") do
@@ -40,7 +40,7 @@ module Passwordless
       assert_equal 1, ActionMailer::Base.deliveries.size
 
       follow_redirect!
-      assert_equal "/users/sign_in/#{Session.last!.id}", path
+      assert_equal "/users/sign_in/#{Session.last!.identifier}", path
     end
 
     test("POST /:passwordless_for/sign_in -> SUCCESS / custom delivery method") do
@@ -111,7 +111,7 @@ module Passwordless
     test("GET /:passwordless_for/sign_in/:id") do
       passwordless_session = create_pwless_session
 
-      get("/users/sign_in/#{passwordless_session.id}")
+      get("/users/sign_in/#{passwordless_session.identifier}")
 
       assert_equal 200, status
       assert_equal "/users/sign_in/#{passwordless_session.to_param}", path
@@ -121,7 +121,7 @@ module Passwordless
     test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS") do
       passwordless_session = create_pwless_session(token: "hi")
 
-      patch("/users/sign_in/#{passwordless_session.id}", params: {passwordless: {token: "hi"}})
+      patch("/users/sign_in/#{passwordless_session.identifier}", params: {passwordless: {token: "hi"}})
 
       assert_equal 303, status
 
@@ -135,7 +135,7 @@ module Passwordless
     test("PATCH /:passwordless_for/sign_in/:id -> ERROR") do
       passwordless_session = create_pwless_session(token: "hi")
 
-      patch("/users/sign_in/#{passwordless_session.id}", params: {passwordless: {token: "no"}})
+      patch("/users/sign_in/#{passwordless_session.identifier}", params: {passwordless: {token: "no"}})
 
       assert_equal 403, status
       assert_equal "/users/sign_in/#{passwordless_session.to_param}", path
@@ -150,7 +150,7 @@ module Passwordless
 
       with_config(restrict_token_reuse: true) do
         patch(
-          "/users/sign_in/#{passwordless_session.id}",
+          "/users/sign_in/#{passwordless_session.identifier}",
           params: {passwordless: {token: "hi"}}
         )
       end
@@ -170,7 +170,7 @@ module Passwordless
       passwordless_session.update!(timeout_at: Time.current - 1.day)
 
       patch(
-        "/users/sign_in/#{passwordless_session.id}",
+        "/users/sign_in/#{passwordless_session.identifier}",
         params: {passwordless: {token: "hi"}}
       )
 
@@ -188,7 +188,7 @@ module Passwordless
       user = User.create(email: "a@a")
       passwordless_session = create_pwless_session(authenticatable: user, token: "hi")
 
-      get "/users/sign_in/#{passwordless_session.id}/#{passwordless_session.token}"
+      get "/users/sign_in/#{passwordless_session.identifier}/#{passwordless_session.token}"
       assert_not_nil pwless_session(User)
 
       get "/users/sign_out"

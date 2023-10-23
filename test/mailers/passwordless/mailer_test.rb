@@ -11,6 +11,6 @@ class Passwordless::MailerTest < ActionMailer::TestCase
 
     assert_match "Signing in ✨", email.subject
     assert_match /sign in: hello\n/, email.body.to_s
-    assert_match %r{/sign_in/#{session.id}/hello}, email.body.to_s
+    assert_match %r{/sign_in/#{session.identifier}/hello}, email.body.to_s
   end
 end

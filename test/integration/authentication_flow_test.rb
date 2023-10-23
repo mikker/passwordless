@@ -28,7 +28,7 @@ class AuthenticationFlowTest < ActionDispatch::SystemTestCase
 
     email = ActionMailer::Base.deliveries.last
     assert_equal alice.email, email.to.first
-    token = email.body.match(%r{/sign_in/\d+/([\w\-_]+)})[1]
+    token = email.body.match(%r{http://.*/sign_in/[A-Za-z0-9\-]+/(\w+)})[1]
 
     fill_in "passwordless[token]", with: token
     click_button "Confirm"
@@ -52,7 +52,7 @@ class AuthenticationFlowTest < ActionDispatch::SystemTestCase
 
     email = ActionMailer::Base.deliveries.last
     assert_equal alice.email, email.to.first
-    magic_link = email.body.to_s.scan(%r{http://.*/sign_in/\d+/\w+}).at(0)
+    magic_link = email.body.to_s.scan(%r{http://.*/sign_in/[a-z0-9\-]+/\w+}).at(0)
 
     visit magic_link
 
