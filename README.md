@@ -16,7 +16,7 @@ Add to your bundle and copy over the migrations:
 
 ```sh
 $ bundle add passwordless
-$ bin/rails passwordless:install:migrations
+$ bin/rails passwordless_engine:install:migrations
 ```
 
 ### Upgrading
