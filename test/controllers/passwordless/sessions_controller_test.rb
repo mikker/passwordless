@@ -196,7 +196,29 @@ module Passwordless
 
       assert_equal 200, status
       assert_equal "/", path
+      assert_match I18n.t("passwordless.sessions.destroy.signed_out"), flash[:notice]
       assert pwless_session(User).blank?
+    end
+
+    test("DELETE /:passwordless_for/sign_out :: When response options are configured ") do
+      Passwordless.configure do |config|
+        config.redirect_to_response_options = {
+          notice: "my custom notice"
+        }
+      end
+
+      user = User.create(email: "a@a")
+      passwordless_session = create_pwless_session(authenticatable: user, token: "hi")
+
+      get "/users/sign_in/#{passwordless_session.id}/#{passwordless_session.token}"
+      assert_not_nil pwless_session(User)
+
+      get "/users/sign_out"
+      follow_redirect!
+
+      assert_equal 200, status
+      assert pwless_session(User).blank?
+      assert_match "my custom notice", flash[:notice]
     end
 
     class Helpers
