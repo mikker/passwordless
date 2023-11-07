@@ -1,6 +1,6 @@
 # Changelog
 
-# Unreleased
+## 1.1.0
 
 ### Changed
 
@@ -16,6 +16,8 @@ class AddIndentifierToPasswordlessSessions < ActiveRecord::Migration[7.1]
   end
 end
 ```
+
+- Use UUIDs as indentifiers for sessions in public (#176)
 
 ### Added
 
