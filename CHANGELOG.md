@@ -2,6 +2,14 @@
 
 # Unreleased
 
+### Changed
+
+Sessions are now referenced publicly by a random UUID instead of their primary key.
+
+This needs a manual database migration like so:
+
+...TODO
+
 ### Added
 
 - Add default flash notice for sign out (#178)
