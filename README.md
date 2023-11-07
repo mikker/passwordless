@@ -122,7 +122,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      sign_in(build_passwordless_session(@user)) # <-- This!
+      sign_in(create_passwordless_session(@user)) # <-- This!
       redirect_to(@user, flash: { notice: 'Welcome!' })
     else
       render(:new)
