@@ -1,17 +1,32 @@
 module Passwordless
   module TestHelpers
     module TestCase
-      def passwordless_sign_out
-        delete(Passwordless::Engine.routes.url_helpers.sign_out_path)
+      def passwordless_sign_out(cls = nil)
+        cls ||= "User".constantize
+        dest = url_for(
+          {
+            controller: "passwordless/sessions",
+            action: "destroy",
+            authenticatable: cls.model_name.singular,
+            resource: cls.model_name.to_s.tableize
+          }
+        )
+        delete(dest)
         follow_redirect!
       end
 
       def passwordless_sign_in(resource)
+        cls = resource.class
         session = Passwordless::Session.create!(authenticatable: resource)
-        magic_link = Passwordless::Engine.routes.url_helpers.send(
-          :"confirm_#{session.authenticatable_type.tableize}_sign_in_url",
-          session,
-          session.token
+        magic_link = url_for(
+          {
+            controller: "passwordless/sessions",
+            action: "confirm",
+            id: session.id,
+            token: session.token,
+            authenticatable: cls.model_name.singular,
+            resource: cls.model_name.to_s.tableize
+          }
         )
         get(magic_link)
         follow_redirect!
@@ -19,16 +34,32 @@ module Passwordless
     end
 
     module SystemTestCase
-      def passwordless_sign_out
-        visit(Passwordless::Engine.routes.url_helpers.sign_out_path)
+      def passwordless_sign_out(cls = nil)
+        cls ||= "User".constantize
+        visit(
+          url_for(
+            {
+              controller: "passwordless/sessions",
+              action: "destroy",
+              authenticatable: cls.model_name.singular,
+              resource: cls.model_name.to_s.tableize
+            }
+          )
+        )
       end
 
       def passwordless_sign_in(resource)
+        cls = resource.class
         session = Passwordless::Session.create!(authenticatable: resource)
-        magic_link = Passwordless::Engine.routes.url_helpers.send(
-          :"confirm_#{session.authenticatable_type.tableize}_sign_in_url",
-          session,
-          session.token
+        magic_link = url_for(
+          {
+            controller: "passwordless/sessions",
+            action: "confirm",
+            id: session.id,
+            token: session.token,
+            authenticatable: cls.model_name.singular,
+            resource: cls.model_name.to_s.tableize
+          }
         )
         visit(magic_link)
       end
