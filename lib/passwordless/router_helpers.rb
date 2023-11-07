@@ -23,14 +23,16 @@ module Passwordless
     #  (Default: 'passwordless/sessions')
     def passwordless_for(resource, at: :na, as: :na, controller: "passwordless/sessions")
       at == :na && at = "/#{resource.to_s}"
-      as == :na && as = "#{resource.to_s}_"
+      as == :na && as = resource.to_s
+
+      as = as.to_s + "_" unless !as || as.to_s.end_with?("_")
 
       plural = resource.to_s
       singular = plural.singularize
 
       defaults = {
         authenticatable: singular,
-        resource: resource,
+        resource: resource
       }
 
       scope(defaults: defaults) do
