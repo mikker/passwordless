@@ -5,6 +5,7 @@
 ### Fixed
 
 - Route generation with :as option (#174)
+- Test helper route generation (#174)
 
 ## 1.0.1
 
