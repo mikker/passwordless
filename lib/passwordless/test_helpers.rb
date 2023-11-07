@@ -8,7 +8,7 @@ module Passwordless
             controller: "passwordless/sessions",
             action: "destroy",
             authenticatable: cls.model_name.singular,
-            resource: cls.model_name.plural
+            resource: cls.model_name.to_s.tableize
           }
         )
         delete(dest)
@@ -25,7 +25,7 @@ module Passwordless
             id: session.id,
             token: session.token,
             authenticatable: cls.model_name.singular,
-            resource: cls.model_name.plural
+            resource: cls.model_name.to_s.tableize
           }
         )
         get(magic_link)
@@ -42,7 +42,7 @@ module Passwordless
               controller: "passwordless/sessions",
               action: "destroy",
               authenticatable: cls.model_name.singular,
-              resource: cls.model_name.plural
+              resource: cls.model_name.to_s.tableize
             }
           )
         )
@@ -58,7 +58,7 @@ module Passwordless
             id: session.id,
             token: session.token,
             authenticatable: cls.model_name.singular,
-            resource: cls.model_name.plural
+            resource: cls.model_name.to_s.tableize
           }
         )
         visit(magic_link)
