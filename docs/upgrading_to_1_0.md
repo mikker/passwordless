@@ -20,7 +20,7 @@ $ bin/rails g migration UpgradePassswordless
 ```
 
 ```ruby
-class UpgradePassswordless < ActiveRecord::Migration[7.0]
+class UpgradePasswordless < ActiveRecord::Migration[7.0]
   def change
     # Encrypted tokens
     add_column(:passwordless_sessions, :token_digest, :string)

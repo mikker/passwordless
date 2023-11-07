@@ -61,6 +61,10 @@ module Passwordless
       !expired?
     end
 
+    def to_param
+      identifier
+    end
+
     private
 
     def token_digest_available?(token_digest)
@@ -68,6 +72,7 @@ module Passwordless
     end
 
     def set_defaults
+      self.identifier = SecureRandom.uuid
       self.expires_at ||= Passwordless.config.expires_at.call
       self.timeout_at ||= Passwordless.config.timeout_at.call
 

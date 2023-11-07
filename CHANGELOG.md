@@ -2,6 +2,21 @@
 
 # Unreleased
 
+### Changed
+
+Sessions are now referenced publicly by a random UUID instead of their primary key.
+
+This needs a manual database migration like so:
+
+```ruby
+class AddIndentifierToPasswordlessSessions < ActiveRecord::Migration[7.1]
+  def change
+    add_column(:passwordless_sessions, :identifier, :string)
+    add_index(:passwordless_sessions, :identifier, unique: true)
+  end
+end
+```
+
 ### Added
 
 - Add default flash notice for sign out (#178)

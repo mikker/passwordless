@@ -37,7 +37,7 @@ module Passwordless
         end
 
         redirect_to(
-          url_for(id: @session.id, action: "show"),
+          url_for(id: @session.identifier, action: "show"),
           flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
         )
       else
@@ -54,7 +54,7 @@ module Passwordless
     #   Shows the form for confirming a Session record.
     #   renders sessions/show.html.erb.
     def show
-      @session = find_session
+      @session = passwordless_session
     end
 
     # patch "/:resource/sign_in/:id"
@@ -66,7 +66,7 @@ module Passwordless
     # @see ControllerHelpers#sign_in
     # @see ControllerHelpers#save_passwordless_redirect_location!
     def update
-      @session = find_session
+      @session = passwordless_session
 
       artificially_slow_down_brute_force_attacks(passwordless_session_params[:token])
 
@@ -86,7 +86,7 @@ module Passwordless
       # safe. We don't want to sign in the user in that case.
       return head(:ok) if request.head?
 
-      @session = find_session
+      @session = passwordless_session
 
       artificially_slow_down_brute_force_attacks(params[:token])
 
@@ -166,10 +166,6 @@ module Passwordless
       authenticatable_type.constantize
     end
 
-    def find_session
-      Session.find_by!(id: params[:id], authenticatable_type: authenticatable_type)
-    end
-
     def find_authenticatable
       email = passwordless_session_params[email_field].downcase.strip
 
@@ -201,7 +197,7 @@ module Passwordless
 
     def passwordless_session
       @passwordless_session ||= Session.find_by!(
-        id: params[:id],
+        identifier: params[:id],
         authenticatable_type: authenticatable_type
       )
     end
