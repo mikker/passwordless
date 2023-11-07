@@ -196,7 +196,15 @@ module Passwordless
 
       assert_equal 200, status
       assert_equal "/", path
+      assert_match "Signed out successfully", flash[:notice]
       assert pwless_session(User).blank?
+    end
+
+    test("DELETE /:passwordless_for/sign_out :: When response options are configured ") do
+      with_config(redirect_to_response_options: {notice: "my custom notice"}) do
+        get "/users/sign_out"
+        assert_match "my custom notice", flash[:notice]
+      end
     end
 
     class Helpers

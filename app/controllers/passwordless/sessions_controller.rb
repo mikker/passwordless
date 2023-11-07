@@ -98,7 +98,12 @@ module Passwordless
     # @see ControllerHelpers#sign_out
     def destroy
       sign_out(authenticatable_class)
-      redirect_to(passwordless_sign_out_redirect_path, Passwordless.config.redirect_to_response_options.dup)
+
+      redirect_to(
+        passwordless_sign_out_redirect_path,
+        notice: I18n.t("passwordless.sessions.destroy.signed_out"),
+        **redirect_to_options
+      )
     end
 
     protected
