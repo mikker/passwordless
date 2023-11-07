@@ -8,7 +8,14 @@ Sessions are now referenced publicly by a random UUID instead of their primary k
 
 This needs a manual database migration like so:
 
-...TODO
+```ruby
+class AddIndentifierToPasswordlessSessions < ActiveRecord::Migration[7.1]
+  def change
+    add_column(:passwordless_sessions, :identifier, :string)
+    add_index(:passwordless_sessions, :identifier, unique: true)
+  end
+end
+```
 
 ### Added
 
