@@ -99,11 +99,11 @@ module Passwordless
     def destroy
       sign_out(authenticatable_class)
 
-      redirect_to_response_options = {
-        notice: I18n.t("passwordless.sessions.destroy.signed_out")
-      }.merge(redirect_to_options)
-
-      redirect_to(passwordless_sign_out_redirect_path, redirect_to_response_options)
+      redirect_to(
+        passwordless_sign_out_redirect_path,
+        notice: I18n.t("passwordless.sessions.destroy.signed_out"),
+        **redirect_to_options
+      )
     end
 
     protected

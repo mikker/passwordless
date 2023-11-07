@@ -1,5 +1,11 @@
 # Changelog
 
+# Unreleased
+
+### Added
+
+- Add default flash notice for sign out (#178)
+
 ## 1.0.1
 
 ### Fixed
