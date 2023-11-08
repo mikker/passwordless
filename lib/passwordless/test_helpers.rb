@@ -22,7 +22,7 @@ module Passwordless
           {
             controller: "passwordless/sessions",
             action: "confirm",
-            id: session.id,
+            id: session.to_param,
             token: session.token,
             authenticatable: cls.model_name.singular,
             resource: cls.model_name.to_s.tableize
