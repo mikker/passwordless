@@ -21,7 +21,7 @@ module Passwordless
         id: session.identifier,
         token: @token,
         authenticatable: session.authenticatable.model_name.singular,
-        resource:
+        resource: resource
       )
       email_field = session.authenticatable.class.passwordless_email_field
 
