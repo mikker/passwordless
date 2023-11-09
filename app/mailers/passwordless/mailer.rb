@@ -12,15 +12,16 @@ module Passwordless
     # is still in memory (optional)
     def sign_in(session, token = nil)
       @token = token || session.token
+
+      resource = session.authenticatable.model_name.to_s.tableize.to_sym
+
       @magic_link = url_for(
-        {
-          controller: "passwordless/sessions",
-          action: "confirm",
-          id: session.identifier,
-          token: @token,
-          authenticatable: "user",
-          resource: "users"
-        }
+        controller: Passwordless.controllers[resource],
+        action: "confirm",
+        id: session.identifier,
+        token: @token,
+        authenticatable: session.authenticatable.model_name.singular,
+        resource:
       )
       email_field = session.authenticatable.class.passwordless_email_field
 

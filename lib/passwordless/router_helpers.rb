@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Passwordless
+  cattr_accessor(:controllers) { {} }
+
   # Helpers for generating passwordless routes.
   module RouterHelpers
     # Generates passwordless routes for a given Model
@@ -34,6 +36,8 @@ module Passwordless
         authenticatable: singular,
         resource: resource
       }
+
+      Passwordless.controllers[resource] = controller
 
       scope(defaults: defaults) do
         get("#{at}/sign_in", to: "#{controller}#new", as: :"#{as}sign_in")
