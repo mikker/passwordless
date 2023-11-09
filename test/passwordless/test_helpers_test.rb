@@ -46,7 +46,7 @@ module Passwordless
       assert 1, Session.count
       assert alice, Session.last!.authenticatable
       assert_match(
-        %r{^http://.*/users/sign_in/[a-z0-9-]+/[A-Z0-9]+}i,
+        %r{^http://.*/users/sign_in/[a-z0-9-]+/[a-z0-9]+}i,
         controller.actions.first.last.first
       )
 
