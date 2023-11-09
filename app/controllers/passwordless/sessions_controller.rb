@@ -43,7 +43,7 @@ module Passwordless
           url_for(
             id: @session.identifier,
             action: "show",
-            controller:
+            controller: controller
           ),
           flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
         )
