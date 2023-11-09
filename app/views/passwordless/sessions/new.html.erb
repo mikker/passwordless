@@ -3,9 +3,10 @@
   <%= f.label email_field_name,
           t("passwordless.sessions.new.email.label"),
           for: "passwordless_#{email_field}" %>
-  <%= text_field_tag email_field_name,
+  <%= email_field_tag email_field_name,
   params.fetch(email_field_name, nil),
   required: true,
+  autofocus: true,
   placeholder: t("passwordless.sessions.new.email.placeholder") %>
   <%= f.submit t("passwordless.sessions.new.submit") %>
 <% end %>

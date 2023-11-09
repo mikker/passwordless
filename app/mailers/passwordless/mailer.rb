@@ -17,7 +17,7 @@ module Passwordless
           controller: "passwordless/sessions",
           action: "confirm",
           id: session.identifier,
-          token: token,
+          token: @token,
           authenticatable: "user",
           resource: "users"
         }
