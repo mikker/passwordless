@@ -5,12 +5,16 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :exception
 
-  helper_method :current_user
+  helper_method :current_user, :current_admin
 
   private
 
   def current_user
     @current_user ||= authenticate_by_session(User)
+  end
+
+  def current_admin
+    @current_admin ||= authenticate_by_session(Admin)
   end
 
   def authenticate_user!

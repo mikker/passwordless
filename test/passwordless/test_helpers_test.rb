@@ -46,14 +46,14 @@ module Passwordless
       assert 1, Session.count
       assert alice, Session.last!.authenticatable
       assert_match(
-        %r{^http://.*/users/sign_in/[a-z0-9-]+/[a-z0-9]+}i,
+        %r{/users/sign_in/[a-z0-9-]+/[a-z0-9]+}i,
         controller.actions.first.last.first
       )
 
       controller.passwordless_sign_out
 
       assert_match(
-        %r{^http://.*/users/sign_out},
+        %r{/users/sign_out},
         controller.actions[-2].last.first
       )
     end

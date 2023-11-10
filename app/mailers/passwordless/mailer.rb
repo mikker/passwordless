@@ -13,16 +13,14 @@ module Passwordless
     def sign_in(session, token = nil)
       @token = token || session.token
 
-      resource = session.authenticatable.model_name.to_s.tableize.to_sym
-
-      @magic_link = url_for(
-        controller: Passwordless.controllers[resource],
+      @magic_link = Passwordless.context.url_for(
+        session,
         action: "confirm",
-        id: session.identifier,
+        id: session.to_param,
         token: @token,
-        authenticatable: session.authenticatable.model_name.singular,
-        resource: resource
+        only_path: false
       )
+
       email_field = session.authenticatable.class.passwordless_email_field
 
       mail(

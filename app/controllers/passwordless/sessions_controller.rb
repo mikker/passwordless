@@ -36,14 +36,11 @@ module Passwordless
           Passwordless.config.after_session_save.call(@session)
         end
 
-        resource = @session.authenticatable.model_name.to_s.tableize.to_sym
-        controller = Passwordless.controllers[resource]
-
         redirect_to(
-          url_for(
-            id: @session.identifier,
-            action: "show",
-            controller: controller
+          Passwordless.context.url_for(
+            @session,
+            id: @session.to_param,
+            action: "show"
           ),
           flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
         )

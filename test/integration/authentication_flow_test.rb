@@ -56,7 +56,7 @@ class AuthenticationFlowTest < ActionDispatch::SystemTestCase
 
     visit magic_link
 
-    assert_equal "/", current_path
+    assert_equal "/secret", current_path
     assert_content "Current user: #{alice.email}"
   end
 end

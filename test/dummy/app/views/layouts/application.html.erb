@@ -16,6 +16,8 @@
     <div style="border: 1px solid gray; padding: 10px; margin-bottom: 10px;">
       <p><strong>Current user:</strong>
         <%= current_user&.email.to_s %></p>
+      <p><strong>Current admin:</strong>
+        <%= current_admin&.email.to_s %></p>
     </div>
 
     <% flash.each do |kind, msg| %>
