@@ -27,15 +27,9 @@ module Passwordless
 
       as = as.to_s + "_" unless !as || as.to_s.end_with?("_")
 
-      plural = resource.to_s
-      singular = plural.singularize
+      pwless_resource = Passwordless.add_resource(resource, controller: controller)
 
-      defaults = {
-        authenticatable: singular,
-        resource: resource
-      }
-
-      scope(defaults: defaults) do
+      scope(defaults: pwless_resource.defaults) do
         get("#{at}/sign_in", to: "#{controller}#new", as: :"#{as}sign_in")
         post("#{at}/sign_in", to: "#{controller}#create")
         get("#{at}/sign_in/:id", to: "#{controller}#show", as: :"verify_#{as}sign_in")

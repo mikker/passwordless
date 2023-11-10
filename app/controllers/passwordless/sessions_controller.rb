@@ -37,7 +37,11 @@ module Passwordless
         end
 
         redirect_to(
-          url_for(id: @session.identifier, action: "show"),
+          Passwordless.context.url_for(
+            @session,
+            id: @session.to_param,
+            action: "show"
+          ),
           flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
         )
       else
