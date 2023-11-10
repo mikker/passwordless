@@ -37,7 +37,7 @@ module Passwordless
         end
 
         redirect_to(
-          Passwordless.context.url_for(
+          Passwordless.context.path_for(
             @session,
             id: @session.to_param,
             action: "show"

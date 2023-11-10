@@ -12,8 +12,19 @@ module Passwordless
     attr_reader :actions
   end
 
-  class MockUnitTest < MockTest
-    include Passwordless::TestHelpers::TestCase
+  class MockControllerTest < MockTest
+    include Passwordless::TestHelpers::ControllerTestCase
+
+    def initialize
+      super
+      @request = OpenStruct.new(session: {})
+    end
+
+    attr_reader :request
+  end
+
+  class MockRequestTest < MockTest
+    include Passwordless::TestHelpers::RequestTestCase
 
     def get(*args)
       @actions << [:get, args]
@@ -37,16 +48,20 @@ module Passwordless
   end
 
   class PasswordlessTestHelpersTest < ActiveSupport::TestCase
-    test("unit test") do
+    class H
+      extend ControllerHelpers
+    end
+
+    test("request test") do
       alice = users(:alice)
-      controller = MockUnitTest.new
+      controller = MockRequestTest.new
 
       controller.passwordless_sign_in(alice)
 
       assert 1, Session.count
       assert alice, Session.last!.authenticatable
       assert_match(
-        %r{/users/sign_in/[a-z0-9-]+/[a-z0-9]+}i,
+        %r{/users/sign_in/[a-z0-9-]{36}/[a-z0-9]+}i,
         controller.actions.first.last.first
       )
 
@@ -58,6 +73,20 @@ module Passwordless
       )
     end
 
+    test("controller test") do
+      alice = users(:alice)
+      controller = MockControllerTest.new
+
+      controller.passwordless_sign_in(alice)
+
+      assert 1, Session.count
+      assert alice, Session.last!.authenticatable
+      assert_equal Session.last!.id, controller.request.session[H.session_key(User)]
+
+      controller.passwordless_sign_out(User)
+      assert_nil controller.request.session[H.session_key(User)]
+    end
+
     test("system test") do
       alice = users(:alice)
       controller = MockSystemTest.new
@@ -67,7 +96,7 @@ module Passwordless
       assert 1, Session.count
       assert alice, Session.last!.authenticatable
       assert_match(
-        %r{^http://.*/users/sign_in/[a-z0-9]+/[a-z0-9]+}i,
+        %r{^http://.*/users/sign_in/[a-z0-9-]{36}/[a-z0-9]+}i,
         controller.actions.last.last.first
       )
 
