@@ -4,6 +4,7 @@
 
 ### Fixed
 
+- Fixed url generation when custom controller is specified (#180)
 - Fixed a bug in `passwordless_sign_in` (#179)
 
 ## 1.1.0
