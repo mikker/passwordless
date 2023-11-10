@@ -40,8 +40,7 @@ module Passwordless
       end
 
       Rails.application.routes.url_helpers.url_for(
-        **resource.defaults,
-        **options
+        resource.defaults.merge(options)
       )
     end
 

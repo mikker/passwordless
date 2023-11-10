@@ -7,25 +7,14 @@ module Passwordless
 
     def initialize
       @actions = []
+      @request = OpenStruct.new(session: {})
     end
 
-    attr_reader :actions
+    attr_reader :actions, :request
   end
 
   class MockUnitTest < MockTest
     include Passwordless::TestHelpers::TestCase
-
-    def get(*args)
-      @actions << [:get, args]
-    end
-
-    def delete(*args)
-      @actions << [:delete, args]
-    end
-
-    def follow_redirect!
-      @actions << [:follow_redirect!]
-    end
   end
 
   class MockSystemTest < MockTest
@@ -37,6 +26,10 @@ module Passwordless
   end
 
   class PasswordlessTestHelpersTest < ActiveSupport::TestCase
+    class H
+      extend ControllerHelpers
+    end
+
     test("unit test") do
       alice = users(:alice)
       controller = MockUnitTest.new
@@ -45,17 +38,10 @@ module Passwordless
 
       assert 1, Session.count
       assert alice, Session.last!.authenticatable
-      assert_match(
-        %r{/users/sign_in/[a-z0-9-]+/[a-z0-9]+}i,
-        controller.actions.first.last.first
-      )
+      assert_equal Session.last!.id, controller.request.session[H.session_key(User)]
 
-      controller.passwordless_sign_out
-
-      assert_match(
-        %r{/users/sign_out},
-        controller.actions[-2].last.first
-      )
+      controller.passwordless_sign_out(User)
+      assert_nil controller.request.session[H.session_key(User)]
     end
 
     test("system test") do
@@ -67,7 +53,7 @@ module Passwordless
       assert 1, Session.count
       assert alice, Session.last!.authenticatable
       assert_match(
-        %r{^http://.*/users/sign_in/[a-z0-9]+/[a-z0-9]+}i,
+        %r{^http://.*/users/sign_in/[a-z0-9-]{36}/[a-z0-9]+}i,
         controller.actions.last.last.first
       )
 

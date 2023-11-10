@@ -1,24 +1,18 @@
 module Passwordless
   module TestHelpers
     module TestCase
+      class H
+        extend ControllerHelpers
+      end
+
       def passwordless_sign_out(cls = nil)
         cls ||= "User".constantize
-        resource = cls.model_name.to_s.tableize
-        dest = Passwordless.context.path_for(resource, action: "destroy")
-        delete(dest)
-        follow_redirect!
+        @request.session.delete(H.session_key(cls))
       end
 
       def passwordless_sign_in(resource)
         session = Passwordless::Session.create!(authenticatable: resource)
-        magic_link = Passwordless.context.path_for(
-          session,
-          action: "confirm",
-          id: session.to_param,
-          token: session.token
-        )
-        get(magic_link)
-        follow_redirect!
+        @request.session[H.session_key(resource.class)] = session.id
       end
     end
 
@@ -26,17 +20,20 @@ module Passwordless
       def passwordless_sign_out(cls = nil)
         cls ||= "User".constantize
         resource = cls.model_name.to_s.tableize
+
         visit(Passwordless.context.url_for(resource, action: "destroy"))
       end
 
       def passwordless_sign_in(resource)
         session = Passwordless::Session.create!(authenticatable: resource)
+
         magic_link = Passwordless.context.url_for(
           session,
           action: "confirm",
-          id: session.id,
+          id: session.to_param,
           token: session.token
         )
+
         visit(magic_link)
       end
     end
