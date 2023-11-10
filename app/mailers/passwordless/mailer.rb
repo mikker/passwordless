@@ -17,8 +17,7 @@ module Passwordless
         session,
         action: "confirm",
         id: session.to_param,
-        token: @token,
-        only_path: false
+        token: @token
       )
 
       email_field = session.authenticatable.class.passwordless_email_field

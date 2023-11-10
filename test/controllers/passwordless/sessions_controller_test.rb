@@ -23,7 +23,7 @@ module Passwordless
       create_user(email: "a@a")
 
       post("/users/sign_in", params: {passwordless: {email: "a@a"}})
-      assert_equal 302, status, response.body
+      assert_equal 302, status
 
       assert_equal 1, ActionMailer::Base.deliveries.size
 
@@ -35,7 +35,7 @@ module Passwordless
       create_user(email: "a_XYZ@a")
 
       post("/users/sign_in", params: {passwordless: {email: "     a_xyZ@a "}})
-      assert_equal 302, status, response.body
+      assert_equal 302, status
 
       assert_equal 1, ActionMailer::Base.deliveries.size
 
