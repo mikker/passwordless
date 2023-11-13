@@ -21,20 +21,20 @@ module Passwordless
     #   redirects to sign in page with generic flash message.
     def create
       unless @resource = find_authenticatable
-        raise(
-          ActiveRecord::RecordNotFound,
-          "Couldn't find #{authenticatable_type} with email #{passwordless_session_params[email_field]}"
-        )
+        if Passwordless.config.paranoid
+          @resource = mock_authenticatable
+        else
+          raise(
+            ActiveRecord::RecordNotFound,
+            "Couldn't find #{authenticatable_type} with email #{passwordless_session_params[email_field]}"
+          )
+        end
       end
 
       @session = build_passwordless_session(@resource)
 
       if @session.save
-        if Passwordless.config.after_session_save.arity == 2
-          Passwordless.config.after_session_save.call(@session, request)
-        else
-          Passwordless.config.after_session_save.call(@session)
-        end
+        after_session_save_call
 
         redirect_to(
           Passwordless.context.path_for(
@@ -141,6 +141,16 @@ module Passwordless
       BCrypt::Password.create(token)
     end
 
+    def after_session_save_call
+      # @resource is mocked when paranoid option is enabled and a non existent user tries to log in
+      return if @resource.instance_variable_get(:@mocked)
+        if Passwordless.config.after_session_save.arity == 2
+          Passwordless.config.after_session_save.call(@session, request)
+        else
+          Passwordless.config.after_session_save.call(@session)
+        end
+    end
+
     def authenticate_and_sign_in(session, token)
       if session.authenticate(token)
         sign_in(session)
@@ -178,6 +188,13 @@ module Passwordless
       else
         authenticatable_class.where("lower(#{email_field}) = ?", email).first
       end
+    end
+
+    def mock_authenticatable
+      email = passwordless_session_params[email_field].downcase.strip
+      resource = authenticatable_class.new(email: email)
+      resource.instance_variable_set(:@mocked, true)
+      resource
     end
 
     def email_field

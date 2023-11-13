@@ -160,6 +160,7 @@ Passwordless.configure do |config|
   config.parent_mailer = "ActionMailer::Base"
   config.restrict_token_reuse = false # Can a token/link be used multiple times?
   config.token_generator = Passwordless::ShortTokenGenerator.new # Used to generate magic link tokens.
+  config.paranoid = false # Set to `true` to prevent unintentional email existence leaks in the database.
 
   config.expires_at = lambda { 1.year.from_now } # How long until a signed in session expires.
   config.timeout_at = lambda { 10.minutes.from_now } # How long until a token/magic link times out.

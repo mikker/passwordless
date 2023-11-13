@@ -93,6 +93,34 @@ module Passwordless
       assert_match "We couldn't find a user with that email address", flash[:error]
     end
 
+    test("POST /:passwordless_for/sign_in -> SUCCESS / Paranoid flag enabled") do
+      create_user(email: "a@a")
+
+      with_config(paranoid: true) do
+        post("/users/sign_in", params: {passwordless: {email: "a@a"}})
+      end
+
+      assert_equal 302, status
+      assert_equal 1, ActionMailer::Base.deliveries.size
+
+      follow_redirect!
+      assert_equal "/users/sign_in/#{Session.last!.identifier}", path
+      assert_match "We've sent you an email with a secret token", flash[:notice]
+    end
+
+    test("POST /:passwordless_for/sign_in -> SUCCESS / Paranoid flag enabled. Does not leak existing emails") do
+      with_config(paranoid: true) do
+        post("/users/sign_in", params: {passwordless: {email: "a@a"}})
+      end
+
+      assert_equal 302, status
+
+      assert_equal 0, ActionMailer::Base.deliveries.size
+      follow_redirect!
+      assert_equal "/users/sign_in/#{Session.last!.identifier}", path
+      assert_match "We've sent you an email with a secret token", flash[:notice]
+    end
+
     test("POST /:passwordless_for/sign_in -> ERROR / other error") do
       create_user(email: "a@a")
 
