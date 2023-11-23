@@ -146,7 +146,13 @@ passwordless_for :users, at: '/', as: :auth
 ```
 
 Also be sure to
-[specify ActionMailer's `default_url_options.host`](http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views).
+[specify ActionMailer's `default_url_options.host`](http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views) and tell the routes as well:
+
+```ruby
+# config/application.rb for example:
+config.action_mailer.default_url_options = {host: "www.example.com"}
+routes.default_url_options[:host] ||= "www.example.com"
+```
 
 ## Configuration
 
