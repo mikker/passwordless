@@ -50,6 +50,12 @@ module Passwordless
     def initialize
       set_defaults!
     end
+
+    def mailer_defaults
+      # Compacting the Hash removes all keys with nil values, allowing to let
+      # the `from` address fall back to the parent mailer's default.
+      { from: default_from_address }.compact
+    end
   end
 
   module Configurable
@@ -67,5 +73,4 @@ module Passwordless
       @config = Configuration.new
     end
   end
-
 end

@@ -35,4 +35,14 @@ class Passwordless::MailerTest < ActionMailer::TestCase
     assert_match /sign in: hello\n/, email.body.to_s
     assert_match %r{/admins/sign_in/#{session.identifier}/hello}, email.body.to_s
   end
+
+  test("without default_from_address falls back to parent_mailer") do
+    WithConfig.with_config({default_from_address: nil, parent_mailer: "ApplicationMailer"}) do
+      email = Passwordless::Mailer.sign_in(
+        Passwordless::Session.create!(authenticatable: users(:alice), token: "hello")
+      )
+
+      assert_equal ["from@example.com"], email.from
+    end
+  end
 end
