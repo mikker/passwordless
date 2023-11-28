@@ -56,7 +56,7 @@ module WithConfig
     # We need to reload the application, because the config can set a different
     # parent_mailer class, which means `Passwordless::Mailer` needs to be
     # reloaded. Simply reloading the whole application seems to be the easiest.
-    Rails.application.reloader.reload!
+    Rails.application.reloader.reload! if options.has_key?(:parent_mailer)
 
     yield
   ensure
