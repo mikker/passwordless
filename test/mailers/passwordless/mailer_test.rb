@@ -40,15 +40,15 @@ class Passwordless::MailerTest < ActionMailer::TestCase
     session = Passwordless::Session.create!(authenticatable: users(:alice), token: "hello")
     email = Passwordless::Mailer.sign_in(session, "hello")
 
-    assert_match %r{localhost:3000/users/sign_in/#{session.identifier}/hello}, email.body.to_s
+    assert_match %r{www.example.com/users/sign_in/#{session.identifier}/hello}, email.body.to_s
   end
 
   test("uses default_url_options from mailer") do
-    WithConfig.with_config({parent_mailer: "ApplicationMailer"}) do
+    with_config({parent_mailer: "ApplicationMailer"}) do
       session = Passwordless::Session.create!(authenticatable: users(:alice), token: "hello")
       email = Passwordless::Mailer.sign_in(session, "hello")
 
-      assert_match %r{example.com/users/sign_in/#{session.identifier}/hello}, email.body.to_s
+      assert_match %r{www.example.org/users/sign_in/#{session.identifier}/hello}, email.body.to_s
     end
   end
 end
