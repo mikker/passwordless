@@ -61,6 +61,8 @@ module WithConfig
     yield
   ensure
     Passwordless.reset_config!
+    # Reload the application again, because we reset the config.
+    Rails.application.reloader.reload! if options.has_key?(:parent_mailer)
   end
 end
 
