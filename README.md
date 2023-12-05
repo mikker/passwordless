@@ -260,18 +260,6 @@ class User < ApplicationRecord
 end
 ```
 
-### Claiming tokens
-
-By default, a token/magic link **can** be used more than once.
-
-To change, in `config/initializers/passwordless.rb`:
-
-```ruby
-Passwordless.configure do |config|
-  config.restrict_token_reuse = true
-end
-```
-
 ## Test helpers
 
 To help with testing, a set of test helpers are provided.
