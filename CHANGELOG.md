@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Added the option `combat_brute_force_attacks`, enabled everywhere but Rails.env.test (#190)
+
 ## 1.1.1
 
 ### Fixed
