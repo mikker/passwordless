@@ -137,6 +137,8 @@ module Passwordless
     private
 
     def artificially_slow_down_brute_force_attacks(token)
+      return unless Passwordless.config.combat_brute_force_attacks
+
       # Make it "slow" on purpose to make brute-force attacks more of a hassle
       BCrypt::Password.create(token)
     end
