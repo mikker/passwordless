@@ -44,6 +44,23 @@ class User < ApplicationRecord
 end
 ```
 
+You might want to update the generated migration file to include db-level constraints similar to the model validation above:
+
+```ruby
+class CreateUsers < ActiveRecord::Migration[7.0]
+  def change
+    create_table :users do |t|
+      t.string :email, null: false
+
+      t.index 'LOWER(email)', unique: true, name: 'index_users_on_lowercase_email'
+
+      t.timestamps
+    end
+  end
+end
+```
+
+
 Finally, mount the engine in your routes:
 
 ```ruby
