@@ -53,23 +53,16 @@ module WithConfig
       end
     end
 
-    # We need to reload the application, because the config can set a different
-    # parent class for the mailer, which means `Passwordless::Mailer` needs to be
-    # reloaded.
-    reload_mailer! if options.has_key?(:parent_mailer)
-
     yield
   ensure
     Passwordless.reset_config!
-
-    # Reload the application again, because we reset the config.
-    reload_mailer! if options.has_key?(:parent_mailer)
   end
 
-  private
-
-  # Reloads the Mailer by removing its constant and reloading the mailer file manually.
-  # This is quite a hack, but it seems to work.
+  # Reloads the Mailer by removing its constant and reloading the mailer file
+  # manually. This is quite a hack, but it seems to work.
+  # 
+  # This can be used when you change the`parent_mailer` config option and need
+  # it load a different parent class.
   def reload_mailer!
     Passwordless.send(:remove_const, :Mailer)
     load File.expand_path("../../app/mailers/passwordless/mailer.rb", __FILE__)
