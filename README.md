@@ -25,26 +25,21 @@ See [Upgrading to Passwordless 1.0](docs/upgrading_to_1_0.md) for more details.
 
 ## Usage
 
-Passwordless creates a single model called `Passwordless::Session`. It doesn't come with its own `User` model, it expects you to create one:
+Passwordless creates a single model called `Passwordless::Session`, so it doesn't come with its own user model. Instead, it expects you to provide one, with an email field in place. If you don't yet have a user model, check out the wiki on [creating the user model](https://github.com/mikker/passwordless/wiki/Creating-the-user-model).
 
-```sh
-$ bin/rails generate model User email
-```
-
-Then specify which field on your `User` record is the email field with:
+Enable Passwordless on your user model by pointing it to the email field:
 
 ```ruby
 class User < ApplicationRecord
-  validates :email,
-            presence: true,
-            uniqueness: { case_sensitive: false },
-            format: { with: URI::MailTo::EMAIL_REGEXP }
-
-  passwordless_with :email # <-- here!
+  # your other code..
+  
+  passwordless_with :email # <-- here! this needs to be a column in `users` table
+  
+  # more of your code..
 end
 ```
 
-Finally, mount the engine in your routes:
+Then mount the engine in your routes:
 
 ```ruby
 Rails.application.routes.draw do
