@@ -50,6 +50,8 @@ module Passwordless
       end
 
     rescue ActiveRecord::RecordNotFound
+      @session = Session.new
+      
       flash[:error] = I18n.t("passwordless.sessions.create.not_found")
       render(:new, status: :not_found)
     end
