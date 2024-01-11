@@ -35,4 +35,29 @@ class Passwordless::MailerTest < ActionMailer::TestCase
     assert_match /sign in: hello\n/, email.body.to_s
     assert_match %r{/admins/sign_in/#{session.identifier}/hello}, email.body.to_s
   end
+
+  test("uses default_url_options from config.action_mailer") do
+    session = Passwordless::Session.create!(authenticatable: users(:alice), token: "hello")
+    email = Passwordless::Mailer.sign_in(session, "hello")
+
+    assert_match %r{www.example.com/users/sign_in/#{session.identifier}/hello}, email.body.to_s
+  end
+
+  test("uses default_url_options from mailer") do
+    with_config({parent_mailer: "ApplicationMailer"}) do
+      # We need to reload the mailer, because the test sets set a different
+      # parent class for the mailer. This means `Passwordless::Mailer` needs
+      # to be reloaded, otherwise it will still have the old parent class.
+      reload_mailer!
+      
+      session = Passwordless::Session.create!(authenticatable: users(:alice), token: "hello")
+      email = Passwordless::Mailer.sign_in(session, "hello")
+
+      assert_match %r{www.example.org/users/sign_in/#{session.identifier}/hello}, email.body.to_s
+    end
+  ensure
+    # Reload the mailer again, because the config is reset back to the default
+    # after the `with_config` block.
+    reload_mailer!
+  end
 end
