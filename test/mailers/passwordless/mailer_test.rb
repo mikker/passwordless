@@ -49,7 +49,7 @@ class Passwordless::MailerTest < ActionMailer::TestCase
       # parent class for the mailer. This means `Passwordless::Mailer` needs
       # to be reloaded, otherwise it will still have the old parent class.
       reload_mailer!
-      
+
       session = Passwordless::Session.create!(authenticatable: users(:alice), token: "hello")
       email = Passwordless::Mailer.sign_in(session, "hello")
 
@@ -58,6 +58,16 @@ class Passwordless::MailerTest < ActionMailer::TestCase
   ensure
     # Reload the mailer again, because the config is reset back to the default
     # after the `with_config` block.
+    reload_mailer!
+  end
+
+  test("uses default from address of parent when default_from_address is nil") do
+    with_config({parent_mailer: "ApplicationMailer", default_from_address: nil}) do
+      reload_mailer!
+
+      assert_equal ApplicationMailer.default.fetch(:from), Passwordless::Mailer.default.fetch(:from)
+    end
+  ensure
     reload_mailer!
   end
 end
