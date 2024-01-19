@@ -32,9 +32,9 @@ Enable Passwordless on your user model by pointing it to the email field:
 ```ruby
 class User < ApplicationRecord
   # your other code..
-  
+
   passwordless_with :email # <-- here! this needs to be a column in `users` table
-  
+
   # more of your code..
 end
 ```
@@ -170,6 +170,8 @@ Passwordless.configure do |config|
   config.success_redirect_path = '/' # After a user successfully signs in
   config.failure_redirect_path = '/' # After a sign in fails
   config.sign_out_redirect_path = '/' # After a user signs out
+
+  config.paranoid = false # Display email sent notice even when the resource is not found.
 end
 ```
 

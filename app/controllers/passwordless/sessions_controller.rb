@@ -20,21 +20,11 @@ module Passwordless
     #   Creates a new Session record then sends the magic link
     #   redirects to sign in page with generic flash message.
     def create
-      unless @resource = find_authenticatable
-        raise(
-          ActiveRecord::RecordNotFound,
-          "Couldn't find #{authenticatable_type} with email #{passwordless_session_params[email_field]}"
-        )
-      end
-
+      handle_resource_not_found unless @resource = find_authenticatable
       @session = build_passwordless_session(@resource)
 
       if @session.save
-        if Passwordless.config.after_session_save.arity == 2
-          Passwordless.config.after_session_save.call(@session, request)
-        else
-          Passwordless.config.after_session_save.call(@session)
-        end
+        call_after_session_save
 
         redirect_to(
           Passwordless.context.path_for(
@@ -51,7 +41,7 @@ module Passwordless
 
     rescue ActiveRecord::RecordNotFound
       @session = Session.new
-      
+
       flash[:error] = I18n.t("passwordless.sessions.create.not_found")
       render(:new, status: :not_found)
     end
@@ -175,12 +165,36 @@ module Passwordless
     end
 
     def find_authenticatable
-      email = passwordless_session_params[email_field].downcase.strip
-
       if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
-        authenticatable_class.fetch_resource_for_passwordless(email)
+        authenticatable_class.fetch_resource_for_passwordless(normalized_email_param)
       else
-        authenticatable_class.where("lower(#{email_field}) = ?", email).first
+        authenticatable_class.where("lower(#{email_field}) = ?", normalized_email_param).first
+      end
+    end
+
+    def normalized_email_param
+      passwordless_session_params[email_field].downcase.strip
+    end
+
+    def handle_resource_not_found
+      if Passwordless.config.paranoid
+        @resource = authenticatable_class.new(email: normalized_email_param)
+        @disable_after_session_save_callback = true
+      else
+        raise(
+          ActiveRecord::RecordNotFound,
+          "Couldn't find #{authenticatable_type} with email #{normalized_email_param}"
+        )
+      end
+    end
+
+    def call_after_session_save
+      return if @disable_after_session_save_callback
+
+      if Passwordless.config.after_session_save.arity == 2
+        Passwordless.config.after_session_save.call(@session, request)
+      else
+        Passwordless.config.after_session_save.call(@session)
       end
     end
 
