@@ -4,7 +4,7 @@ require "bcrypt"
 
 module Passwordless
   # Controller for managing Passwordless sessions
-  class SessionsController < ApplicationController
+  class SessionsController < Passwordless.config.parent_controller.constantize
     include ControllerHelpers
 
     helper_method :email_field
@@ -51,7 +51,7 @@ module Passwordless
 
     rescue ActiveRecord::RecordNotFound
       @session = Session.new
-      
+
       flash[:error] = I18n.t("passwordless.sessions.create.not_found")
       render(:new, status: :not_found)
     end

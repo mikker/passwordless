@@ -28,6 +28,7 @@ module Passwordless
     include Options
 
     option :default_from_address, default: "CHANGE_ME@example.com"
+    option :parent_controller, default: "ApplicationController"
     option :parent_mailer, default: "ActionMailer::Base"
     option :restrict_token_reuse, default: true
     option :token_generator, default: ShortTokenGenerator.new

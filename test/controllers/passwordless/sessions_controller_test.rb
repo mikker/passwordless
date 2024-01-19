@@ -207,6 +207,19 @@ module Passwordless
       end
     end
 
+    test("custom parent") do
+      class Passwordless::CustomParentController < ActionController::Base; end
+
+      with_config({parent_controller: "Passwordless::CustomParentController"}) do
+        reload_controller!
+
+        assert_equal Passwordless::CustomParentController, Passwordless::SessionsController.superclass
+      end
+    ensure
+      reload_controller!
+      Passwordless.send(:remove_const, :CustomParentController)
+    end
+
     class Helpers
       extend Passwordless::ControllerHelpers
     end
