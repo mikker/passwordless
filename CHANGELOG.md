@@ -2,15 +2,16 @@
 
 ## 1.3.0
 
-## Added
+### Changed
+
+- The default `from` of the parent mailer won't be overridden if the `default_from_address` option is set to `nil` (#198)
+
+### Added
 
 - Added `paranoid` option to display the email sent notice even when the resource is not found (#196)
 - Added `parent_controller` option to set the `SessionsController` parent class (#199)
 - Added `only_path` param to `SystemTestCase#passwordless_sign_in` and `SystemTestCase#passwordless_sign_out` (#197)
 
-## Changed
-
-- The default `from` of the parent mailer won't be overridden if the `default_from_address` option is set to `nil` (#198)
 
 ## 1.2.0
 
