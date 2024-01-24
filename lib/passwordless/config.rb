@@ -49,6 +49,8 @@ module Passwordless
       end
     )
 
+    option :paranoid, default: false
+
     def initialize
       set_defaults!
     end

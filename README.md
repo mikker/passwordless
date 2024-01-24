@@ -171,6 +171,8 @@ Passwordless.configure do |config|
   config.success_redirect_path = '/' # After a user successfully signs in
   config.failure_redirect_path = '/' # After a sign in fails
   config.sign_out_redirect_path = '/' # After a user signs out
+
+  config.paranoid = false # Display email sent notice even when the resource is not found.
 end
 ```
 
