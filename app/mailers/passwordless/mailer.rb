@@ -3,7 +3,7 @@
 module Passwordless
   # The mailer responsible for sending Passwordless' mails.
   class Mailer < Passwordless.config.parent_mailer.constantize
-    default from: Passwordless.config.default_from_address
+    default(from: Passwordless.config.default_from_address) if Passwordless.config.default_from_address
 
     # Sends a token and a magic link
     #
