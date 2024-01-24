@@ -43,21 +43,22 @@ module Passwordless
     end
 
     module SystemTestCase
-      def passwordless_sign_out(cls = nil)
+      def passwordless_sign_out(cls = nil, only_path: false)
         cls ||= "User".constantize
         resource = cls.model_name.to_s.tableize
 
-        visit(Passwordless.context.url_for(resource, action: "destroy"))
+        visit(Passwordless.context.url_for(resource, action: "destroy", only_path: only_path))
       end
 
-      def passwordless_sign_in(resource)
+      def passwordless_sign_in(resource, only_path: false)
         session = Passwordless::Session.create!(authenticatable: resource)
 
         magic_link = Passwordless.context.url_for(
           session,
           action: "confirm",
           id: session.to_param,
-          token: session.token
+          token: session.token,
+          only_path: only_path
         )
 
         visit(magic_link)
