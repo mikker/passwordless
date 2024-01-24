@@ -32,9 +32,9 @@ Enable Passwordless on your user model by pointing it to the email field:
 ```ruby
 class User < ApplicationRecord
   # your other code..
-  
+
   passwordless_with :email # <-- here! this needs to be a column in `users` table
-  
+
   # more of your code..
 end
 ```
@@ -158,6 +158,7 @@ The default values are shown below. It's recommended to only include the ones th
 ```ruby
 Passwordless.configure do |config|
   config.default_from_address = "CHANGE_ME@example.com"
+  config.parent_controller = "ApplicationController"
   config.parent_mailer = "ActionMailer::Base"
   config.restrict_token_reuse = false # Can a token/link be used multiple times?
   config.token_generator = Passwordless::ShortTokenGenerator.new # Used to generate magic link tokens.
