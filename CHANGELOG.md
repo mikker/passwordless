@@ -1,10 +1,10 @@
 # Changelog
 
-## Unreleased
+## 1.4.0
 
 ### Changed
 
-- Configurable redirect paths now accept both strings and procs (#202)
+- Configurable redirect paths now accept both strings and lambdas (#202)
 
 ## 1.3.0
 
