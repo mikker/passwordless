@@ -170,7 +170,7 @@ module Passwordless
 
     def call_or_return(value)
       if value.respond_to?(:call)
-        instance_eval(&value)
+        instance_exec(&value)
       else
         value
       end
