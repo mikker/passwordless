@@ -119,8 +119,15 @@ module Passwordless
       nil
     end
 
-    def passwordless_success_redirect_path
-      success_redirect_path = call_or_return(Passwordless.config.success_redirect_path)
+    def passwordless_success_redirect_path(authenticatable)
+      success_redirect_path = Passwordless.config.success_redirect_path
+
+      if success_redirect_path.respond_to?(:call)
+        success_redirect_path = call_or_return(
+          success_redirect_path,
+          *[authenticatable].first(success_redirect_path.arity)
+        )
+      end
 
       if Passwordless.config.redirect_back_after_sign_in
         session_redirect_url = reset_passwordless_redirect_location!(authenticatable_class)
@@ -142,7 +149,11 @@ module Passwordless
     def authenticate_and_sign_in(session, token)
       if session.authenticate(token)
         sign_in(session)
-        redirect_to(passwordless_success_redirect_path, status: :see_other, **redirect_to_options)
+        redirect_to(
+          passwordless_success_redirect_path(session.authenticatable),
+          status: :see_other,
+          **redirect_to_options
+        )
       else
         flash[:error] = I18n.t("passwordless.sessions.errors.invalid_token")
         render(status: :forbidden, action: "show")
@@ -168,9 +179,9 @@ module Passwordless
       authenticatable_type.constantize
     end
 
-    def call_or_return(value)
+    def call_or_return(value, *args)
       if value.respond_to?(:call)
-        instance_exec(&value)
+        instance_exec(*args, &value)
       else
         value
       end

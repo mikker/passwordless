@@ -145,20 +145,26 @@ module Passwordless
       assert_equal pwless_session(User), Session.last!.id
     end
 
-    test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS / callable success path") do
+    test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS / callable success path with no args") do
       passwordless_session = create_pwless_session(token: "hi")
 
       with_config(success_redirect_path: lambda { "/" }) do
         patch("/users/sign_in/#{passwordless_session.identifier}", params: {passwordless: {token: "hi"}})
       end
 
-      assert_equal 303, status
+      follow_redirect!
+      assert_equal "/", path
+    end
+
+    test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS / callable success path with 1 arg") do
+      passwordless_session = create_pwless_session(token: "hi")
+
+      with_config(success_redirect_path: lambda { |user| "/#{user.id}" }) do
+        patch("/users/sign_in/#{passwordless_session.identifier}", params: {passwordless: {token: "hi"}})
+      end
 
       follow_redirect!
-      assert_equal 200, status
-      assert_equal "/", path
-
-      assert_equal pwless_session(User), Session.last!.id
+      assert_equal "/#{passwordless_session.authenticatable.id}", path
     end
 
     test("PATCH /:passwordless_for/sign_in/:id -> ERROR") do
