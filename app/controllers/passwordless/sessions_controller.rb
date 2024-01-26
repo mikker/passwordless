@@ -169,7 +169,11 @@ module Passwordless
     end
 
     def call_or_return(value)
-      value.respond_to?(:call) ? value.call : value
+      if value.respond_to?(:call)
+        instance_eval(&value)
+      else
+        value
+      end
     end
 
     def find_authenticatable
