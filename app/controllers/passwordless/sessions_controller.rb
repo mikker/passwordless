@@ -105,11 +105,11 @@ module Passwordless
     protected
 
     def passwordless_sign_out_redirect_path
-      Passwordless.config.sign_out_redirect_path
+      call_or_return(Passwordless.config.sign_out_redirect_path)
     end
 
     def passwordless_failure_redirect_path
-      Passwordless.config.failure_redirect_path
+      call_or_return(Passwordless.config.failure_redirect_path)
     end
 
     def passwordless_query_redirect_path
@@ -120,10 +120,14 @@ module Passwordless
     end
 
     def passwordless_success_redirect_path
-      return Passwordless.config.success_redirect_path unless Passwordless.config.redirect_back_after_sign_in
+      success_redirect_path = call_or_return(Passwordless.config.success_redirect_path)
 
-      session_redirect_url = reset_passwordless_redirect_location!(authenticatable_class)
-      passwordless_query_redirect_path || session_redirect_url || Passwordless.config.success_redirect_path
+      if Passwordless.config.redirect_back_after_sign_in
+        session_redirect_url = reset_passwordless_redirect_location!(authenticatable_class)
+        return passwordless_query_redirect_path || session_redirect_url || success_redirect_path
+      end
+
+      success_redirect_path
     end
 
     private
@@ -162,6 +166,10 @@ module Passwordless
 
     def authenticatable_class
       authenticatable_type.constantize
+    end
+
+    def call_or_return(value)
+      value.respond_to?(:call) ? value.call : value
     end
 
     def find_authenticatable

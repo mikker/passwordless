@@ -19,6 +19,16 @@ module Passwordless
       assert_template "passwordless/sessions/new"
     end
 
+    test("GET /:passwordless_for/sign_in/:id") do
+      passwordless_session = create_pwless_session
+
+      get("/users/sign_in/#{passwordless_session.identifier}")
+
+      assert_equal 200, status
+      assert_equal "/users/sign_in/#{passwordless_session.to_param}", path
+      assert_template "passwordless/sessions/show"
+    end
+
     test("POST /:passwordless_for/sign_in -> SUCCESS") do
       create_user(email: "a@a")
 
@@ -121,20 +131,26 @@ module Passwordless
       assert_match "An error occured", flash[:error]
     end
 
-    test("GET /:passwordless_for/sign_in/:id") do
-      passwordless_session = create_pwless_session
-
-      get("/users/sign_in/#{passwordless_session.identifier}")
-
-      assert_equal 200, status
-      assert_equal "/users/sign_in/#{passwordless_session.to_param}", path
-      assert_template "passwordless/sessions/show"
-    end
-
     test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS") do
       passwordless_session = create_pwless_session(token: "hi")
 
       patch("/users/sign_in/#{passwordless_session.identifier}", params: {passwordless: {token: "hi"}})
+
+      assert_equal 303, status
+
+      follow_redirect!
+      assert_equal 200, status
+      assert_equal "/", path
+
+      assert_equal pwless_session(User), Session.last!.id
+    end
+
+    test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS / callable success path") do
+      passwordless_session = create_pwless_session(token: "hi")
+
+      with_config(success_redirect_path: lambda { "/" }) do
+        patch("/users/sign_in/#{passwordless_session.identifier}", params: {passwordless: {token: "hi"}})
+      end
 
       assert_equal 303, status
 
@@ -221,13 +237,15 @@ module Passwordless
     end
 
     test("custom parent") do
-      class Passwordless::CustomParentController < ActionController::Base; end
+      class Passwordless::CustomParentController < ActionController::Base
+      end
 
       with_config({parent_controller: "Passwordless::CustomParentController"}) do
         reload_controller!
 
         assert_equal Passwordless::CustomParentController, Passwordless::SessionsController.superclass
       end
+
     ensure
       reload_controller!
       Passwordless.send(:remove_const, :CustomParentController)
