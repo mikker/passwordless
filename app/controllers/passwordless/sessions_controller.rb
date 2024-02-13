@@ -30,7 +30,8 @@ module Passwordless
           Passwordless.context.path_for(
             @session,
             id: @session.to_param,
-            action: "show"
+            action: "show",
+            **locale_options
           ),
           flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
         )
@@ -249,6 +250,11 @@ module Passwordless
 
     def passwordless_session_params
       params.require(:passwordless).permit(:token, authenticatable_class.passwordless_email_field)
+    end
+
+    def locale_options
+      locale = params[:locale]
+      locale ? { locale: locale } : {}
     end
   end
 end

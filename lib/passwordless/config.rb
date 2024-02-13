@@ -44,8 +44,10 @@ module Passwordless
     option :sign_out_redirect_path, default: "/"
     option(
       :after_session_save,
-      default: lambda do |session, _request|
-        Mailer.sign_in(session, session.token).deliver_now
+      default: lambda do |session, request|
+        locale = request.params[:locale]
+        url_options = locale ? { locale: locale } : {}
+        Mailer.sign_in(session, session.token, url_options).deliver_now
       end
     )
 
