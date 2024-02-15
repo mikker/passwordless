@@ -10,7 +10,7 @@ module Passwordless
     # @param session [Session] An instance of Passwordless::Session
     # @param token [String] The token in plaintext. Falls back to `session.token` hoping it
     # is still in memory (optional)
-    def sign_in(session, token = nil)
+    def sign_in(session, token = nil, url_options = {})
       @token = token || session.token
 
       @magic_link = Passwordless.context.url_for(
@@ -18,6 +18,7 @@ module Passwordless
         action: "confirm",
         id: session.to_param,
         token: @token,
+        **url_options,
         **default_url_options
       )
 
