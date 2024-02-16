@@ -14,7 +14,6 @@ Rails.application.routes.draw do
 
   root(to: "users#index")
 
-  # optional path scope (denoted by the parentheses)
   scope "/locale/:locale" do
     passwordless_for(:users,  as: :locale_user)
   end
