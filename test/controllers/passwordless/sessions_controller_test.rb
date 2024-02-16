@@ -121,37 +121,37 @@ module Passwordless
       assert_equal "/users/sign_in/#{Session.last!.identifier}", path
     end
 
-    # test("POST /locale/fr/:passwordless_for/sign_in -> SUCCESS ") do
-    #   class Passwordless::LocaleParentController < ActionController::Base
-    #     around_action :switch_locale
+    test("POST /locale/fr/:passwordless_for/sign_in -> SUCCESS ") do
+      class Passwordless::LocaleParentController < ActionController::Base
+        around_action :switch_locale
 
-    #     def default_url_options
-    #       { locale: I18n.locale }
-    #     end
+        def default_url_options
+          { locale: I18n.locale }
+        end
 
-    #     def switch_locale(&action)
-    #       locale = params[:locale] || I18n.default_locale
-    #       I18n.with_locale(locale, &action)
-    #     end
-    #   end
+        def switch_locale(&action)
+          locale = params[:locale] || I18n.default_locale
+          I18n.with_locale(locale, &action)
+        end
+      end
 
-    #   with_config({parent_controller: "Passwordless::LocaleParentController"}) do
-    #     reload_controller!
-    #   end
+      with_config({parent_controller: "Passwordless::LocaleParentController"}) do
+        reload_controller!
+      end
 
-    #   create_user(email: "a@a")
+      create_user(email: "a@a")
 
-    #   post("/locale/fr/users/sign_in", params: {passwordless: {email: "a@a"}})
-    #   assert_equal 302, status
+      post("/locale/fr/users/sign_in", params: {passwordless: {email: "a@a"}})
+      assert_equal 302, status
 
-    #   assert_equal 1, ActionMailer::Base.deliveries.size
+      assert_equal 1, ActionMailer::Base.deliveries.size
 
-    #   follow_redirect!
-    #   assert_equal "/locale/fr/users/sign_in/#{Session.last!.identifier}", path
-    # ensure
-    #   reload_controller!
-    #   Passwordless.send(:remove_const, :LocaleParentController)
-    # end
+      follow_redirect!
+      assert_equal "/locale/fr/users/sign_in/#{Session.last!.identifier}", path
+    ensure
+      reload_controller!
+      Passwordless.send(:remove_const, :LocaleParentController)
+    end
 
     test("POST /:passwordless_for/sign_in -> SUCCESS / malformed email") do
       create_user(email: "a_XYZ@a")
