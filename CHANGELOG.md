@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Evaluate callable redirects in context of controller (#203)
+
+### Added
+
+- Add url_options param to sign_in email (#208)
+- Include TestHelpers in ActionDispatch::IntegrationTest (#211)
+
 ## 1.4.0
 
 ### Changed
