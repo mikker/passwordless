@@ -75,6 +75,10 @@ if defined?(ActionDispatch::SystemTestCase)
   ActionDispatch::SystemTestCase.send(:include, ::Passwordless::TestHelpers::SystemTestCase)
 end
 
+if defined?(ActionDispatch::IntegrationTest)
+  ActionDispatch::IntegrationTest.send(:include, ::Passwordless::TestHelpers::RequestTestCase)
+end
+
 if defined?(RSpec)
   RSpec.configure do |config|
     config.include(::Passwordless::TestHelpers::ControllerTestCase, type: :controller)
