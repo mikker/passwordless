@@ -1,0 +1,29 @@
+---
+fr:
+  passwordless:
+    sessions:
+      new:
+        email:
+          label: "Adresse e-mail"
+          placeholder: "user@example.com"
+        submit: "Connexion"
+      create:
+        email_sent: "Nous vous avons envoyé un e-mail avec un jeton secret"
+        not_found: "Nous n'avons pas pu trouver d'utilisateur avec cette adresse e-mail"
+        error: "Une erreur s'est produite"
+      show:
+        confirm: "Confirmer"
+      errors:
+        invalid_token: "Le jeton n'est pas valide"
+        session_expired: "Votre session a expiré, veuillez vous reconnecter."
+        token_claimed: "Ce lien a déjà été utilisé, essayez d'en demander un nouveau"
+      destroy:
+        signed_out: "Déconnexion réussie"
+    mailer:
+      sign_in:
+        subject: "Connexion ✨"
+        body: |-
+          Utiliser ce jeton pour vous connecter: %{token}
+
+          Vous pouvez également vous connecter directement avec ce lien:
+          %{magic_link}

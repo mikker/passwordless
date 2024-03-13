@@ -30,7 +30,8 @@ module Passwordless
           Passwordless.context.path_for(
             @session,
             id: @session.to_param,
-            action: "show"
+            action: "show",
+            **default_url_options
           ),
           flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
         )
