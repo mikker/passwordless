@@ -12,6 +12,7 @@ en:
         not_found: "We couldn't find a user with that email address"
         error: "An error occured"
       show:
+        token: "Token"
         confirm: "Confirm"
       errors:
         invalid_token: "Token is invalid"
