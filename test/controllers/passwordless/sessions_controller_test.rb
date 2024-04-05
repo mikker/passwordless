@@ -17,6 +17,7 @@ module Passwordless
 
       assert_equal 200, status
       assert_template "passwordless/sessions/new"
+      assert_match "E-mail address", response.body
     end
 
     test("GET /:passwordless_for/sign_in/:id") do
@@ -263,6 +264,71 @@ module Passwordless
 
     def pwless_session(cls)
       session[Helpers.session_key(cls)]
+    end
+  end
+end
+
+module Passwordless
+  class SessionsControllerParamsTest < ActionDispatch::IntegrationTest
+    def create_user(attrs = {})
+      attrs.reverse_merge!(email: next_email)
+      User.create!(attrs)
+    end
+
+    def create_pwless_session(attrs = {})
+      attrs[:authenticatable] = create_user unless attrs.key?(:authenticatable)
+      Session.create!(attrs)
+    end
+
+    class Passwordless::LocaleParentController < ActionController::Base
+      around_action :switch_locale
+
+      def default_url_options
+        {locale: I18n.locale}
+      end
+
+      def switch_locale(&action)
+        locale = params[:locale] || I18n.default_locale
+        I18n.with_locale(locale, &action)
+      end
+    end
+
+    setup do
+      with_config({parent_controller: "Passwordless::LocaleParentController"}) do
+        reload_controller!
+      end
+    end
+
+    teardown do
+      reload_controller!
+    end
+
+    test("GET /locale/en/:passwordless_for/sign_in") do
+      get "/locale/en/users/sign_in"
+
+      assert_match "E-mail address", response.body
+    end
+
+    test("GET /locale/test/:passwordless_for/sign_in") do
+      get "/locale/test/users/sign_in"
+
+      assert_match "Gimme dat email", response.body
+    end
+
+    test("GET /locale/test/:passwordless_for/sign_in/:id") do
+      passwordless_session = create_pwless_session
+
+      get("/locale/test/users/sign_in/#{passwordless_session.identifier}")
+
+      assert_equal "/locale/test/users/sign_in/#{passwordless_session.to_param}", path
+    end
+
+    test("POST /locale/test/:passwordless_for/sign_in -> SUCCESS ") do
+      create_user(email: "a@a")
+
+      post("/locale/test/users/sign_in", params: {passwordless: {email: "a@a"}})
+
+      assert_equal 302, status
     end
   end
 end

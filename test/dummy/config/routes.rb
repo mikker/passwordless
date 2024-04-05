@@ -12,4 +12,8 @@ Rails.application.routes.draw do
   get("/secret-alt", to: "secrets#index")
 
   root(to: "users#index")
+
+  scope("/locale/:locale") do
+    passwordless_for(:users, as: :locale_user)
+  end
 end

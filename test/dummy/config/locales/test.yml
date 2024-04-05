@@ -1,0 +1,7 @@
+---
+test:
+  passwordless:
+    sessions:
+      new:
+        email:
+          label: "Gimme dat email"
