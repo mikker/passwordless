@@ -25,7 +25,7 @@ module Passwordless
         around_action :switch_locale
 
         def default_url_options
-          { locale: I18n.locale }
+          {locale: I18n.locale}
         end
 
         def switch_locale(&action)
@@ -33,6 +33,7 @@ module Passwordless
           I18n.with_locale(locale, &action)
         end
       end
+
       get "/locale/en/users/sign_in"
 
       assert_equal 200, status
@@ -43,12 +44,12 @@ module Passwordless
       Passwordless.send(:remove_const, :LocaleParentController)
     end
 
-    test("GET /locale/fr/:passwordless_for/sign_in") do
+    test("GET /locale/test/:passwordless_for/sign_in") do
       class Passwordless::LocaleParentController < ActionController::Base
         around_action :switch_locale
 
         def default_url_options
-          { locale: I18n.locale }
+          {locale: I18n.locale}
         end
 
         def switch_locale(&action)
@@ -56,15 +57,16 @@ module Passwordless
           I18n.with_locale(locale, &action)
         end
       end
+
       with_config({parent_controller: "Passwordless::LocaleParentController"}) do
         reload_controller!
       end
 
-      get "/locale/fr/users/sign_in"
+      get "/locale/test/users/sign_in"
 
       assert_equal 200, status
       assert_template "passwordless/sessions/new"
-      assert_match "Adresse e-mail", response.body
+      assert_match "Gimme dat email", response.body
     ensure
       reload_controller!
       Passwordless.send(:remove_const, :LocaleParentController)
@@ -80,12 +82,12 @@ module Passwordless
       assert_template "passwordless/sessions/show"
     end
 
-    test("GET /locale/fr/:passwordless_for/sign_in/:id") do
+    test("GET /locale/test/:passwordless_for/sign_in/:id") do
       class Passwordless::LocaleParentController < ActionController::Base
         around_action :switch_locale
 
         def default_url_options
-          { locale: I18n.locale }
+          {locale: I18n.locale}
         end
 
         def switch_locale(&action)
@@ -97,12 +99,13 @@ module Passwordless
       with_config({parent_controller: "Passwordless::LocaleParentController"}) do
         reload_controller!
       end
+
       passwordless_session = create_pwless_session
 
-      get("/locale/fr/users/sign_in/#{passwordless_session.identifier}")
+      get("/locale/test/users/sign_in/#{passwordless_session.identifier}")
 
       assert_equal 200, status
-      assert_equal "/locale/fr/users/sign_in/#{passwordless_session.to_param}", path
+      assert_equal "/locale/test/users/sign_in/#{passwordless_session.to_param}", path
       assert_template "passwordless/sessions/show"
     ensure
       reload_controller!
@@ -121,12 +124,12 @@ module Passwordless
       assert_equal "/users/sign_in/#{Session.last!.identifier}", path
     end
 
-    test("POST /locale/fr/:passwordless_for/sign_in -> SUCCESS ") do
+    test("POST /locale/test/:passwordless_for/sign_in -> SUCCESS ") do
       class Passwordless::LocaleParentController < ActionController::Base
         around_action :switch_locale
 
         def default_url_options
-          { locale: I18n.locale }
+          {locale: I18n.locale}
         end
 
         def switch_locale(&action)
@@ -141,13 +144,13 @@ module Passwordless
 
       create_user(email: "a@a")
 
-      post("/locale/fr/users/sign_in", params: {passwordless: {email: "a@a"}})
+      post("/locale/test/users/sign_in", params: {passwordless: {email: "a@a"}})
       assert_equal 302, status
 
       assert_equal 1, ActionMailer::Base.deliveries.size
 
       follow_redirect!
-      assert_equal "/locale/fr/users/sign_in/#{Session.last!.identifier}", path
+      assert_equal "/locale/test/users/sign_in/#{Session.last!.identifier}", path
     ensure
       reload_controller!
       Passwordless.send(:remove_const, :LocaleParentController)
