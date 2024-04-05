@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add support for scoped routes with `default_url_options` (#209)
+
 ## 1.5.0
 
 ### Changed
