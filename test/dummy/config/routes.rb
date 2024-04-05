@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-
   passwordless_for(:users)
   passwordless_for(:admins, controller: "admin/sessions")
   passwordless_for(:devs, as: :auth, at: "/")
@@ -14,7 +13,7 @@ Rails.application.routes.draw do
 
   root(to: "users#index")
 
-  scope "/locale/:locale" do
-    passwordless_for(:users,  as: :locale_user)
+  scope("/locale/:locale") do
+    passwordless_for(:users, as: :locale_user)
   end
 end
