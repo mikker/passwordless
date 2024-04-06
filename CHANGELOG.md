@@ -2,7 +2,13 @@
 
 ## Unreleased
 
+### Added
+
 - Add support for scoped routes with `default_url_options` (#209)
+
+### Fixed
+
+- Use flash.alert of flash[:error] (#215)
 
 ## 1.5.0
 
