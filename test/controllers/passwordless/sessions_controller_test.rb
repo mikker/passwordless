@@ -114,7 +114,7 @@ module Passwordless
       assert_equal 0, ActionMailer::Base.deliveries.size
 
       assert_template "passwordless/sessions/new"
-      assert_match "We couldn't find a user with that email address", flash[:error]
+      assert_match "We couldn't find a user with that email address", flash.alert
     end
 
     test("POST /:passwordless_for/sign_in -> ERROR / other error") do
@@ -129,7 +129,7 @@ module Passwordless
       assert_equal 0, ActionMailer::Base.deliveries.size
 
       assert_template "passwordless/sessions/new"
-      assert_match "An error occured", flash[:error]
+      assert_match "An error occured", flash.alert
     end
 
     test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS") do
@@ -196,7 +196,7 @@ module Passwordless
       follow_redirect!
       assert_equal 200, status
       assert_equal "/", path
-      assert_match "This link has already been used, try requesting the link again", flash[:error]
+      assert_match "This link has already been used, try requesting the link again", flash.alert
 
       assert_nil pwless_session(User)
     end
@@ -215,7 +215,7 @@ module Passwordless
       follow_redirect!
       assert_equal 200, status
       assert_equal "/", path
-      assert_match "Your session has expired", flash[:error]
+      assert_match "Your session has expired", flash.alert
 
       assert_nil pwless_session(User)
     end

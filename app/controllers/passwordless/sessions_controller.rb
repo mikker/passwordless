@@ -36,14 +36,14 @@ module Passwordless
           flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
         )
       else
-        flash[:error] = I18n.t("passwordless.sessions.create.error")
+        flash.alert = I18n.t("passwordless.sessions.create.error")
         render(:new, status: :unprocessable_entity)
       end
 
     rescue ActiveRecord::RecordNotFound
       @session = Session.new
 
-      flash[:error] = I18n.t("passwordless.sessions.create.not_found")
+      flash.alert = I18n.t("passwordless.sessions.create.not_found")
       render(:new, status: :not_found)
     end
 
@@ -156,15 +156,15 @@ module Passwordless
           **redirect_to_options
         )
       else
-        flash[:error] = I18n.t("passwordless.sessions.errors.invalid_token")
+        flash.alert = I18n.t("passwordless.sessions.errors.invalid_token")
         render(status: :forbidden, action: "show")
       end
 
     rescue Errors::TokenAlreadyClaimedError
-      flash[:error] = I18n.t("passwordless.sessions.errors.token_claimed")
+      flash.alert = I18n.t("passwordless.sessions.errors.token_claimed")
       redirect_to(passwordless_failure_redirect_path, status: :see_other, **redirect_to_options)
     rescue Errors::SessionTimedOutError
-      flash[:error] = I18n.t("passwordless.sessions.errors.session_expired")
+      flash.alert = I18n.t("passwordless.sessions.errors.session_expired")
       redirect_to(passwordless_failure_redirect_path, status: :see_other, **redirect_to_options)
     end
 
