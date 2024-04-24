@@ -9,7 +9,8 @@ module Passwordless
     belongs_to(
       :authenticatable,
       polymorphic: true,
-      inverse_of: :passwordless_sessions
+      inverse_of: :passwordless_sessions,
+      autosave: false
     )
 
     validates(
