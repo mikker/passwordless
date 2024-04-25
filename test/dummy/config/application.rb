@@ -24,10 +24,19 @@ Bundler.require(*Rails.groups)
 
 module Dummy
   class Application < Rails::Application
-    config.load_defaults 7.0
+    config.load_defaults Rails::VERSION::STRING.to_f
 
     config.action_mailer.default_url_options = {host: "localhost", port: "3000"}
     routes.default_url_options[:host] = "localhost:3000"
-    config.i18n.available_locales = %i[en test]
+
+    case Rails::VERSION::MAJOR
+    when 6
+      I18n.available_locales = %i[en test]
+    when 7..Float::INFINITY
+      config.i18n.available_locales = %i[en test]
+
+      # Silence deprecation warning
+      config.active_support.cache_format_version = 7.0
+    end
   end
 end
