@@ -83,7 +83,6 @@ module FixturePaths
         self.file_fixture_path = "#{fixture_path_}/files"
       end
 
-      # Load all fixtures
       fixtures(:all)
     end
   end
