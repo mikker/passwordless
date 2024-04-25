@@ -27,5 +27,9 @@ module Dummy
     config.action_mailer.default_url_options = {host: "localhost", port: "3000"}
     routes.default_url_options[:host] = "localhost:3000"
     config.i18n.available_locales = %i[en test]
+
+    if Rails::VERSION::MAJOR >= 7
+      config.active_support.cache_format_version = 7.0
+    end
   end
 end
