@@ -32,7 +32,7 @@ module Dummy
     case Rails::VERSION::MAJOR
     when 6
       I18n.available_locales = %i[en test]
-    when 7..Integer::MAX
+    when 7..Float::INFINITY
       config.i18n.available_locales = %i[en test]
 
       # Silence deprecation warning
