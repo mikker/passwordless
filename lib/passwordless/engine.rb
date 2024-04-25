@@ -11,9 +11,5 @@ module Passwordless
       ActionDispatch::Routing::Mapper.include RouterHelpers
       ActiveRecord::Base.extend ModelHelpers
     end
-
-    config.before_initialize do |app|
-      app.config.i18n.load_path += Dir[Engine.root.join("config", "locales", "*.yml")]
-    end
   end
 end
