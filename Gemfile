@@ -5,7 +5,7 @@ gemspec
 gem "erb-formatter"
 gem "pry"
 gem "puma"
-gem "sqlite3"
+gem "sqlite3", "~> 1"
 gem "yard"
 
 group :test do
