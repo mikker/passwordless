@@ -71,16 +71,15 @@ end
 include(WithConfig)
 
 class ActiveSupport::TestCase
-  # Define a custom method to set fixture paths if not already available
-  unless respond_to?(:fixture_path=)
-    def self.fixture_path=(path)
-      @fixture_path = path
-      self.file_fixture_path = "#{path}/files"
-    end
-  end
+  fixture_path = File.expand_path("./fixtures", __dir__)
 
-  # Setting the fixture path
-  self.fixture_path = File.expand_path("./fixtures", __dir__)
+  if respond_to?(:fixture_paths=)
+    self.fixture_paths = [fixture_path]
+  elsif respond_to?(:fixture_path=)
+    self.fixture_path = fixture_path
+  else
+    self.file_fixture_path = "#{fixture_path}/files"
+  end
 
   # Load all fixtures
   fixtures :all
