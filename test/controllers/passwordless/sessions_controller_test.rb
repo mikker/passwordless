@@ -101,6 +101,7 @@ module Passwordless
       assert_equal 302, status
 
       assert_equal 0, ActionMailer::Base.deliveries.size
+      assert_nil Session.last.authenticatable
 
       follow_redirect!
       assert_equal "/users/sign_in/#{Session.last!.identifier}", path
