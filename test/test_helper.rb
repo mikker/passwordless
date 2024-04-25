@@ -75,17 +75,12 @@ module FixturePaths
     base.class_eval do
       fixture_path_ = File.expand_path("./fixtures", __dir__)
 
-      pp(fixture_path_)
-
       if respond_to?(:fixture_paths=)
         self.fixture_paths = [fixture_path_]
-        pp("fixture_paths", self.fixture_paths)
       elsif respond_to?(:fixture_path=)
         self.fixture_path = fixture_path_
-        pp("fixture_path", self.fixture_path)
       else
         self.file_fixture_path = "#{fixture_path_}/files"
-        pp("file_fixture_path", self.file_fixture_path)
       end
 
       # Load all fixtures
