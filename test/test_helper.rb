@@ -23,14 +23,6 @@ require "rails/test_help"
 # to be shown.
 Minitest.backtrace_filter = Minitest::BacktraceFilter.new
 
-# Load fixtures from the engine
-if ActiveSupport::TestCase.respond_to?(:fixture_paths=)
-  ActiveSupport::TestCase.fixture_paths = [File.expand_path("../fixtures", __FILE__)]
-  ActionDispatch::IntegrationTest.fixture_paths = ActiveSupport::TestCase.fixture_paths
-  ActiveSupport::TestCase.file_fixture_path = ActiveSupport::TestCase.fixture_paths.first + "/files"
-  ActiveSupport::TestCase.fixtures(:all)
-end
-
 def Minitest.filter_backtrace(bt)
   bt.select { |line| line !~ %r{/gems/} }
 end
@@ -64,14 +56,32 @@ module WithConfig
   # This can be used when you change the`parent_mailer` config option and need
   # it load a different parent class.
   def reload_mailer!
+    return unless defined?(Passwordless::Mailer)
     Passwordless.send(:remove_const, :Mailer)
-    load File.expand_path("../../app/mailers/passwordless/mailer.rb", __FILE__)
+    load(File.expand_path("../../app/mailers/passwordless/mailer.rb", __FILE__))
   end
 
   def reload_controller!
+    return unless defined?(Passwordless::SessionsController)
     Passwordless.send(:remove_const, :SessionsController)
-    load File.expand_path("../../app/controllers/passwordless/sessions_controller.rb", __FILE__)
+    load(File.expand_path("../../app/controllers/passwordless/sessions_controller.rb", __FILE__))
   end
 end
 
 include(WithConfig)
+
+class ActiveSupport::TestCase
+  # Define a custom method to set fixture paths if not already available
+  unless respond_to?(:fixture_path=)
+    def self.fixture_path=(path)
+      @fixture_path = path
+      self.file_fixture_path = "#{path}/files"
+    end
+  end
+
+  # Setting the fixture path
+  self.fixture_path = File.expand_path("./fixtures", __dir__)
+
+  # Load all fixtures
+  fixtures :all
+end
