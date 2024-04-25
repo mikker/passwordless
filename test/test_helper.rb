@@ -70,22 +70,34 @@ end
 
 include(WithConfig)
 
-class ActiveSupport::TestCase
-  fixture_path_ = File.expand_path("./fixtures", __dir__)
+module FixturePaths
+  def self.included(base)
+    base.class_eval do
+      fixture_path_ = File.expand_path("./fixtures", __dir__)
 
-  pp fixture_path_
+      pp(fixture_path_)
 
-  if respond_to?(:fixture_paths=)
-    self.fixture_paths = [fixture_path_]
-    pp "fixture_paths", self.fixture_paths
-  elsif respond_to?(:fixture_path=)
-    self.fixture_path = fixture_path_
-    pp "fixture_path", self.fixture_path
-  else
-    self.file_fixture_path = "#{fixture_path_}/files"
-    pp "file_fixture_path", self.file_fixture_path
+      if respond_to?(:fixture_paths=)
+        self.fixture_paths = [fixture_path_]
+        pp("fixture_paths", self.fixture_paths)
+      elsif respond_to?(:fixture_path=)
+        self.fixture_path = fixture_path_
+        pp("fixture_path", self.fixture_path)
+      else
+        self.file_fixture_path = "#{fixture_path_}/files"
+        pp("file_fixture_path", self.file_fixture_path)
+      end
+
+      # Load all fixtures
+      fixtures(:all)
+    end
   end
+end
 
-  # Load all fixtures
-  fixtures :all
+class ActionDispatch::IntegrationTest
+  include FixturePaths
+end
+
+class ActiveSupport::TestCase
+  include FixturePaths
 end
