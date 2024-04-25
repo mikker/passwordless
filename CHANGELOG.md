@@ -2,13 +2,18 @@
 
 ## Unreleased
 
+### Changed
+
+- Use flash.alert as standard Rails (#215)
+
 ### Added
 
 - Add support for scoped routes with `default_url_options` (#209)
 
 ### Fixed
 
-- Use flash.alert of flash[:error] (#215)
+- Fix `paranoid` mode creating a session for missing users (#219)
+- Fix missing `token` locale key (#214)
 
 ## 1.5.0
 
