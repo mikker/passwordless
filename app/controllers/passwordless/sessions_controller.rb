@@ -213,9 +213,9 @@ module Passwordless
     end
 
     def call_after_session_save
-      return if @skip_after_session_save_callback
-
-      if Passwordless.config.after_session_save.arity == 2
+      if @skip_after_session_save_callback
+        Passwordless.config.after_session_paranoid.call(@session, request)
+      elsif Passwordless.config.after_session_save.arity == 2
         Passwordless.config.after_session_save.call(@session, request)
       else
         Passwordless.config.after_session_save.call(@session)

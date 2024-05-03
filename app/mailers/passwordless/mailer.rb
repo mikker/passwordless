@@ -29,5 +29,18 @@ module Passwordless
         subject: I18n.t("passwordless.mailer.sign_in.subject")
       )
     end
+
+    # sends an email when user attempts to login with unknown address
+    #
+    # @param session [Session] An instance of Passwordless::Session
+    def unknown_address(session)
+      email_field = session.authenticatable.class.passwordless_email_field
+      @email = session.authenticatable.send(email_field)
+
+      mail(
+        to: @email,
+        subject: I18n.t("passwordless.mailer.unknown_address.subject")
+      )
+    end
   end
 end

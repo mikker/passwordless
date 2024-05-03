@@ -48,6 +48,12 @@ module Passwordless
         Mailer.sign_in(session, session.token).deliver_now
       end
     )
+    option(
+      :after_session_paranoid,
+      default: lambda do |session, _request|
+        Mailer.unknown_address(session).deliver_now
+      end
+    )
 
     option :paranoid, default: false
 

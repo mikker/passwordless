@@ -98,9 +98,9 @@ module Passwordless
         post("/users/sign_in", params: {passwordless: {email: "a@a"}})
       end
 
+      assert_equal 1, ActionMailer::Base.deliveries.size
       assert_equal 302, status
 
-      assert_equal 0, ActionMailer::Base.deliveries.size
       assert_nil Session.last.authenticatable
 
       follow_redirect!

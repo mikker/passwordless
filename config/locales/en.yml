@@ -28,3 +28,13 @@ en:
 
           Alternatively you can use this link to sign in directly:
           %{magic_link}
+      unknown_address:
+        subject: "Not Registered"
+        body: |-
+          We noticed a login attempt using your email, %{email}.
+
+          If you're seeing this email, that means that you don't currently have an
+          account associated with this email for Chuck.
+          Maybe you have a different account that's associated with your Chuck user?
+
+          If this wasn't you, disregard this email.
