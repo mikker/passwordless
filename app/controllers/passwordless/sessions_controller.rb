@@ -203,10 +203,7 @@ module Passwordless
     def handle_resource_not_found
       if Passwordless.config.paranoid
         @resource = authenticatable_class.new(email: normalized_email_param)
-
-        if Passwordless.config.send_paranoid_email
-          @skip_after_session_save_callback = true 
-        end
+        @skip_after_session_save_callback = true 
       else
         raise(
           ActiveRecord::RecordNotFound,
@@ -217,7 +214,9 @@ module Passwordless
 
     def call_after_session_save
       if @skip_after_session_save_callback
-        Passwordless.config.after_session_paranoid.call(@session, request)
+        if Passwordless.config.send_paranoid_email
+          Mailer.unknown_address(@session).deliver_now 
+        end
       elsif Passwordless.config.after_session_save.arity == 2
         Passwordless.config.after_session_save.call(@session, request)
       else
