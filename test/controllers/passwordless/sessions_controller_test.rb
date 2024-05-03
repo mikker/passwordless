@@ -98,14 +98,30 @@ module Passwordless
         post("/users/sign_in", params: {passwordless: {email: "a@a"}})
       end
 
-      assert_equal 1, ActionMailer::Base.deliveries.size
       assert_equal 302, status
 
+      assert_equal 0, ActionMailer::Base.deliveries.size
       assert_nil Session.last.authenticatable
 
       follow_redirect!
       assert_equal "/users/sign_in/#{Session.last!.identifier}", path
     end
+
+    test("POST /:passwordless_for/sign_in -> SUCCESS / not found,
+         paranoid enabled, send paranoid email") do
+      with_config(paranoid: true, send_paranoid_email: true) do
+        post("/users/sign_in", params: {passwordless: {email: "a@a"}})
+      end
+
+      assert_equal 1, ActionMailer::Base.deliveries.size
+      assert_nil Session.last.authenticatable
+
+      assert_equal 302, status
+
+      follow_redirect!
+      assert_equal "/users/sign_in/#{Session.last!.identifier}", path
+    end
+
 
     test("POST /:passwordless_for/sign_in -> ERROR / not found and paranoid disabled") do
       post("/users/sign_in", params: {passwordless: {email: "A@a"}})
