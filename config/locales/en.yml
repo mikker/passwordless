@@ -34,7 +34,7 @@ en:
           We noticed a login attempt using your email, %{email}.
 
           If you're seeing this email, that means that you don't currently have an
-          account associated with this email for Chuck.
-          Maybe you have a different account that's associated with your Chuck user?
+          account associated with this email.
+          Maybe you have a different email that's associated with your account?
 
           If this wasn't you, disregard this email.
