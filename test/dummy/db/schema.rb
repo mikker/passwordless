@@ -26,8 +26,8 @@ ActiveRecord::Schema[7.1].define(version: 2023_06_21_085550) do
     t.datetime "claimed_at", precision: nil
     t.string "token_digest", null: false
     t.string "identifier", null: false
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["authenticatable_type", "authenticatable_id"], name: "authenticatable"
     t.index ["identifier"], name: "index_passwordless_sessions_on_identifier", unique: true
   end
