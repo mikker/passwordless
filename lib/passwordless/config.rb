@@ -48,7 +48,7 @@ module Passwordless
         Mailer.sign_in(session, session.token).deliver_now
       end
     )
-    
+
     option :paranoid, default: false
     option :send_paranoid_email, default: false
 
