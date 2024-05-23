@@ -154,6 +154,17 @@ config.action_mailer.default_url_options = {host: "www.example.com"}
 routes.default_url_options[:host] ||= "www.example.com"
 ```
 
+## Constraints for config/routes.rb
+
+With [constraints](https://guides.rubyonrails.org/routing.html#request-based-constraints) you can restrict access to certain routes.
+Passwordless provides a Passwordless::Constraint for this purpose to at the minimum ensure the user is logged in, or in the below case that the user has the word "john" in the email.
+
+```ruby
+constraints Passwordless::Constraint.new(User, ->(user) { user.email.include?("john") }) do
+  get("/secret-john", to: "secrets#index")
+end
+```
+
 ## Configuration
 
 To customize Passwordless, create a file `config/initializers/passwordless.rb`.
