@@ -1,5 +1,2 @@
-
-class Admin
-  class SessionsController < Passwordless::SessionsController
-  end
+class Admin::SessionsController < Passwordless::SessionsController
 end

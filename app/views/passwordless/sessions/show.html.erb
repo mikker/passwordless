@@ -1,5 +1,8 @@
 <%= form_with(model: @session, url: url_for(action: 'update'), scope: 'passwordless', method: 'patch', data: { turbo: false }) do |f| %>
-  <%= f.label :token, autocomplete: "off" %>
-  <%= f.text_field :token %>
+  <%= f.label :token, t(".token") %>
+  <%= f.text_field :token,
+      required: true,
+      autofocus: true,
+      autocomplete: "one-time-code" %>
   <%= f.submit t(".confirm") %>
 <% end %>

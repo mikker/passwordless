@@ -1,11 +1,10 @@
 source "https://rubygems.org"
 
-gemspec
+gemspec(path: "..")
 
-gem "erb-formatter"
-gem "pry"
+gem "rails", "~> 7.0.0"
 gem "puma"
-gem "sqlite3", "~> 1"
+gem "sqlite3", "~> 1.4"
 gem "yard"
 
 group :test do
@@ -14,3 +13,5 @@ group :test do
   gem "minitest"
   gem "rails-controller-testing"
 end
+
+# vim: ft=ruby

@@ -28,6 +28,7 @@ module Passwordless
     include Options
 
     option :default_from_address, default: "CHANGE_ME@example.com"
+    option :parent_controller, default: "ApplicationController"
     option :parent_mailer, default: "ActionMailer::Base"
     option :restrict_token_reuse, default: true
     option :token_generator, default: ShortTokenGenerator.new
@@ -47,6 +48,8 @@ module Passwordless
         Mailer.sign_in(session, session.token).deliver_now
       end
     )
+
+    option :paranoid, default: false
 
     def initialize
       set_defaults!

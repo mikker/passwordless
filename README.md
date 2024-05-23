@@ -25,26 +25,21 @@ See [Upgrading to Passwordless 1.0](docs/upgrading_to_1_0.md) for more details.
 
 ## Usage
 
-Passwordless creates a single model called `Passwordless::Session`. It doesn't come with its own `User` model, it expects you to create one:
+Passwordless creates a single model called `Passwordless::Session`, so it doesn't come with its own user model. Instead, it expects you to provide one, with an email field in place. If you don't yet have a user model, check out the wiki on [creating the user model](https://github.com/mikker/passwordless/wiki/Creating-the-user-model).
 
-```sh
-$ bin/rails generate model User email
-```
-
-Then specify which field on your `User` record is the email field with:
+Enable Passwordless on your user model by pointing it to the email field:
 
 ```ruby
 class User < ApplicationRecord
-  validates :email,
-            presence: true,
-            uniqueness: { case_sensitive: false },
-            format: { with: URI::MailTo::EMAIL_REGEXP }
+  # your other code..
 
-  passwordless_with :email # <-- here!
+  passwordless_with :email # <-- here! this needs to be a column in `users` table
+
+  # more of your code..
 end
 ```
 
-Finally, mount the engine in your routes:
+Then mount the engine in your routes:
 
 ```ruby
 Rails.application.routes.draw do
@@ -75,7 +70,7 @@ class ApplicationController < ActionController::Base
   def require_user!
     return if current_user
     save_passwordless_redirect_location!(User) # <-- optional, see below
-    redirect_to root_path, flash: { error: 'You are not worthy!' }
+    redirect_to root_path, alert: "You are not worthy!"
   end
 end
 ```
@@ -174,8 +169,9 @@ The default values are shown below. It's recommended to only include the ones th
 ```ruby
 Passwordless.configure do |config|
   config.default_from_address = "CHANGE_ME@example.com"
+  config.parent_controller = "ApplicationController"
   config.parent_mailer = "ActionMailer::Base"
-  config.restrict_token_reuse = false # Can a token/link be used multiple times?
+  config.restrict_token_reuse = true # Can a token/link be used multiple times?
   config.token_generator = Passwordless::ShortTokenGenerator.new # Used to generate magic link tokens.
 
   config.expires_at = lambda { 1.year.from_now } # How long until a signed in session expires.
@@ -186,6 +182,8 @@ Passwordless.configure do |config|
   config.success_redirect_path = '/' # After a user successfully signs in
   config.failure_redirect_path = '/' # After a sign in fails
   config.sign_out_redirect_path = '/' # After a user signs out
+
+  config.paranoid = false # Display email sent notice even when the resource is not found.
 end
 ```
 
@@ -250,7 +248,7 @@ class ApplicationController < ActionController::Base
   def require_user!
     return if current_user
     save_passwordless_redirect_location!(User) # <-- this one!
-    redirect_to root_path, flash: {error: 'You are not worthy!'}
+    redirect_to root_path, alert: "You are not worthy!"
   end
 end
 ```

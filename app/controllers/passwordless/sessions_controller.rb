@@ -4,7 +4,7 @@ require "bcrypt"
 
 module Passwordless
   # Controller for managing Passwordless sessions
-  class SessionsController < ApplicationController
+  class SessionsController < Passwordless.config.parent_controller.constantize
     include ControllerHelpers
 
     helper_method :email_field
@@ -20,37 +20,30 @@ module Passwordless
     #   Creates a new Session record then sends the magic link
     #   redirects to sign in page with generic flash message.
     def create
-      unless @resource = find_authenticatable
-        raise(
-          ActiveRecord::RecordNotFound,
-          "Couldn't find #{authenticatable_type} with email #{passwordless_session_params[email_field]}"
-        )
-      end
-
+      handle_resource_not_found unless @resource = find_authenticatable
       @session = build_passwordless_session(@resource)
 
       if @session.save
-        if Passwordless.config.after_session_save.arity == 2
-          Passwordless.config.after_session_save.call(@session, request)
-        else
-          Passwordless.config.after_session_save.call(@session)
-        end
+        call_after_session_save
 
         redirect_to(
           Passwordless.context.path_for(
             @session,
             id: @session.to_param,
-            action: "show"
+            action: "show",
+            **default_url_options
           ),
           flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
         )
       else
-        flash[:error] = I18n.t("passwordless.sessions.create.error")
+        flash.alert = I18n.t("passwordless.sessions.create.error")
         render(:new, status: :unprocessable_entity)
       end
 
     rescue ActiveRecord::RecordNotFound
-      flash[:error] = I18n.t("passwordless.sessions.create.not_found")
+      @session = Session.new
+
+      flash.alert = I18n.t("passwordless.sessions.create.not_found")
       render(:new, status: :not_found)
     end
 
@@ -113,11 +106,11 @@ module Passwordless
     protected
 
     def passwordless_sign_out_redirect_path
-      Passwordless.config.sign_out_redirect_path
+      call_or_return(Passwordless.config.sign_out_redirect_path)
     end
 
     def passwordless_failure_redirect_path
-      Passwordless.config.failure_redirect_path
+      call_or_return(Passwordless.config.failure_redirect_path)
     end
 
     def passwordless_query_redirect_path
@@ -127,11 +120,22 @@ module Passwordless
       nil
     end
 
-    def passwordless_success_redirect_path
-      return Passwordless.config.success_redirect_path unless Passwordless.config.redirect_back_after_sign_in
+    def passwordless_success_redirect_path(authenticatable)
+      success_redirect_path = Passwordless.config.success_redirect_path
 
-      session_redirect_url = reset_passwordless_redirect_location!(authenticatable_class)
-      passwordless_query_redirect_path || session_redirect_url || Passwordless.config.success_redirect_path
+      if success_redirect_path.respond_to?(:call)
+        success_redirect_path = call_or_return(
+          success_redirect_path,
+          *[authenticatable].first(success_redirect_path.arity)
+        )
+      end
+
+      if Passwordless.config.redirect_back_after_sign_in
+        session_redirect_url = reset_passwordless_redirect_location!(authenticatable_class)
+        return passwordless_query_redirect_path || session_redirect_url || success_redirect_path
+      end
+
+      success_redirect_path
     end
 
     private
@@ -146,17 +150,21 @@ module Passwordless
     def authenticate_and_sign_in(session, token)
       if session.authenticate(token)
         sign_in(session)
-        redirect_to(passwordless_success_redirect_path, status: :see_other, **redirect_to_options)
+        redirect_to(
+          passwordless_success_redirect_path(session.authenticatable),
+          status: :see_other,
+          **redirect_to_options
+        )
       else
-        flash[:error] = I18n.t("passwordless.sessions.errors.invalid_token")
+        flash.alert = I18n.t("passwordless.sessions.errors.invalid_token")
         render(status: :forbidden, action: "show")
       end
 
     rescue Errors::TokenAlreadyClaimedError
-      flash[:error] = I18n.t("passwordless.sessions.errors.token_claimed")
+      flash.alert = I18n.t("passwordless.sessions.errors.token_claimed")
       redirect_to(passwordless_failure_redirect_path, status: :see_other, **redirect_to_options)
     rescue Errors::SessionTimedOutError
-      flash[:error] = I18n.t("passwordless.sessions.errors.session_expired")
+      flash.alert = I18n.t("passwordless.sessions.errors.session_expired")
       redirect_to(passwordless_failure_redirect_path, status: :see_other, **redirect_to_options)
     end
 
@@ -172,13 +180,45 @@ module Passwordless
       authenticatable_type.constantize
     end
 
-    def find_authenticatable
-      email = passwordless_session_params[email_field].downcase.strip
-
-      if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
-        authenticatable_class.fetch_resource_for_passwordless(email)
+    def call_or_return(value, *args)
+      if value.respond_to?(:call)
+        instance_exec(*args, &value)
       else
-        authenticatable_class.where("lower(#{email_field}) = ?", email).first
+        value
+      end
+    end
+
+    def find_authenticatable
+      if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
+        authenticatable_class.fetch_resource_for_passwordless(normalized_email_param)
+      else
+        authenticatable_class.where("lower(#{email_field}) = ?", normalized_email_param).first
+      end
+    end
+
+    def normalized_email_param
+      passwordless_session_params[email_field].downcase.strip
+    end
+
+    def handle_resource_not_found
+      if Passwordless.config.paranoid
+        @resource = authenticatable_class.new(email: normalized_email_param)
+        @skip_after_session_save_callback = true
+      else
+        raise(
+          ActiveRecord::RecordNotFound,
+          "Couldn't find #{authenticatable_type} with email #{normalized_email_param}"
+        )
+      end
+    end
+
+    def call_after_session_save
+      return if @skip_after_session_save_callback
+
+      if Passwordless.config.after_session_save.arity == 2
+        Passwordless.config.after_session_save.call(@session, request)
+      else
+        Passwordless.config.after_session_save.call(@session)
       end
     end
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreatePasswordlessSessions < ActiveRecord::Migration[5.1]
+class CreatePasswordlessSessions < ActiveRecord::Migration[6.0]
   def change
     create_table(:passwordless_sessions) do |t|
       t.belongs_to(

@@ -17,6 +17,17 @@ module Passwordless
 
       assert_equal 200, status
       assert_template "passwordless/sessions/new"
+      assert_match "E-mail address", response.body
+    end
+
+    test("GET /:passwordless_for/sign_in/:id") do
+      passwordless_session = create_pwless_session
+
+      get("/users/sign_in/#{passwordless_session.identifier}")
+
+      assert_equal 200, status
+      assert_equal "/users/sign_in/#{passwordless_session.to_param}", path
+      assert_template "passwordless/sessions/show"
     end
 
     test("POST /:passwordless_for/sign_in -> SUCCESS") do
@@ -82,7 +93,21 @@ module Passwordless
       end
     end
 
-    test("POST /:passwordless_for/sign_in -> ERROR / not found") do
+    test("POST /:passwordless_for/sign_in -> SUCCESS / not found and paranoid enabled") do
+      with_config(paranoid: true) do
+        post("/users/sign_in", params: {passwordless: {email: "a@a"}})
+      end
+
+      assert_equal 302, status
+
+      assert_equal 0, ActionMailer::Base.deliveries.size
+      assert_nil Session.last.authenticatable
+
+      follow_redirect!
+      assert_equal "/users/sign_in/#{Session.last!.identifier}", path
+    end
+
+    test("POST /:passwordless_for/sign_in -> ERROR / not found and paranoid disabled") do
       post("/users/sign_in", params: {passwordless: {email: "A@a"}})
 
       assert_equal 404, status
@@ -90,7 +115,7 @@ module Passwordless
       assert_equal 0, ActionMailer::Base.deliveries.size
 
       assert_template "passwordless/sessions/new"
-      assert_match "We couldn't find a user with that email address", flash[:error]
+      assert_match "We couldn't find a user with that email address", flash.alert
     end
 
     test("POST /:passwordless_for/sign_in -> ERROR / other error") do
@@ -105,17 +130,7 @@ module Passwordless
       assert_equal 0, ActionMailer::Base.deliveries.size
 
       assert_template "passwordless/sessions/new"
-      assert_match "An error occured", flash[:error]
-    end
-
-    test("GET /:passwordless_for/sign_in/:id") do
-      passwordless_session = create_pwless_session
-
-      get("/users/sign_in/#{passwordless_session.identifier}")
-
-      assert_equal 200, status
-      assert_equal "/users/sign_in/#{passwordless_session.to_param}", path
-      assert_template "passwordless/sessions/show"
+      assert_match "An error occured", flash.alert
     end
 
     test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS") do
@@ -130,6 +145,28 @@ module Passwordless
       assert_equal "/", path
 
       assert_equal pwless_session(User), Session.last!.id
+    end
+
+    test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS / callable success path with no args") do
+      passwordless_session = create_pwless_session(token: "hi")
+
+      with_config(success_redirect_path: lambda { "/" }) do
+        patch("/users/sign_in/#{passwordless_session.identifier}", params: {passwordless: {token: "hi"}})
+      end
+
+      follow_redirect!
+      assert_equal "/", path
+    end
+
+    test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS / callable success path with 1 arg") do
+      passwordless_session = create_pwless_session(token: "hi")
+
+      with_config(success_redirect_path: lambda { |user| "/#{user.id}" }) do
+        patch("/users/sign_in/#{passwordless_session.identifier}", params: {passwordless: {token: "hi"}})
+      end
+
+      follow_redirect!
+      assert_equal "/#{passwordless_session.authenticatable.id}", path
     end
 
     test("PATCH /:passwordless_for/sign_in/:id -> ERROR") do
@@ -160,7 +197,7 @@ module Passwordless
       follow_redirect!
       assert_equal 200, status
       assert_equal "/", path
-      assert_match "This link has already been used, try requesting the link again", flash[:error]
+      assert_match "This link has already been used, try requesting the link again", flash.alert
 
       assert_nil pwless_session(User)
     end
@@ -179,7 +216,7 @@ module Passwordless
       follow_redirect!
       assert_equal 200, status
       assert_equal "/", path
-      assert_match "Your session has expired", flash[:error]
+      assert_match "Your session has expired", flash.alert
 
       assert_nil pwless_session(User)
     end
@@ -207,12 +244,92 @@ module Passwordless
       end
     end
 
+    test("custom parent") do
+      class Passwordless::CustomParentController < ActionController::Base
+      end
+
+      with_config({parent_controller: "Passwordless::CustomParentController"}) do
+        reload_controller!
+
+        assert_equal Passwordless::CustomParentController, Passwordless::SessionsController.superclass
+      end
+
+    ensure
+      reload_controller!
+      Passwordless.send(:remove_const, :CustomParentController)
+    end
+
     class Helpers
       extend Passwordless::ControllerHelpers
     end
 
     def pwless_session(cls)
       session[Helpers.session_key(cls)]
+    end
+  end
+end
+
+module Passwordless
+  class SessionsControllerParamsTest < ActionDispatch::IntegrationTest
+    def create_user(attrs = {})
+      attrs.reverse_merge!(email: next_email)
+      User.create!(attrs)
+    end
+
+    def create_pwless_session(attrs = {})
+      attrs[:authenticatable] = create_user unless attrs.key?(:authenticatable)
+      Session.create!(attrs)
+    end
+
+    class Passwordless::LocaleParentController < ActionController::Base
+      around_action :switch_locale
+
+      def default_url_options
+        {locale: I18n.locale}
+      end
+
+      def switch_locale(&action)
+        locale = params[:locale] || I18n.default_locale
+        I18n.with_locale(locale, &action)
+      end
+    end
+
+    setup do
+      with_config({parent_controller: "Passwordless::LocaleParentController"}) do
+        reload_controller!
+      end
+    end
+
+    teardown do
+      reload_controller!
+    end
+
+    test("GET /locale/en/:passwordless_for/sign_in") do
+      get "/locale/en/users/sign_in"
+
+      assert_match "E-mail address", response.body
+    end
+
+    test("GET /locale/test/:passwordless_for/sign_in") do
+      get "/locale/test/users/sign_in"
+
+      assert_match "Gimme dat email", response.body
+    end
+
+    test("GET /locale/test/:passwordless_for/sign_in/:id") do
+      passwordless_session = create_pwless_session
+
+      get("/locale/test/users/sign_in/#{passwordless_session.identifier}")
+
+      assert_equal "/locale/test/users/sign_in/#{passwordless_session.to_param}", path
+    end
+
+    test("POST /locale/test/:passwordless_for/sign_in -> SUCCESS ") do
+      create_user(email: "a@a")
+
+      post("/locale/test/users/sign_in", params: {passwordless: {email: "a@a"}})
+
+      assert_equal 302, status
     end
   end
 end
