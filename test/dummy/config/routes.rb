@@ -12,4 +12,12 @@ Rails.application.routes.draw do
   get("/secret-alt", to: "secrets#index")
 
   root(to: "users#index")
+
+  scope("/locale/:locale") do
+    passwordless_for(:users, as: :locale_user)
+  end
+
+  constraints Passwordless::Constraint.new(User, ->(user) { user.email.include?("john") }) do
+    get("/secret-john", to: "secrets#index")
+  end
 end
