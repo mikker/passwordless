@@ -152,11 +152,27 @@ routes.default_url_options[:host] ||= "www.example.com"
 ## Constraints for config/routes.rb
 
 With [constraints](https://guides.rubyonrails.org/routing.html#request-based-constraints) you can restrict access to certain routes.
-Passwordless provides a Passwordless::Constraint for this purpose to at the minimum ensure the user is logged in, or in the below case that the user has the word "john" in the email.
+Passwordless provides a Passwordless::Constraint for this purpose to at the minimum ensure the user is authenticated, or in the below case that the user has the word "john" in the email.
 
 ```ruby
 constraints Passwordless::Constraint.new(User, ->(user) { user.email.include?("john") }) do
   get("/secret-john", to: "secrets#index")
+end
+```
+
+The proc is optional, so you can also restrict resources to authenticated users.
+
+```ruby
+constraints Passwordless::Constraint.new(User) do
+  get("/secret", to: "secrets#index")
+end
+```
+
+You can also restrict resources to non-authenticated users, this will mean authenticated users no longer have access.
+
+```ruby
+constraints Passwordless::Constraint.new(User, authenticated: false) do
+  get("/secret", to: "secrets#index")
 end
 ```
 
