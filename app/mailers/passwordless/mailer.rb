@@ -26,7 +26,7 @@ module Passwordless
 
       mail(
         to: session.authenticatable.send(email_field),
-        subject: I18n.t("passwordless.mailer.sign_in.subject")
+        subject: I18n.t("passwordless.mailer.sign_in.subject", token: @token)
       )
     end
   end
