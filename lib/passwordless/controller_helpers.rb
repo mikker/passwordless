@@ -54,7 +54,7 @@ module Passwordless
     end
 
     # Signs in session
-    # @param authenticatable [Passwordless::Session] Instance of {Passwordless::Session}
+    # @param passwordless_session [Passwordless::Session] Instance of {Passwordless::Session}
     # to sign in
     # @return [ActiveRecord::Base] the record that is passed in.
     def sign_in(passwordless_session)
