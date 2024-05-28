@@ -3,6 +3,7 @@
 require "active_support"
 require "passwordless/config"
 require "passwordless/context"
+require "passwordless/constraint"
 require "passwordless/errors"
 require "passwordless/engine"
 require "passwordless/token_digest"

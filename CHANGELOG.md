@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Added `Passwordless::Constraint` and `Passwordless::NotConstraint` for routing constraints (#228)
+
+### Fixed
+
+- Fixed double loading of locale files (#221)
+
 ## 1.6.0
 
 ### Changed

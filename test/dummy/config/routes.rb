@@ -16,4 +16,22 @@ Rails.application.routes.draw do
   scope("/locale/:locale") do
     passwordless_for(:users, as: :locale_user)
   end
+
+  constraints(Passwordless::Constraint.new(User)) do
+    get("/constraint/only-user", to: "secrets#index")
+  end
+
+  is_john = -> (user) { user.email.include?("john") }
+
+  constraints(Passwordless::Constraint.new(User, if: is_john)) do
+    get("/constraint/only-john", to: "secrets#index")
+  end
+
+  constraints(Passwordless::ConstraintNot.new(User)) do
+    get("/constraint/not-user", to: "secrets#index")
+  end
+
+  constraints(Passwordless::ConstraintNot.new(User, if: is_john)) do
+    get("/constraint/not-john", to: "secrets#index")
+  end
 end

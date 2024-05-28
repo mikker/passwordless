@@ -8,7 +8,24 @@
 
 Add authentication to your Rails app without all the icky-ness of passwords. _Magic link_ authentication, if you will. We call it _passwordless_.
 
----
+- [Installation](#installation)
+  - [Upgrading](#upgrading)
+- [Usage](#usage)
+  - [Getting the current user, restricting access, the usual](#getting-the-current-user-restricting-access-the-usual)
+  - [Providing your own templates](#providing-your-own-templates)
+  - [Registering new users](#registering-new-users)
+  - [URLs and links](#urls-and-links)
+  - [Route constraints](#route-constraints)
+- [Configuration](#configuration)
+  - [Delivery method](#delivery-method)
+  - [Token generation](#token-generation)
+  - [Timeout and Expiry](#timeout-and-expiry)
+  - [Redirection after sign-in](#redirection-after-sign-in)
+  - [Looking up the user](#looking-up-the-user)
+- [Test helpers](#test-helpers)
+- [Security considerations](#security-considerations)
+- [Alternatives](#alternatives)
+- [License](#license)
 
 ## Installation
 
@@ -147,6 +164,35 @@ Also be sure to
 # config/application.rb for example:
 config.action_mailer.default_url_options = {host: "www.example.com"}
 routes.default_url_options[:host] ||= "www.example.com"
+```
+
+### Route constraints
+
+With [constraints](https://guides.rubyonrails.org/routing.html#request-based-constraints) you can restrict access to certain routes.
+Passwordless provides `Passwordless::Constraint` and it's negative counterpart `Passwordless::NotConstraint` for this purpose.
+
+To limit a route to only authenticated `User`s:
+
+```ruby
+constraints Passwordless::Constraint.new(User) do
+  # ...
+end
+```
+
+The constraint takes a second `if:` argument, that expects a block and is passed the `authenticatable` record, (ie. `User`):
+
+```ruby
+constraints Passwordless::Constraint.new(User, if: -> (user) { user.email.include?("john") }) do
+  # ...
+end
+```
+
+The negated version has the same API but with the opposite result, ie. ensuring authenticated user **don't** have access:
+
+```ruby
+constraints Passwordless::NotConstraint.new(User) do
+  get("/no-users-allowed", to: "secrets#index")
+end
 ```
 
 ## Configuration

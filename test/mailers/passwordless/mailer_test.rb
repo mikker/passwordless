@@ -55,6 +55,7 @@ class Passwordless::MailerTest < ActionMailer::TestCase
 
       assert_match %r{www.example.org/users/sign_in/#{session.identifier}/hello}, email.body.to_s
     end
+
   ensure
     # Reload the mailer again, because the config is reset back to the default
     # after the `with_config` block.
@@ -67,6 +68,7 @@ class Passwordless::MailerTest < ActionMailer::TestCase
 
       assert_equal ApplicationMailer.default.fetch(:from), Passwordless::Mailer.default.fetch(:from)
     end
+
   ensure
     reload_mailer!
   end
