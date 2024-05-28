@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'passwordless/controller_helpers'
+require "passwordless/controller_helpers"
 
 module Passwordless
   class Constraint
