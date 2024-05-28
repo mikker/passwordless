@@ -7,45 +7,52 @@ module Passwordless
   class ConstraintTest < ActionDispatch::IntegrationTest
     fixtures :users
 
-    test("#alice_has_no_access") do
+    test("restricts to users") do
+      assert_raises(ActionController::RoutingError) do
+        get "/constraint/only-user"
+      end
+
       alice = users(:alice)
       passwordless_sign_in(alice)
 
-      get "/secret-john"
-      assert_response :not_found
+      get "/constraint/only-user"
+      assert_response :success
     end
 
-    test("#john_has_access") do
+    test("restricts with predicate") do
+      alice = users(:alice)
+      passwordless_sign_in(alice)
+
+      assert_raises(ActionController::RoutingError) do
+        get "/constraint/only-john"
+      end
+
       john = users(:john)
       passwordless_sign_in(john)
 
-      get "/secret-john"
-      assert response.body.include?("shhhh! secrets!")
+      get "/constraint/only-john"
+      assert_response :success
     end
 
-    test("#anyone_logged_in_has_access") do
-      alice = users(:alice)
-      passwordless_sign_in(alice)
-
-      get "/secret-noproc"
-      assert response.body.include?("shhhh! secrets!")
-
-      john = users(:john)
-      passwordless_sign_in(john)
-
-      get "/secret-noproc"
-      assert response.body.include?("shhhh! secrets!")
+    test("negative version") do
+      get "/constraint/not-user"
+      # redirect because not signed in but route is still matched
+      assert_response :redirect
     end
 
-    test("#anyone_not_logged_in_has_access") do
-      get "/secret-unauthenticated"
-      assert response.body.include?("shhhh! secrets!")
+    test("negative version with predicate") do
+      passwordless_sign_in(users(:alice))
+      assert_raises(ActionController::RoutingError) do
+        get "/constraint/not-user"
+      end
 
-      alice = users(:alice)
-      passwordless_sign_in(alice)
+      get "/constraint/not-john"
+      assert_response :success
 
-      get "/secret-unauthenticated"
-      assert_response :not_found
+      passwordless_sign_in(users(:john))
+      assert_raises(ActionController::RoutingError) do
+        get "/constraint/not-john"
+      end
     end
   end
 end

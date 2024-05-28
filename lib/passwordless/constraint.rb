@@ -6,18 +6,33 @@ module Passwordless
   class Constraint
     include ControllerHelpers
 
-    attr_reader :authenticatable_type, :authenticated, :lambda, :session
+    attr_reader :authenticatable_type, :predicate, :session
 
-    def initialize(authenticatable_type, lambda = -> { true }, authenticated: true)
+    # @param [Class] authenticatable_type
+    # @param [lambda|Proc] if - a lambda that takes an authenticatable and returns a boolean
+    def initialize(authenticatable_type, **options)
       @authenticatable_type = authenticatable_type
-      @authenticated = authenticated
-      @lambda = lambda
+      # `if' is a keyword but so we do this instead of keyword arguments
+      @predicate = options.fetch(:if) { -> (_) { true } }
     end
 
     def matches?(request)
+      # used in authenticate_by_session
       @session = request.session
       authenticatable = authenticate_by_session(authenticatable_type)
-      authenticatable.present? == authenticated && lambda.call(authenticatable)
+      !!(authenticatable && predicate.call(authenticatable))
+    end
+  end
+
+  class ConstraintNot < Constraint
+    # @param [Class] authenticatable_type
+    # @param [lambda|Proc] if - a lambda that takes an authenticatable and returns a boolean
+    def initialize(...)
+      super
+    end
+
+    def matches?(request)
+      !super
     end
   end
 end
