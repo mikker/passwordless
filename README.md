@@ -8,7 +8,24 @@
 
 Add authentication to your Rails app without all the icky-ness of passwords. _Magic link_ authentication, if you will. We call it _passwordless_.
 
----
+- [Installation](#installation)
+  - [Upgrading](#upgrading)
+- [Usage](#usage)
+  - [Getting the current user, restricting access, the usual](#getting-the-current-user-restricting-access-the-usual)
+  - [Providing your own templates](#providing-your-own-templates)
+  - [Registering new users](#registering-new-users)
+  - [URLs and links](#urls-and-links)
+  - [Route constraints](#route-constraints)
+- [Configuration](#configuration)
+  - [Delivery method](#delivery-method)
+  - [Token generation](#token-generation)
+  - [Timeout and Expiry](#timeout-and-expiry)
+  - [Redirection after sign-in](#redirection-after-sign-in)
+  - [Looking up the user](#looking-up-the-user)
+- [Test helpers](#test-helpers)
+- [Security considerations](#security-considerations)
+- [Alternatives](#alternatives)
+- [License](#license)
 
 ## Installation
 
@@ -149,30 +166,32 @@ config.action_mailer.default_url_options = {host: "www.example.com"}
 routes.default_url_options[:host] ||= "www.example.com"
 ```
 
-## Constraints for config/routes.rb
+### Route constraints
 
 With [constraints](https://guides.rubyonrails.org/routing.html#request-based-constraints) you can restrict access to certain routes.
-Passwordless provides a Passwordless::Constraint for this purpose to at the minimum ensure the user is authenticated, or in the below case that the user has the word "john" in the email.
+Passwordless provides `Passwordless::Constraint` and it's negative counterpart `Passwordless::NotConstraint` for this purpose.
 
-```ruby
-constraints Passwordless::Constraint.new(User, ->(user) { user.email.include?("john") }) do
-  get("/secret-john", to: "secrets#index")
-end
-```
-
-The proc is optional, so you can also restrict resources to authenticated users.
+To limit a route to only authenticated `User`s:
 
 ```ruby
 constraints Passwordless::Constraint.new(User) do
-  get("/secret", to: "secrets#index")
+  # ...
 end
 ```
 
-You can also restrict resources to non-authenticated users, this will mean authenticated users no longer have access.
+The constraint takes a second `if:` argument, that expects a block and is passed the `authenticatable` record, (ie. `User`):
 
 ```ruby
-constraints Passwordless::Constraint.new(User, authenticated: false) do
-  get("/secret", to: "secrets#index")
+constraints Passwordless::Constraint.new(User, if: -> (user) { user.email.include?("john") }) do
+  # ...
+end
+```
+
+The negated version has the same API but with the opposite result, ie. ensuring authenticated user **don't** have access:
+
+```ruby
+constraints Passwordless::NotConstraint.new(User) do
+  get("/no-users-allowed", to: "secrets#index")
 end
 ```
 
