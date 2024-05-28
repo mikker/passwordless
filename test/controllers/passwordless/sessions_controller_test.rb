@@ -161,12 +161,12 @@ module Passwordless
     test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS / callable success path with 1 arg") do
       passwordless_session = create_pwless_session(token: "hi")
 
-      with_config(success_redirect_path: lambda { |user| "/#{user.id}" }) do
+      with_config(success_redirect_path: lambda { |user| "/users/#{user.id}" }) do
         patch("/users/sign_in/#{passwordless_session.identifier}", params: {passwordless: {token: "hi"}})
       end
 
       follow_redirect!
-      assert_equal "/#{passwordless_session.authenticatable.id}", path
+      assert_equal "/users/#{passwordless_session.authenticatable.id}", path
     end
 
     test("PATCH /:passwordless_for/sign_in/:id -> ERROR") do
