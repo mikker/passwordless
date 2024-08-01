@@ -169,7 +169,7 @@ routes.default_url_options[:host] ||= "www.example.com"
 ### Route constraints
 
 With [constraints](https://guides.rubyonrails.org/routing.html#request-based-constraints) you can restrict access to certain routes.
-Passwordless provides `Passwordless::Constraint` and it's negative counterpart `Passwordless::NotConstraint` for this purpose.
+Passwordless provides `Passwordless::Constraint` and it's negative counterpart `Passwordless::ConstraintNot` for this purpose.
 
 To limit a route to only authenticated `User`s:
 
@@ -190,7 +190,7 @@ end
 The negated version has the same API but with the opposite result, ie. ensuring authenticated user **don't** have access:
 
 ```ruby
-constraints Passwordless::NotConstraint.new(User) do
+constraints Passwordless::ConstraintNot.new(User) do
   get("/no-users-allowed", to: "secrets#index")
 end
 ```
