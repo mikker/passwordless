@@ -4,7 +4,7 @@
 
 ### Added
 
-- Added `Passwordless::Constraint` and `Passwordless::NotConstraint` for routing constraints (#228)
+- Added `Passwordless::Constraint` and `Passwordless::ConstraintNot` for routing constraints (#228)
 
 ### Fixed
 
