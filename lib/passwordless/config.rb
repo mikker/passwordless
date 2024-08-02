@@ -50,6 +50,7 @@ module Passwordless
     )
 
     option :paranoid, default: false
+    option :send_paranoid_email, default: false
 
     def initialize
       set_defaults!
