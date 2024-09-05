@@ -4,7 +4,7 @@ gemspec(path: "..")
 
 gem "rails", github: "rails/rails", branch: "main"
 gem "puma"
-gem "sqlite3", "~> 1.4"
+gem "sqlite3", "~> 2"
 gem "yard"
 
 group :test do
@@ -15,4 +15,3 @@ group :test do
 end
 
 # vim: ft=ruby
-
