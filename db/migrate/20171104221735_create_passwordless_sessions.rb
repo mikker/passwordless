@@ -6,6 +6,7 @@ class CreatePasswordlessSessions < ActiveRecord::Migration[6.0]
       t.belongs_to(
         :authenticatable,
         polymorphic: true,
+        type: :int, # change to e.g. :uuid if your model doesn't use integer IDs
         index: {name: "authenticatable"}
       )
 
