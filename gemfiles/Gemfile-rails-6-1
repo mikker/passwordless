@@ -15,4 +15,3 @@ group :test do
 end
 
 # vim: ft=ruby
-
