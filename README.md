@@ -166,6 +166,30 @@ config.action_mailer.default_url_options = {host: "www.example.com"}
 routes.default_url_options[:host] ||= "www.example.com"
 ```
 
+Note as well that `passwordless_for` accepts a custom controller. One possible application of this
+is to add a `before_action` that redirects authenticated users from the sign-in routes, as in this example:
+
+
+```ruby
+# config/routes.rb
+passwordless_for :users, controller: "sessions"
+```
+
+```ruby
+# app/controllers/sessions_controller.rb
+
+class SessionsController < Passwordless::SessionsController
+  before_action :require_unauth!, only: %i[new show]
+
+  private
+
+  def require_unauth!
+    return unless current_user
+    redirect_to("/", notice: "You are already signed in.")
+  end
+end
+```
+
 ### Route constraints
 
 With [constraints](https://guides.rubyonrails.org/routing.html#request-based-constraints) you can restrict access to certain routes.
