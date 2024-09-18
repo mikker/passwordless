@@ -179,7 +179,7 @@ passwordless_for :users, controller: "sessions"
 # app/controllers/sessions_controller.rb
 
 class SessionsController < Passwordless::SessionsController
-  before_action :require_unauth!, only: %i[ new show ]
+  before_action :require_unauth!, only: %i[new show]
 
   private
 
