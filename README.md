@@ -183,11 +183,10 @@ class SessionsController < Passwordless::SessionsController
 
   private
 
-    def require_unauth!
-      unless @current_user.nil?
-        redirect_to "/", notice: "You are already signed in."
-      end
-    end
+  def require_unauth!
+    return unless current_user
+    redirect_to("/", notice: "You are already signed in.")
+  end
 end
 ```
 
