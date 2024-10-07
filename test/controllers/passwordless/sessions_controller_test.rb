@@ -221,32 +221,6 @@ module Passwordless
       assert_nil pwless_session(User)
     end
 
-    test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS with after_session_confirm") do
-      user = create_user(email: "test@example.com")
-      passwordless_session = create_pwless_session(authenticatable: user, token: "valid_token")
-      
-      confirm_called = false
-      
-      with_config(after_session_confirm: ->(session) { 
-        confirm_called = true
-        assert_equal user, session.authenticatable
-      }) do
-        patch(
-          "/users/sign_in/#{passwordless_session.identifier}", 
-          params: {passwordless: {token: "valid_token"}}
-        )
-      end
-
-      assert_equal 303, status
-      assert confirm_called, "after_session_confirm hook was not called"
-      
-      follow_redirect!
-      assert_equal 200, status
-      assert_equal "/", path
-      
-      assert_equal pwless_session(User), Session.last!.id
-    end
-
     test("PATCH /:passwordless_for/sign_in/:id -> after_session_confirm with request object") do
       user = create_user(email: "test@example.com")
       passwordless_session = create_pwless_session(authenticatable: user, token: "valid_token")

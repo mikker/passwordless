@@ -248,49 +248,6 @@ Passwordless.configure do |config|
 end
 ```
 
-## After Session Confirmation Hook
-Passwordless now supports an after_session_confirm hook that allows you to perform custom actions after a session has been successfully confirmed. This is particularly useful for tasks such as marking an email as verified or updating user attributes after their first successful login.
-
-#### Configuration
-You can configure the after_session_confirm hook in your Passwordless configuration:
-
-```ruby
-Passwordless.configure do |config|
-  # ... other configuration options ...
-
-  config.after_session_confirm = ->(session) {
-    # Your custom logic here
-    user = session.authenticatable
-    user.update(email_verified: true)
-  }
-end
-```
-
-#### Usage
-The after_session_confirm hook is called automatically after a successful session confirmation. It receives the session object as an argument, which you can use to access the authenticated user (via session.authenticatable) and perform any necessary operations.
-
-**Example: Marking an Email as Verified**
-
-```ruby
-Passwordless.configure do |config|
-  config.after_session_confirm = ->(session) {
-    user = session.authenticatable
-    user.update(email_verified: true)
-  }
-end
-```
-
-**Example: Updating Last Login Timestamp**
-
-```ruby
-Passwordless.configure do |config|
-  config.after_session_confirm = ->(session) {
-    user = session.authenticatable
-    user.update(last_login_at: Time.current)
-  }
-end
-```
-
 ### Delivery method
 
 By default, Passwordless sends emails. See [Providing your own templates](#providing-your-own-templates). If you need to customize this further, you can do so in the `after_session_save` callback.
@@ -306,6 +263,24 @@ Passwordless.configure do |config|
     # You can change behavior to do something with session model. For example,
     # SmsApi.send_sms(session.authenticatable.phone_number, session.token)
   end
+end
+```
+
+## After Session Confirmation Hook
+The after_session_confirm hook is called automatically after a successful session confirmation. It receives the request and session objects as arguments, which you can use to access the authenticated user (via session.authenticatable) and perform any necessary operations.
+
+You can configure the after_session_confirm hook in your Passwordless configuration:
+
+```ruby
+Passwordless.configure do |config|
+  # ... other configuration options ...
+
+  config.after_session_confirm = ->(request, session) {
+    # Your custom logic here
+    user = session.authenticatable
+    user.update(email_verified: true)
+    user.update(last_login_ip: request.remote_ip)
+  }
 end
 ```
 
