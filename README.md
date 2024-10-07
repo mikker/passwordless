@@ -275,7 +275,7 @@ You can configure the after_session_confirm hook in your Passwordless configurat
 Passwordless.configure do |config|
   # ... other configuration options ...
 
-  config.after_session_confirm = ->(request, session) {
+  config.after_session_confirm = ->(session, request) {
     # Your custom logic here
     user = session.authenticatable
     user.update(email_verified: true)
