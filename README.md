@@ -243,6 +243,8 @@ Passwordless.configure do |config|
   config.sign_out_redirect_path = '/' # After a user signs out
 
   config.paranoid = false # Display email sent notice even when the resource is not found.
+
+  config.after_session_confirm = ->(request, session) {} # Called after a session is confirmed.
 end
 ```
 
@@ -264,6 +266,20 @@ Passwordless.configure do |config|
 end
 ```
 
+## After Session Confirm Hook
+
+An `after_session_confirm` hook is called after a successful session confirmation – in other words: after a user signs in successfully.
+
+```ruby
+Passwordless.configure do |config|
+  config.after_session_confirm = ->(session, request) {
+    user = session.authenticatable
+    user.update!(
+      email_verified: true.
+      last_login_ip: request.remote_ip
+    )
+  }
+end
 ### Token generation
 
 By default Passwordless generates short, 6-digit, alpha numeric tokens. You can change the generator using `Passwordless.config.token_generator` to something else that responds to `call(session)` eg.:
