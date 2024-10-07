@@ -244,7 +244,7 @@ Passwordless.configure do |config|
 
   config.paranoid = false # Display email sent notice even when the resource is not found.
 
-  config.after_session_confirm = ->(session) {} # Called after a session is confirmed.
+  config.after_session_confirm = ->(request, session) {} # Called after a session is confirmed.
 end
 ```
 
