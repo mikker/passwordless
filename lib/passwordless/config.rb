@@ -51,6 +51,12 @@ module Passwordless
 
     option :paranoid, default: false
 
+    option(
+      :after_session_confirm,
+      default: lambda do |session, _request|
+      end
+    )
+
     def initialize
       set_defaults!
     end
