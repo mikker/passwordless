@@ -266,24 +266,20 @@ Passwordless.configure do |config|
 end
 ```
 
-## After Session Confirmation Hook
-The after_session_confirm hook is called automatically after a successful session confirmation. It receives the request and session objects as arguments, which you can use to access the authenticated user (via session.authenticatable) and perform any necessary operations.
+## After Session Confirm Hook
 
-You can configure the after_session_confirm hook in your Passwordless configuration:
+An `after_session_confirm` hook is called after a successful session confirmation – in other words: after a user signs in successfully.
 
 ```ruby
 Passwordless.configure do |config|
-  # ... other configuration options ...
-
   config.after_session_confirm = ->(session, request) {
-    # Your custom logic here
     user = session.authenticatable
-    user.update(email_verified: true)
-    user.update(last_login_ip: request.remote_ip)
+    user.update!(
+      email_verified: true.
+      last_login_ip: request.remote_ip
+    )
   }
 end
-```
-
 ### Token generation
 
 By default Passwordless generates short, 6-digit, alpha numeric tokens. You can change the generator using `Passwordless.config.token_generator` to something else that responds to `call(session)` eg.:

@@ -53,7 +53,7 @@ module Passwordless
 
     option(
       :after_session_confirm,
-      default: lambda do |session, _request|
+      default: lambda do |_session, _request|
       end
     )
 
