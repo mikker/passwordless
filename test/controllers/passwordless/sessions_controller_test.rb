@@ -56,11 +56,26 @@ module Passwordless
 
     test("POST /:passwordless_for/sign_in -> FAILURE / invalid email format") do
       post("/users/sign_in", params: {passwordless: {email: "invalid_email"}})
-
-      assert_equal 200, status  # Expecting to re-render the form
-      assert_equal 0, ActionMailer::Base.deliveries.size
       
+      assert_equal 200, status
+      assert_equal 0, ActionMailer::Base.deliveries.size
       assert_includes response.body, "Invalid email format"
+    end
+
+    test("POST /:passwordless_for/sign_in -> FAILURE / empty email") do
+      post("/users/sign_in", params: {passwordless: {email: ""}})
+      
+      assert_equal 200, status
+      assert_equal 0, ActionMailer::Base.deliveries.size
+      assert_includes response.body, "Email address cannot be blank"
+    end
+
+    test("POST /:passwordless_for/sign_in -> FAILURE / whitespace-only email") do
+      post("/users/sign_in", params: {passwordless: {email: "   "}})
+      
+      assert_equal 200, status
+      assert_equal 0, ActionMailer::Base.deliveries.size
+      assert_includes response.body, "Email address cannot be blank"
     end
 
     test("POST /:passwordless_for/sign_in -> SUCCESS / custom delivery method") do

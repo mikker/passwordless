@@ -191,14 +191,16 @@ module Passwordless
     def find_authenticatable
       email = normalized_email_param
       
-      if email.match?(URI::MailTo::EMAIL_REGEXP)
+      if email.blank?
+        raise ArgumentError, I18n.t("passwordless.sessions.errors.email_cannot_be_blank")
+      elsif !email.match?(URI::MailTo::EMAIL_REGEXP)
+        raise ArgumentError, I18n.t("passwordless.sessions.errors.invalid_email_format")
+      else
         if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
           authenticatable_class.fetch_resource_for_passwordless(email)
         else
           authenticatable_class.where("lower(#{email_field}) = ?", email).first
         end
-      else
-        raise ArgumentError, "Invalid email format"
       end
     end
 
