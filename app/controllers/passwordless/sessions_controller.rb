@@ -20,31 +20,38 @@ module Passwordless
     #   Creates a new Session record then sends the magic link
     #   redirects to sign in page with generic flash message.
     def create
-      handle_resource_not_found unless @resource = find_authenticatable
-      @session = build_passwordless_session(@resource)
-
-      if @session.save
-        call_after_session_save
-
-        redirect_to(
-          Passwordless.context.path_for(
-            @session,
-            id: @session.to_param,
-            action: "show",
-            **default_url_options
-          ),
-          flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
-        )
-      else
-        flash.alert = I18n.t("passwordless.sessions.create.error")
+      begin
+        @resource = find_authenticatable
+        if @resource.nil?
+          handle_resource_not_found
+          return
+        end
+        
+        @session = build_passwordless_session(@resource)
+        if @session.save
+          call_after_session_save
+          redirect_to(
+            Passwordless.context.path_for(
+              @session,
+              id: @session.to_param,
+              action: "show",
+              **default_url_options
+            ),
+            flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
+          )
+        else
+          flash.now[:alert] = I18n.t("passwordless.sessions.create.error")
+          render(:new, status: :unprocessable_entity)
+        end
+      rescue ArgumentError => e
+        @session = Session.new
+        flash.now[:alert] = e.message
         render(:new, status: :unprocessable_entity)
+      rescue ActiveRecord::RecordNotFound
+        @session = Session.new
+        flash.now[:alert] = I18n.t("passwordless.sessions.create.not_found")
+        render(:new, status: :not_found)
       end
-
-    rescue ActiveRecord::RecordNotFound
-      @session = Session.new
-
-      flash.alert = I18n.t("passwordless.sessions.create.not_found")
-      render(:new, status: :not_found)
     end
 
     # get "/:resource/sign_in/:id"
