@@ -54,6 +54,15 @@ module Passwordless
       assert_equal "/users/sign_in/#{Session.last!.identifier}", path
     end
 
+    test("POST /:passwordless_for/sign_in -> FAILURE / invalid email format") do
+      post("/users/sign_in", params: {passwordless: {email: "invalid_email"}})
+
+      assert_equal 200, status  # Expecting to re-render the form
+      assert_equal 0, ActionMailer::Base.deliveries.size
+      
+      assert_includes response.body, "Invalid email format"
+    end
+
     test("POST /:passwordless_for/sign_in -> SUCCESS / custom delivery method") do
       called = false
 

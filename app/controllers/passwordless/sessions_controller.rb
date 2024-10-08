@@ -189,10 +189,16 @@ module Passwordless
     end
 
     def find_authenticatable
-      if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
-        authenticatable_class.fetch_resource_for_passwordless(normalized_email_param)
+      email = normalized_email_param
+      
+      if email.match?(URI::MailTo::EMAIL_REGEXP)
+        if authenticatable_class.respond_to?(:fetch_resource_for_passwordless)
+          authenticatable_class.fetch_resource_for_passwordless(email)
+        else
+          authenticatable_class.where("lower(#{email_field}) = ?", email).first
+        end
       else
-        authenticatable_class.where("lower(#{email_field}) = ?", normalized_email_param).first
+        raise ArgumentError, "Invalid email format"
       end
     end
 
