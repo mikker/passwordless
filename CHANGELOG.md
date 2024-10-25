@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.0
+
+### Added
+
+- Added `config.after_session_confirm` hook (#237)
+
 ## 1.7.0
 
 ### Added
