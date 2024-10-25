@@ -25,6 +25,9 @@ jobs:
         exclude:
           - gemfile: gemfiles/Gemfile-rails-main
             ruby: "3.0"
+        exclude:
+          - gemfile: gemfiles/Gemfile-rails-main
+            ruby: "3.1"
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:
