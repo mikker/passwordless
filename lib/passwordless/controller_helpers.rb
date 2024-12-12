@@ -87,9 +87,11 @@ module Passwordless
     # Saves request.original_url as the redirect location for a
     # passwordless Model.
     # @param (see #authenticate_by_session)
+    # @param url [String] the url to redirect to
     # @return [String] the redirect url that was just saved.
-    def save_passwordless_redirect_location!(authenticatable_class)
-      session[redirect_session_key(authenticatable_class)] = request.original_url
+    def save_passwordless_redirect_location!(authenticatable_class, url=nil)
+      url = request.original_url if url.nil?
+      set_passwordless_redirect_location! url
     end
 
     # Resets the redirect_location to root_path by deleting the redirect_url
