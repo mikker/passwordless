@@ -14,6 +14,9 @@ module Passwordless
     #   renders sessions/new.html.erb.
     def new
       @session = Session.new
+      unless params[:redirect_to].nil?
+        save_passwordless_redirect_location! authenticatable_class, params[:redirect_to]
+      end
     end
 
     # post '/:resource/sign_in'
