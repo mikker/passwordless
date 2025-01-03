@@ -275,11 +275,13 @@ Passwordless.configure do |config|
   config.after_session_confirm = ->(session, request) {
     user = session.authenticatable
     user.update!(
-      email_verified: true.
+      email_verified: true,
       last_login_ip: request.remote_ip
     )
   }
 end
+```
+
 ### Token generation
 
 By default Passwordless generates short, 6-digit, alpha numeric tokens. You can change the generator using `Passwordless.config.token_generator` to something else that responds to `call(session)` eg.:
