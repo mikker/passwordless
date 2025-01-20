@@ -16,7 +16,7 @@ From 1.0 the flow is:
 If you're already running Passwordless, you'll need to update your database schema.
 
 ```sh
-$ bin/rails g migration UpgradePassswordless
+$ bin/rails g migration UpgradePasswordless
 ```
 
 ```ruby
