@@ -312,6 +312,10 @@ Rails.application.config.session_store :cookie_store,
   # ...
 ```
 
+#### Clean up expired sessions
+
+Call `Passwordless::Session.where('expires_at < ?', Time.zone.now).delete_all` in a task that runs periodically.
+
 ### Redirection after sign-in
 
 By default Passwordless will redirect back to where the user wanted to go _if_ it knows where that is -- so you'll have to help it. `Passwordless::ControllerHelpers` provide a method:
