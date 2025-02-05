@@ -24,6 +24,8 @@ jobs:
           - gemfiles/Gemfile-rails-7-0
           - gemfiles/Gemfile-rails-6-1
         exclude:
+          - gemfile: Gemfile
+            ruby: "3.0"
           - gemfile: gemfiles/Gemfile-rails-main
             ruby: "3.0"
           - gemfile: gemfiles/Gemfile-rails-main
