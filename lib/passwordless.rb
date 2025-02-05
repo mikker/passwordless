@@ -12,11 +12,18 @@ require "passwordless/token_digest"
 module Passwordless
   extend Configurable
 
+  LOCK = Mutex.new
+
   def self.context
-    @context ||= Context.new
+    return @context if @context
+
+    LOCK.synchronize do
+      @context ||= Context.new
+    end
   end
 
   def self.add_resource(resource, controller:, **defaults)
+    pp(context)
     context.resources[resource] = Resource.new(resource, controller: controller)
   end
 
