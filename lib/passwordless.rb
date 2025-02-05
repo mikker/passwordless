@@ -23,7 +23,6 @@ module Passwordless
   end
 
   def self.add_resource(resource, controller:, **defaults)
-    pp(context)
     context.resources[resource] = Resource.new(resource, controller: controller)
   end
 

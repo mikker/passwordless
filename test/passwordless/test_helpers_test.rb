@@ -1,5 +1,6 @@
 require "test_helper"
 require "passwordless/test_helpers"
+require "ostruct"
 
 module Passwordless
   class MockTest
