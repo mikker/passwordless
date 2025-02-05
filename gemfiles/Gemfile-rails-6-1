@@ -6,12 +6,16 @@ gem "rails", "~> 6.1.0"
 gem "puma"
 gem "sqlite3", "~> 1.4"
 gem "yard"
+gem "concurrent-ruby", "1.3.4"
+gem "bigdecimal"
 
 group :test do
   gem "capybara", require: false
   gem "codecov", require: false
   gem "minitest"
   gem "rails-controller-testing"
+  gem "ostruct"
+  gem "benchmark"
 end
 
 # vim: ft=ruby
