@@ -12,6 +12,8 @@ group :test do
   gem "codecov", require: false
   gem "minitest"
   gem "rails-controller-testing"
+  gem "ostruct"
+  gem "benchmark"
 end
 
 # vim: ft=ruby

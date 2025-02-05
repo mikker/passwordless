@@ -5,7 +5,7 @@ gemspec
 gem "erb-formatter"
 gem "pry"
 gem "puma"
-gem "sqlite3", "~> 1.4"
+gem "sqlite3", "~> 2"
 gem "yard"
 gem "ostruct"
 gem "benchmark"
