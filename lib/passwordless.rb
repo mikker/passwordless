@@ -17,6 +17,9 @@ module Passwordless
   def self.context
     return @context if @context
 
+    # Routes are lazy loaded in Rails 8 so we need to load them to populate Context#resources.
+    Rails.application.try(:reload_routes_unless_loaded)
+
     LOCK.synchronize do
       @context ||= Context.new
     end
