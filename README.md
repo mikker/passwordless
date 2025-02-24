@@ -355,6 +355,16 @@ class User < ApplicationRecord
 end
 ```
 
+## Testing
+
+To run tests locally on a fork of this repository:
+
+```
+$ bundle
+$ bin/rails db:create RAILS_ENV=test
+$ bin/rails test
+```
+
 ## Test helpers
 
 To help with testing, a set of test helpers are provided.
