@@ -296,6 +296,15 @@ end
 
 Passwordless will keep generating tokens until it finds one that hasn't been used yet. So be sure to use some kind of method where matches are unlikely.
 
+If your app should not distinguish between lowercase and uppercase letters in tokens, `Passwordless.config.case_insensitive_tokens` may be set to `true`.
+
+```ruby
+Passwordless.configure do |config|
+  config.token_generator = Passwordless::ShortTokenGenerator.new
+  config.case_insensitive_tokens = true # allows `abc123` and `AbC123` to match `ABC123`
+end
+```
+
 ### Timeout and Expiry
 
 The _timeout_ is the time by which the generated token and magic link is invalidated. After this the token cannot be used to sign in to your app and the user will need to request a new token.

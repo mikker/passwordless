@@ -33,8 +33,9 @@ module Passwordless
     attr_reader :token
 
     def token=(plaintext)
-      self.token_digest = Passwordless.digest(plaintext)
-      @token = (plaintext)
+      token = plaintext.upcase if Passwordless.config.case_insensitive_tokens
+      self.token_digest = Passwordless.digest(token)
+      @token = (token)
     end
 
     def authenticate(token)
@@ -81,6 +82,7 @@ module Passwordless
 
       self.token, self.token_digest = loop {
         token = Passwordless.config.token_generator.call(self)
+        token = token.upcase if Passwordless.config.case_insensitive_tokens
         digest = Passwordless.digest(token)
         break [token, digest] if token_digest_available?(digest)
       }
