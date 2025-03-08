@@ -300,7 +300,6 @@ If your app should not distinguish between lowercase and uppercase letters in to
 
 ```ruby
 Passwordless.configure do |config|
-  config.token_generator = Passwordless::ShortTokenGenerator.new
   config.case_insensitive_tokens = true # allows `abc123` and `AbC123` to match `ABC123`
 end
 ```
