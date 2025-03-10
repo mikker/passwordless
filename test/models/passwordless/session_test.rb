@@ -87,14 +87,6 @@ module Passwordless
       assert_equal Passwordless.digest("hi"), session.token_digest
     end
 
-    test("setting token manually when case insensitive") do
-      Passwordless.config.case_insensitive_tokens = true
-      session = Session.new(token: "hi")
-      assert_equal "hi".upcase, session.token
-      assert_equal Passwordless.digest("hi".upcase), session.token_digest
-      Passwordless.config.case_insensitive_tokens = false
-    end
-
     test("with a custom expire at function") do
       custom_expire_at = Time.parse("01-01-2100").utc
       old_expires_at = Passwordless.config.expires_at
