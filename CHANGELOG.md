@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.1
+
+### Fixed
+
+- Fix issue with Rails 8 lazy loading routes (#247)
+
 ## 1.8.0
 
 ### Added
