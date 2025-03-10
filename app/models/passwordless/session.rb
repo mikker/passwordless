@@ -38,8 +38,8 @@ module Passwordless
     end
 
     def authenticate(token)
-      Passwordless.config.case_insensitive_tokens ? modified_token = token.upcase : modified_token = token
-      token_digest == Passwordless.digest(modified_token)
+      token = token.upcase if Passwordless.config.case_insensitive_tokens
+      token_digest == Passwordless.digest(token)
     end
 
     def expired?
@@ -82,9 +82,9 @@ module Passwordless
 
       self.token, self.token_digest = loop {
         token = Passwordless.config.token_generator.call(self)
-        Passwordless.config.case_insensitive_tokens ? modified_token = token.upcase : modified_token = token
-        digest = Passwordless.digest(modified_token)
-        break [modified_token, digest] if token_digest_available?(digest)
+        token = token.upcase if Passwordless.config.case_insensitive_tokens
+        digest = Passwordless.digest(token)
+        break [token, digest] if token_digest_available?(digest)
       }
     end
   end
