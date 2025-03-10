@@ -32,9 +32,10 @@ module Passwordless
     # hashed version in the database
     attr_reader :token
 
-    def token=(plaintext)
-      self.token_digest = Passwordless.digest(plaintext)
-      @token = (plaintext)
+    def token=(token)
+      token = token.upcase if Passwordless.config.case_insensitive_tokens
+      self.token_digest = Passwordless.digest(token)
+      @token = token
     end
 
     def authenticate(token)
