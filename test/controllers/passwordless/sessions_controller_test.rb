@@ -130,7 +130,7 @@ module Passwordless
       assert_equal 0, ActionMailer::Base.deliveries.size
 
       assert_template "passwordless/sessions/new"
-      assert_match "An error occured", flash.alert
+      assert_match "An error occurred", flash.alert
     end
 
     test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS") do
