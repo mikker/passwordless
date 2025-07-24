@@ -29,13 +29,16 @@ module Passwordless
 
       pwless_resource = Passwordless.add_resource(resource, controller: controller)
 
+      sign_in_path  = Passwordless.config.sign_in_path_name
+      sign_out_path = Passwordless.config.sign_out_path_name
+
       scope(defaults: pwless_resource.defaults) do
-        get("#{at}/sign_in", to: "#{controller}#new", as: :"#{as}sign_in")
-        post("#{at}/sign_in", to: "#{controller}#create")
-        get("#{at}/sign_in/:id", to: "#{controller}#show", as: :"verify_#{as}sign_in")
-        get("#{at}/sign_in/:id/:token", to: "#{controller}#confirm", as: :"confirm_#{as}sign_in")
-        patch("#{at}/sign_in/:id", to: "#{controller}#update")
-        match("#{at}/sign_out", to: "#{controller}#destroy", via: %i[get delete], as: :"#{as}sign_out")
+        get("#{at}/#{sign_in_path}", to: "#{controller}#new", as: :"#{as}#{sign_in_path}")
+        post("#{at}/#{sign_in_path}", to: "#{controller}#create")
+        get("#{at}/#{sign_in_path}/:id", to: "#{controller}#show", as: :"verify_#{as}#{sign_in_path}")
+        get("#{at}/#{sign_in_path}/:id/:token", to: "#{controller}#confirm", as: :"confirm_#{as}#{sign_in_path}")
+        patch("#{at}/#{sign_in_path}/:id", to: "#{controller}#update")
+        match("#{at}/#{sign_out_path}", to: "#{controller}#destroy", via: %i[get delete], as: :"#{as}#{sign_out_path}")
       end
     end
   end
