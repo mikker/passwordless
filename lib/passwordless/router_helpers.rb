@@ -35,7 +35,7 @@ module Passwordless
 
       pwless_resource = Passwordless.add_resource(resource, controller: controller)
 
-      scope_block = proc do
+      route_definitions = proc do
         scope(defaults: pwless_resource.defaults) do
           get("#{at}/sign_in", to: "#{controller}#new", as: :"#{as}sign_in")
           post("#{at}/sign_in", to: "#{controller}#create")
@@ -47,10 +47,10 @@ module Passwordless
       end
 
       if block_given?
-        scope(defaults: pwless_resource.defaults, &block)
-        instance_exec(&scope_block)
+        block.call
+        instance_exec(&route_definitions)
       else
-        instance_exec(&scope_block)
+        instance_exec(&route_definitions)
       end
     end
   end
