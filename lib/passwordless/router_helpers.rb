@@ -10,6 +10,10 @@ module Passwordless
     #     passwordless_for :users, at: 'session_stuff', as: :user_session_things
     #     # or with a custom controller ...
     #     passwordless_for :users, controller: 'my_custom_controller'
+    #     # or with a scope block ...
+    #     scope ":locale" do
+    #       passwordless_for :users
+    #     end
     # @param resource [Symbol] the pluralized symbol of a Model (e.g - :users).
     # @param at [String] Optional - provide custom path for the passwordless
     #   engine to get mounted at (using the above example your URLs end
@@ -21,7 +25,9 @@ module Passwordless
     # @param controller [String] Optional - provide a custom controller for
     #  sessions to use (using the above example the controller called would be MyCustomController
     #  (Default: 'passwordless/sessions')
-    def passwordless_for(resource, at: :na, as: :na, controller: "passwordless/sessions")
+    # @yield [scope] Optional - yields the current scope to a block for nested routes
+    # @yieldparam scope [ActionDispatch::Routing::Mapper::Scope] the current route scope
+    def passwordless_for(resource, at: :na, as: :na, controller: "passwordless/sessions", &block)
       at == :na && at = "/#{resource.to_s}"
       as == :na && as = resource.to_s
 
@@ -29,13 +35,22 @@ module Passwordless
 
       pwless_resource = Passwordless.add_resource(resource, controller: controller)
 
-      scope(defaults: pwless_resource.defaults) do
-        get("#{at}/sign_in", to: "#{controller}#new", as: :"#{as}sign_in")
-        post("#{at}/sign_in", to: "#{controller}#create")
-        get("#{at}/sign_in/:id", to: "#{controller}#show", as: :"verify_#{as}sign_in")
-        get("#{at}/sign_in/:id/:token", to: "#{controller}#confirm", as: :"confirm_#{as}sign_in")
-        patch("#{at}/sign_in/:id", to: "#{controller}#update")
-        match("#{at}/sign_out", to: "#{controller}#destroy", via: %i[get delete], as: :"#{as}sign_out")
+      scope_block = proc do
+        scope(defaults: pwless_resource.defaults) do
+          get("#{at}/sign_in", to: "#{controller}#new", as: :"#{as}sign_in")
+          post("#{at}/sign_in", to: "#{controller}#create")
+          get("#{at}/sign_in/:id", to: "#{controller}#show", as: :"verify_#{as}sign_in")
+          get("#{at}/sign_in/:id/:token", to: "#{controller}#confirm", as: :"confirm_#{as}sign_in")
+          patch("#{at}/sign_in/:id", to: "#{controller}#update")
+          match("#{at}/sign_out", to: "#{controller}#destroy", via: %i[get delete], as: :"#{as}sign_out")
+        end
+      end
+
+      if block_given?
+        scope(defaults: pwless_resource.defaults, &block)
+        instance_exec(&scope_block)
+      else
+        instance_exec(&scope_block)
       end
     end
   end
