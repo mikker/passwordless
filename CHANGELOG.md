@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.8.1
+
+### Fixed
+
+- Fix issue with Rails 8 lazy loading routes (#247)
+
+## 1.8.0
+
+### Added
+
+- Added `config.after_session_confirm` hook (#237)
+
 ## 1.7.0
 
 ### Added

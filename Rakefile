@@ -18,12 +18,10 @@ load("rails/tasks/statistics.rake")
 
 require "bundler/gem_tasks"
 
-require "rake/testtask"
-
-Rake::TestTask.new(:test) do |t|
-  t.libs << "test"
-  t.pattern = "test/**/*_test.rb"
-  t.verbose = false
+task(:test) do
+  puts("Use `bin/rails test`")
+  puts("-" * 80)
+  system("bin/rails test")
 end
 
 task(default: :test)

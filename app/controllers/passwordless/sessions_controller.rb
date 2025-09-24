@@ -157,6 +157,7 @@ module Passwordless
     def authenticate_and_sign_in(session, token)
       if session.authenticate(token)
         sign_in(session)
+        call_after_session_confirm(session, request)
         redirect_to(
           passwordless_success_redirect_path(session.authenticatable),
           status: :see_other,
@@ -193,6 +194,12 @@ module Passwordless
       else
         value
       end
+    end
+
+    def call_after_session_confirm(session, request)
+      return unless Passwordless.config.after_session_confirm.respond_to?(:call)
+
+      Passwordless.config.after_session_confirm.call(session, request)
     end
 
     def find_authenticatable
