@@ -258,7 +258,7 @@ In `config/initializers/passwordless.rb`:
 Passwordless.configure do |config|
   config.after_session_save = lambda do |session, request|
     # Default behavior is
-    # Passwordless::Mailer.sign_in(session).deliver_now
+    # Passwordless::Mailer.sign_in(session, session.token).deliver_now
 
     # You can change behavior to do something with session model. For example,
     # SmsApi.send_sms(session.authenticatable.phone_number, session.token)
