@@ -273,7 +273,7 @@ module Passwordless
       assert_equal "/", path
       assert_match "Signed out successfully", flash[:notice]
       assert pwless_session(User).blank?
-      refute passwordless_session.reload.available?
+      assert_not passwordless_session.reload.available?
     end
 
     test("DELETE /:passwordless_for/sign_out :: When response options are configured ") do
