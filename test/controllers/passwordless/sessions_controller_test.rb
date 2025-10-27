@@ -224,16 +224,16 @@ module Passwordless
     test("PATCH /:passwordless_for/sign_in/:id -> after_session_confirm with request object") do
       user = create_user(email: "test@example.com")
       passwordless_session = create_pwless_session(authenticatable: user, token: "valid_token")
-      
+
       confirm_called = false
-      
-      with_config(after_session_confirm: ->(session, request) { 
+
+      with_config(after_session_confirm: ->(session, request) {
         confirm_called = true
         assert_equal user, session.authenticatable
         assert_kind_of ActionDispatch::Request, request
       }) do
         patch(
-          "/users/sign_in/#{passwordless_session.identifier}", 
+          "/users/sign_in/#{passwordless_session.identifier}",
           params: {passwordless: {token: "valid_token"}}
         )
       end
@@ -245,12 +245,12 @@ module Passwordless
     test("PATCH /:passwordless_for/sign_in/:id -> after_session_confirm not called on invalid token") do
       user = create_user(email: "test@example.com")
       passwordless_session = create_pwless_session(authenticatable: user, token: "valid_token")
-      
+
       confirm_called = false
-      
+
       with_config(after_session_confirm: ->(_) { confirm_called = true }) do
         patch(
-          "/users/sign_in/#{passwordless_session.identifier}", 
+          "/users/sign_in/#{passwordless_session.identifier}",
           params: {passwordless: {token: "invalid_token"}}
         )
       end
@@ -273,6 +273,7 @@ module Passwordless
       assert_equal "/", path
       assert_match "Signed out successfully", flash[:notice]
       assert pwless_session(User).blank?
+      refute passwordless_session.reload.available?
     end
 
     test("DELETE /:passwordless_for/sign_out :: When response options are configured ") do
