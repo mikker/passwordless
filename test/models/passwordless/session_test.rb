@@ -16,6 +16,24 @@ module Passwordless
       refute session.authenticate("no")
     end
 
+    test("authenticate with case insensitive tokens") do
+      Passwordless.config.case_insensitive_tokens = true
+      session = create_session(token: "hi123")
+
+      assert session.authenticate("hi123")
+      assert session.authenticate("Hi123")
+      assert session.authenticate("HI123")
+      refute session.authenticate("no123")
+      
+      Passwordless.config.case_insensitive_tokens = false
+      session = create_session(token: "hi123")
+
+      assert session.authenticate("hi123")
+      refute session.authenticate("Hi123")
+      refute session.authenticate("HI123")
+      refute session.authenticate("no123")
+    end
+
     test("#expired?") do
       expired_session = create_session(expires_at: 1.hour.ago)
 
@@ -67,6 +85,14 @@ module Passwordless
       session = Session.new(token: "hi")
       assert_equal "hi", session.token
       assert_equal Passwordless.digest("hi"), session.token_digest
+    end
+    
+    test("setting token manually when case insensitive") do
+      Passwordless.config.case_insensitive_tokens = true
+      session = Session.new(token: "hi")
+      assert_equal "hi".upcase, session.token
+      assert_equal Passwordless.digest("hi".upcase), session.token_digest
+      Passwordless.config.case_insensitive_tokens = false
     end
 
     test("with a custom expire at function") do
