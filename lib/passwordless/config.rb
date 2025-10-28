@@ -57,6 +57,9 @@ module Passwordless
       end
     )
 
+    option :sign_in_path_name, default: "sign_in"
+    option :sign_out_path_name, default: "sign_out"
+
     def initialize
       set_defaults!
     end

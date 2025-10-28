@@ -18,6 +18,7 @@ Add authentication to your Rails app without all the icky-ness of passwords. _Ma
   - [Route constraints](#route-constraints)
 - [Configuration](#configuration)
   - [Delivery method](#delivery-method)
+- [After Session Confirm Hook](#after-session-confirm-hook)
   - [Token generation](#token-generation)
   - [Timeout and Expiry](#timeout-and-expiry)
   - [Redirection after sign-in](#redirection-after-sign-in)
@@ -241,6 +242,9 @@ Passwordless.configure do |config|
   config.success_redirect_path = '/' # After a user successfully signs in
   config.failure_redirect_path = '/' # After a sign in fails
   config.sign_out_redirect_path = '/' # After a user signs out
+
+  config.sign_in_path_name = "sign_in" # Path name for sign in routes (e.g., "login")
+  config.sign_out_path_name = "sign_out" # Path name for sign out routes (e.g., "logout")
 
   config.paranoid = false # Display email sent notice even when the resource is not found.
 
