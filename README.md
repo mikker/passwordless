@@ -56,11 +56,20 @@ class User < ApplicationRecord
 end
 ```
 
-Then mount the engine in your routes:
+Then mount the engine in your routes. You can use it at the root level or within a scope:
 
 ```ruby
 Rails.application.routes.draw do
+  # Simple usage
   passwordless_for :users
+
+  # With custom options
+  passwordless_for :admins, at: '/admin', as: :admin
+
+  # Nested within a scope
+  scope ":locale" do
+    passwordless_for :users, as: :locale_user
+  end
 
   # other routes
 end
