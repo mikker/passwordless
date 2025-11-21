@@ -30,6 +30,22 @@ module Passwordless
       assert_template "passwordless/sessions/show"
     end
 
+    test("GET /:passwordless_for/sign_in/:id -> ERROR / garbage sent through as id") do
+      assert_raises ActiveRecord::RecordNotFound do
+        get("/users/sign_in/wp-includes/wlwmanifest.xml")
+      end
+    end
+
+    test("GET /:passwordless_for/sign_in/:id -> SUCCESS / garbage sent through as id and paranoid enabled") do
+      with_config(paranoid: true) do
+        get("/users/sign_in/wp-includes/wlwmanifest.xml")
+      end
+
+      assert_equal 302, status
+      follow_redirect!
+      assert_equal "/users/sign_in", path
+    end
+
     test("POST /:passwordless_for/sign_in -> SUCCESS") do
       create_user(email: "a@a")
 
