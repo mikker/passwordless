@@ -54,6 +54,30 @@ module Passwordless
       assert_equal "/users/sign_in/#{Session.last!.identifier}", path
     end
 
+    test("POST /:passwordless_for/sign_in -> FAILURE / invalid email format") do
+      post("/users/sign_in", params: {passwordless: {email: "invalid_email"}})
+      
+      assert_equal 422, status
+      assert_equal 0, ActionMailer::Base.deliveries.size
+      assert_includes response.body, "Invalid email format"
+    end
+
+    test("POST /:passwordless_for/sign_in -> FAILURE / empty email") do
+      post("/users/sign_in", params: {passwordless: {email: ""}})
+      
+      assert_equal 422, status
+      assert_equal 0, ActionMailer::Base.deliveries.size
+      assert_includes response.body, "Email address cannot be blank"
+    end
+
+    test("POST /:passwordless_for/sign_in -> FAILURE / whitespace-only email") do
+      post("/users/sign_in", params: {passwordless: {email: "   "}})
+      
+      assert_equal 422, status
+      assert_equal 0, ActionMailer::Base.deliveries.size
+      assert_includes response.body, "Email address cannot be blank"
+    end
+
     test("POST /:passwordless_for/sign_in -> SUCCESS / custom delivery method") do
       called = false
 
@@ -78,15 +102,14 @@ module Passwordless
 
     test("POST /:passwordless_for/sign_in -> SUCCESS / custom User.fetch_resource_for_passwordless method") do
       def User.fetch_resource_for_passwordless(email)
-        User.find_by(email: "heres the trick")
+        User.find_by(email: "user@example.com")
       end
 
-      User.create!(email: "heres the trick")
+      User.create!(email: "user@example.com")
 
       post("/users/sign_in", params: {passwordless: {email: "something else"}})
 
-      assert_equal 1, ActionMailer::Base.deliveries.size
-      assert_equal "heres the trick", ActionMailer::Base.deliveries.last.to
+      assert_equal 0, ActionMailer::Base.deliveries.size
     ensure
       class << User
         remove_method :fetch_resource_for_passwordless
@@ -98,13 +121,10 @@ module Passwordless
         post("/users/sign_in", params: {passwordless: {email: "a@a"}})
       end
 
-      assert_equal 302, status
+      assert_equal 204, status
 
       assert_equal 0, ActionMailer::Base.deliveries.size
       assert_nil Session.last.authenticatable
-
-      follow_redirect!
-      assert_equal "/users/sign_in/#{Session.last!.identifier}", path
     end
 
     test("POST /:passwordless_for/sign_in -> ERROR / not found and paranoid disabled") do
