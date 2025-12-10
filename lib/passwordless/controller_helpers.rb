@@ -75,10 +75,13 @@ module Passwordless
       passwordless_session
     end
 
-    # Signs out user by deleting the session key.
+    # Signs out user by deleting the session key and expire the session
     # @param (see #authenticate_by_session)
     # @return [boolean] Always true
     def sign_out(authenticatable_class)
+      pwless_session = find_passwordless_session_for(authenticatable_class)
+      pwless_session&.update!(expires_at: Time.current)
+
       session.delete(session_key(authenticatable_class))
       reset_session
       true
