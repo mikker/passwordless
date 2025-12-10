@@ -4,7 +4,7 @@
       t("passwordless.sessions.new.email.label"),
       for: "passwordless_#{email_field}" %>
   <%= email_field_tag email_field_name,
-      params.fetch(email_field_name, nil),
+      params.dig(:passwordless, email_field),
       required: true,
       autofocus: true,
       placeholder: t("passwordless.sessions.new.email.placeholder") %>
