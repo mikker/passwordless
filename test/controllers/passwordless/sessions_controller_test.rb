@@ -107,7 +107,7 @@ module Passwordless
       assert_equal "/users/sign_in/#{Session.last!.identifier}", path
     end
 
-    test("POST /:passwordless_for/sign_in -> ERROR / not found and paranoid disabled") do
+    test("POST /:passwordless_for/sign_in -> ERROR / not found and paranoid disabled does not persist alert") do
       post("/users/sign_in", params: {passwordless: {email: "A@a"}})
 
       assert_equal 404, status
@@ -116,9 +116,12 @@ module Passwordless
 
       assert_template "passwordless/sessions/new"
       assert_match "We couldn't find a user with that email address", flash.alert
+
+      get "/users/sign_in"
+      assert_no_match "We couldn't find a user with that email address", flash.alert
     end
 
-    test("POST /:passwordless_for/sign_in -> ERROR / other error") do
+    test("POST /:passwordless_for/sign_in -> ERROR / other error does not persist alert") do
       create_user(email: "a@a")
 
       with_config(expires_at: lambda { nil }) do
@@ -131,6 +134,9 @@ module Passwordless
 
       assert_template "passwordless/sessions/new"
       assert_match "An error occurred", flash.alert
+
+      get "/users/sign_in"
+      assert_no_match "An error occurred", flash.alert
     end
 
     test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS") do
@@ -257,6 +263,23 @@ module Passwordless
 
       assert_equal 403, status
       assert_not confirm_called, "after_session_confirm hook was called with invalid token"
+    end
+
+    test("PATCH /:passwordless_for/sign_in/:id -> ERROR / invalid token shows flash alert does not persist alert") do
+      user = create_user(email: "test@example.com")
+      passwordless_session = create_pwless_session(authenticatable: user, token: "valid_token")
+
+      patch(
+        "/users/sign_in/#{passwordless_session.identifier}",
+        params: {passwordless: {token: "invalid_token"}}
+      )
+
+      assert_equal 403, status
+      assert_template "passwordless/sessions/show"
+      assert_match "Token is invalid", flash.alert
+
+      get "/users/sign_in"
+      assert_no_match "Token is invalid", flash.alert
     end
 
     test("DELETE /:passwordless_for/sign_out") do

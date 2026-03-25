@@ -10,7 +10,7 @@ gem "yard"
 group :test do
   gem "capybara", require: false
   gem "codecov", require: false
-  gem "minitest"
+  gem "minitest", "~> 5.0"
   gem "rails-controller-testing"
   gem "ostruct"
   gem "benchmark"

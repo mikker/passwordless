@@ -36,14 +36,14 @@ module Passwordless
           flash: {notice: I18n.t("passwordless.sessions.create.email_sent")}
         )
       else
-        flash.alert = I18n.t("passwordless.sessions.create.error")
+        flash.now.alert = I18n.t("passwordless.sessions.create.error")
         render(:new, status: :unprocessable_entity)
       end
 
     rescue ActiveRecord::RecordNotFound
       @session = Session.new
 
-      flash.alert = I18n.t("passwordless.sessions.create.not_found")
+      flash.now.alert = I18n.t("passwordless.sessions.create.not_found")
       render(:new, status: :not_found)
     end
 
@@ -157,7 +157,7 @@ module Passwordless
           **redirect_to_options
         )
       else
-        flash.alert = I18n.t("passwordless.sessions.errors.invalid_token")
+        flash.now.alert = I18n.t("passwordless.sessions.errors.invalid_token")
         render(status: :forbidden, action: "show")
       end
 

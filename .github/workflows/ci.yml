@@ -31,6 +31,8 @@ jobs:
             ruby: "3.0"
           - gemfile: gemfiles/Gemfile-rails-main
             ruby: "3.1"
+          - gemfile: gemfiles/Gemfile-rails-main
+            ruby: "3.2"
           - gemfile: gemfiles/Gemfile-rails-6-1
             ruby: "3.4"
           - gemfile: gemfiles/Gemfile-rails-7-0
