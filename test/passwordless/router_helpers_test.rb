@@ -117,6 +117,63 @@ module Passwordless
       assert_equal "/sign_in", url_helpers.auth_sign_in_path
     end
 
+    test("nested within a scope") do
+      defaults = {authenticatable: "user", resource: "users", locale: "en"}
+      
+      # Test GET /:locale/users/sign_in
+      assert_recognizes(
+        {controller: "passwordless/sessions", action: "new"}.merge(defaults),
+        {method: :get, path: "/locale/en/users/sign_in"},
+        defaults
+      )
+      
+      # Test POST /:locale/users/sign_in
+      assert_recognizes(
+        {controller: "passwordless/sessions", action: "create"}.merge(defaults),
+        {method: :post, path: "/locale/en/users/sign_in", params: {passwordless: {email: "a@a"}}},
+        defaults
+      )
+      
+      # Test GET /:locale/users/sign_in/:id
+      assert_recognizes(
+        {controller: "passwordless/sessions", action: "show", id: "123"}.merge(defaults),
+        {method: :get, path: "/locale/en/users/sign_in/123"},
+        defaults
+      )
+      
+      # Test GET /:locale/users/sign_in/:id/:token
+      assert_recognizes(
+        {controller: "passwordless/sessions", action: "confirm", id: "123", token: "abc"}.merge(defaults),
+        {method: :get, path: "/locale/en/users/sign_in/123/abc"},
+        defaults
+      )
+      
+      # Test PATCH /:locale/users/sign_in/:id
+      assert_recognizes(
+        {controller: "passwordless/sessions", action: "update", id: "123"}.merge(defaults),
+        {method: :patch, path: "/locale/en/users/sign_in/123"},
+        defaults
+      )
+      
+      # Test DELETE /:locale/users/sign_out
+      assert_recognizes(
+        {controller: "passwordless/sessions", action: "destroy"}.merge(defaults),
+        {method: :delete, path: "/locale/en/users/sign_out"},
+        defaults
+      )
+      
+      # Test GET /:locale/users/sign_out
+      assert_recognizes(
+        {controller: "passwordless/sessions", action: "destroy"}.merge(defaults),
+        {method: :get, path: "/locale/en/users/sign_out"},
+        defaults
+      )
+      
+      # Test URL helpers
+      assert_equal "/locale/en/users/sign_in", url_helpers.locale_user_sign_in_path(locale: "en")
+      assert_equal "/locale/en/users/sign_out", url_helpers.locale_user_sign_out_path(locale: "en")
+    end
+
     private
 
     def url_helpers
