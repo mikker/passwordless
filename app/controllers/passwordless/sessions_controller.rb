@@ -85,9 +85,13 @@ module Passwordless
 
       @session = passwordless_session
 
-      artificially_slow_down_brute_force_attacks(params[:token])
+      if @session.present?
+        artificially_slow_down_brute_force_attacks(params[:token])
 
-      authenticate_and_sign_in(@session, params[:token])
+        authenticate_and_sign_in(@session, params[:token])
+      else
+        redirect_to users_sign_in_path
+      end
     end
 
     # match '/:resource/sign_out', via: %i[get delete].
@@ -253,6 +257,8 @@ module Passwordless
         identifier: params[:id],
         authenticatable_type: authenticatable_type
       )
+    rescue ActiveRecord::RecordNotFound
+      raise ActiveRecord::RecordNotFound, "Couldn't find session with id #{params[:id]}" unless Passwordless.config.paranoid
     end
 
     def passwordless_session_params
