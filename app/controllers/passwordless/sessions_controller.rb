@@ -114,8 +114,14 @@ module Passwordless
     end
 
     def passwordless_query_redirect_path
-      query_redirect_uri = URI(params[:destination_path])
-      query_redirect_uri.to_s if query_redirect_uri.host.nil? || query_redirect_uri.host == URI(request.url).host
+      destination_path = params[:destination_path].to_s
+
+      return url_from(destination_path) if respond_to?(:url_from)
+
+      uri = URI.parse(destination_path)
+      if (uri.host.nil? && destination_path.start_with?('/') && !destination_path.start_with?('//')) || uri.host == request.host
+        destination_path
+      end
     rescue URI::InvalidURIError, ArgumentError
       nil
     end

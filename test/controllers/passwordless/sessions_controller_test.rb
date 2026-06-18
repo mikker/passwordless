@@ -175,6 +175,93 @@ module Passwordless
       assert_equal "/users/#{passwordless_session.authenticatable.id}", path
     end
 
+    test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS / safe destination_path") do
+      passwordless_session = create_pwless_session(token: "hi")
+      destination_path = "/staging"
+
+      patch(
+        "/users/sign_in/#{passwordless_session.identifier}",
+        params: {
+          passwordless: {token: "hi"},
+          destination_path: destination_path
+        }
+      )
+
+      assert_equal 303, status
+      assert_equal "#{request.base_url}#{destination_path}", response.location
+      assert_equal pwless_session(User), Session.last!.id
+    end
+
+    test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS / unsafe destination_path falls back") do
+      passwordless_session = create_pwless_session(token: "hi")
+
+      patch(
+        "/users/sign_in/#{passwordless_session.identifier}",
+        params: {
+          passwordless: {token: "hi"},
+          destination_path: "-staging.com"
+        }
+      )
+
+      assert_equal 303, status
+
+      follow_redirect!
+      assert_equal 200, status
+      assert_equal "/", path
+
+      assert_equal pwless_session(User), Session.last!.id
+    end
+
+    test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS / outside host destination_path falls back when not allowlisted") do
+      passwordless_session = create_pwless_session(token: "hi")
+
+      destination_path = "https://staging.yoursite.com/welcome"
+
+      patch(
+        "/users/sign_in/#{passwordless_session.identifier}",
+        params: {
+          passwordless: {token: "hi"},
+          destination_path: destination_path
+        }
+      )
+
+      assert_equal 303, status
+
+      follow_redirect!
+      assert_equal 200, status
+      assert_equal "/", path
+
+      assert_equal pwless_session(User), Session.last!.id
+    end
+
+    test("PATCH /:passwordless_for/sign_in/:id -> SUCCESS / outside host destination_path redirects when allowlisted") do
+      unless ActionController::Base.respond_to?(:allowed_redirect_hosts)
+        skip("allowed_redirect_hosts is only available on Rails 8.1+")
+      end
+
+      passwordless_session = create_pwless_session(token: "hi")
+      destination_path = "https://staging.yoursite.com/welcome"
+
+      original_allowed_redirect_hosts = ActionController::Base.allowed_redirect_hosts
+      ActionController::Base.allowed_redirect_hosts = ["staging.yoursite.com"]
+
+      patch(
+        "/users/sign_in/#{passwordless_session.identifier}",
+        params: {
+          passwordless: {token: "hi"},
+          destination_path: destination_path
+        }
+      )
+
+      assert_equal 303, status
+      assert_equal destination_path, response.location
+      assert_equal pwless_session(User), Session.last!.id
+    ensure
+      if ActionController::Base.respond_to?(:allowed_redirect_hosts)
+        ActionController::Base.allowed_redirect_hosts = original_allowed_redirect_hosts
+      end
+    end
+
     test("PATCH /:passwordless_for/sign_in/:id -> ERROR") do
       passwordless_session = create_pwless_session(token: "hi")
 

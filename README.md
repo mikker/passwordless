@@ -332,6 +332,21 @@ end
 
 This can also be turned off with `Passwordless.config.redirect_back_after_sign_in = false`.
 
+### Redirecting to external hosts (Multi-tenant applications)
+
+By default, `passwordless` strictly protects against Open Redirect vulnerabilities. When a user logs in, the `destination_path` parameter is sanitized using Rails' native `url_from` helper. This guarantees that users can only be redirected to safe, relative paths within your application.
+
+If you are building a multi-tenant application and legitimately need to redirect users to external subdomains or different hosts after authentication, you have two options depending on your Rails version:
+
+**For Rails 8.1+**
+Rails natively supports external redirect allowlisting. You can specify your trusted domains in your environment configuration, and `passwordless` will automatically respect them:
+
+# config/environments/production.rb
+config.action_controller.allowed_redirect_hosts = ["staging.yoursite.com", "app.yoursite.com"]
+
+**For Rails 8.0 and older**
+You will need to manually override the redirect behavior to bypass the default security checks. You can do this by overriding the `passwordless_query_redirect_path` helper in the `session_controller.rb`
+
 ### Looking up the user
 
 By default Passwordless uses the `passwordless_with` column to _case insensitively_ fetch the user resource.
