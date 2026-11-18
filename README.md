@@ -284,7 +284,17 @@ end
 
 ### Token generation
 
-By default Passwordless generates short, 6-digit, alpha numeric tokens. You can change the generator using `Passwordless.config.token_generator` to something else that responds to `call(session)` eg.:
+By default Passwordless generates short, 6-digit, alpha numeric tokens.
+
+You can change the characters and length:
+
+```ruby
+Passwordless.configure do |config|
+  config.token_generator = Passwordless::ShortTokenGenerator.new(chars: [*"0".."9"], size: 8)
+end
+```
+
+You can also change the generator using `Passwordless.config.token_generator` to something else that responds to `call(session)` eg.:
 
 ```ruby
 Passwordless.configure do |config|
