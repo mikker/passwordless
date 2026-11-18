@@ -69,6 +69,21 @@ module Passwordless
       assert_equal Passwordless.digest("hi"), session.token_digest
     end
 
+    test("with a custom token normalizer") do
+      old_normalizer = Passwordless.config.token_normalizer
+      Passwordless.config.token_normalizer = lambda { |token| token.upcase.delete(" ") }
+
+      session = create_session(token: "ABC 123")
+
+      assert_equal "ABC 123", session.token
+      assert_equal Passwordless.digest("ABC123"), session.token_digest
+      assert session.authenticate("abc123")
+      assert session.authenticate("Abc 123")
+      refute session.authenticate("abc124")
+
+      Passwordless.config.token_normalizer = old_normalizer
+    end
+
     test("with a custom expire at function") do
       custom_expire_at = Time.parse("01-01-2100").utc
       old_expires_at = Passwordless.config.expires_at

@@ -30,6 +30,6 @@ module Passwordless
   end
 
   def self.digest(token)
-    TokenDigest.new(token).digest
+    TokenDigest.new(config.token_normalizer.call(token)).digest
   end
 end

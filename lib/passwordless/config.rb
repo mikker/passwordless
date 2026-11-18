@@ -32,6 +32,7 @@ module Passwordless
     option :parent_mailer, default: "ActionMailer::Base"
     option :restrict_token_reuse, default: true
     option :token_generator, default: ShortTokenGenerator.new
+    option :token_normalizer, default: lambda { |token| token }
     option :combat_brute_force_attacks, default: !Rails.env.test?
 
     option :expires_at, default: lambda { 1.year.from_now }
