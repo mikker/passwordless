@@ -8,7 +8,7 @@ module Passwordless
     end
 
     def call(_session)
-      @chars.sample(@size, random: SecureRandom).join
+      Array.new(@size) { @chars.sample(random: SecureRandom) }.join
     end
   end
 end

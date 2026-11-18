@@ -7,8 +7,8 @@ module Passwordless
     end
 
     test("generates tokens with custom chars and size") do
-      generator = ShortTokenGenerator.new(chars: [*"0".."9"], size: 8)
-      assert_match(/^[0-9]{8}$/, generator.call(nil))
+      generator = ShortTokenGenerator.new(chars: %w[0 1], size: 8)
+      assert_match(/^[01]{8}$/, generator.call(nil))
     end
   end
 end
