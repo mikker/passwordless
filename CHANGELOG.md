@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Added `config.token_normalizer`, e.g. for case-insensitive tokens (#274)
+
 ## 1.8.1
 
 ### Fixed
