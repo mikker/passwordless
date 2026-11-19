@@ -232,6 +232,7 @@ Passwordless.configure do |config|
   config.parent_mailer = "ActionMailer::Base"
   config.restrict_token_reuse = true # Can a token/link be used multiple times?
   config.token_generator = Passwordless::ShortTokenGenerator.new # Used to generate magic link tokens.
+  config.token_normalizer = lambda { |token| token } # Applied to tokens before they are compared.
 
   config.expires_at = lambda { 1.year.from_now } # How long until a signed in session expires.
   config.timeout_at = lambda { 10.minutes.from_now } # How long until a token/magic link times out.
@@ -295,6 +296,14 @@ end
 ```
 
 Passwordless will keep generating tokens until it finds one that hasn't been used yet. So be sure to use some kind of method where matches are unlikely.
+
+Both the generated token and the token entered by the user are passed through `Passwordless.config.token_normalizer` before they are compared. Use it to make tokens case-insensitive, or to ignore separators added by your generator:
+
+```ruby
+Passwordless.configure do |config|
+  config.token_normalizer = lambda { |token| token.upcase.delete(" ") } # "abc 123" matches "ABC123"
+end
+```
 
 ### Timeout and Expiry
 
